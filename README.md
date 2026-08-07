@@ -6,7 +6,7 @@ Theseus is an independent public-interest direction, not a commercial product by
 
 ## Public Research Program Contract
 
-**Version:** `0.1-draft`
+**Version:** `0.2-draft`
 
 **Status:** proposed for public review
 
@@ -52,6 +52,14 @@ Every accepted change records its version, date, summary, reason, and review sta
 This repository contains the program-level contract only. Sonar and other tools are research lines that may support the program, but no single tool defines Theseus.
 
 No decision about grants, sponsorship, hardware purchases, or institutional structure is implied by this draft.
+
+## Methodological foundation
+
+Theseus follows a practice of human-agent engineering. An agent is neither a magical assistant nor an autonomous replacement for human responsibility, but a participant in a sociotechnical system. Our work reduces the distance between human intent and actual action through explicit contracts, bounded tools, provenance, observable postconditions, and read-back verification.
+
+We distinguish historical memory from current operational truth, intention from permission, tool from wrapper, observation from inference, and MVP from production. When a route fails, we record the signal, identify the missing contract, repair the smallest responsible layer, verify the postcondition, and preserve the reusable lesson.
+
+The longer explanation of this method is in [Methodology: Sadhana of Engineering](docs/methodology.md).
 
 ## Public review
 
