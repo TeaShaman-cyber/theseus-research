@@ -52,7 +52,9 @@ This manifesto is a versioned contract, not a timeless declaration. Changes foll
   authorization boundary, the autonomy boundary, sponsor independence, or
   public status. When compatibility is uncertain, use the higher version.
 
-Every accepted change records its version, date, summary, reason, and review status.
+Every accepted change records its version, date, summary, reason, and review status in [CHANGELOG.md](CHANGELOG.md).
+
+**Acceptance authority:** public review informs; the named program maintainer (currently [@TeaShaman-cyber](https://github.com/TeaShaman-cyber)) accepts. A change is "explicitly accepted" only when the maintainer merges it and records it in the changelog.
 
 ### Revision record: `0.3-draft` — 2026-08-13
 
@@ -78,6 +80,8 @@ This repository contains the program-level contract only. Specific tools and imp
 No decision about grants, sponsorship, hardware purchases, or institutional structure is implied by this draft.
 
 ## Methodological foundation
+
+*This section is explanatory, not normative. Normative commitments are limited to Mission, Core invariants, Non-goals, and Knowledge as code above.*
 
 Theseus follows a practice of human-agent engineering. An agent is neither a magical assistant nor an autonomous replacement for human responsibility, but a participant in a sociotechnical system. Our work reduces the distance between human intent and actual action through explicit contracts, bounded tools, provenance, observable postconditions, and read-back verification.
 

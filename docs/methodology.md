@@ -147,6 +147,8 @@ and where to stop”
 
 This methodology document may be clarified without changing the program's core mission. A change that alters consent, autonomy, provenance, sponsor independence, public status, or another core invariant must follow the contract's versioning rules and cannot be smuggled in as mere documentation.
 
+To make this checkable rather than declarative: every accepted change to this document is recorded in the contract's [CHANGELOG.md](../CHANGELOG.md) as PATCH or MINOR, with an explicit note that core invariants are not affected. A change that cannot honestly carry that note is a MAJOR contract change and belongs in the README review path, not here.
+
 ## Research context: ComBodied Agents
 
 The external paper [ComBodied Agents: a New Paradigm of Human-Centric Agentic AI](https://arxiv.org/abs/2608.10915) is a useful adjacent reference for this methodology. It organizes a long-term support loop around event-based perception, longitudinal and correctable memory, personal-state prediction, and an admissible intervention policy. Its central distinction between observation, inferred state, predicted trajectory, and authorized intervention reinforces Theseus's own separation of evidence from interpretation and permission.
