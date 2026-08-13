@@ -1,12 +1,14 @@
 # Theseus Methodology: Sadhana of Engineering
 
-**Status:** explanatory companion to the `0.2-draft` program contract
+**Status:** explanatory and operational companion to the `0.3-draft` program contract
+
+**Languages:** English (international reference) · [Русский перевод](methodology.ru.md)
 
 **Type:** methodology and working culture
 
 **Scope:** human-agent engineering in a public-interest research program
 
-This document explains how Theseus tries to turn its contract into everyday engineering practice. It is intentionally explanatory: the normative commitments remain in the [program contract](../README.md).
+This document explains how Theseus tries to turn its contract into everyday engineering practice. It is explanatory and operational: its working rules translate the [program contract](../README.md) into bounded practice, remain subordinate to it, and may not weaken its invariants. A change to consent, autonomy, provenance, sponsor independence, public status, or another contract boundary must be handled as a contract revision, not smuggled in as methodology wording.
 
 ## From DevOps to human-agent engineering
 
@@ -26,7 +28,7 @@ When an agent enters the engineering process, another distance becomes important
       tools ----------> external world
 ```
 
-The agent can read, search, edit, run commands, publish, and communicate with external systems. It is therefore a participant with capabilities, limitations, routing failures, and a tendency to continue confidently along the wrong path when the contract is implicit.
+Within explicitly approved, bounded operational envelopes, the agent can read, search, edit, run commands, publish, and communicate with external systems. It is therefore a participant with capabilities, limitations, routing failures, and a tendency to continue confidently along the wrong path when the contract is implicit. The envelope must identify the permitted scope, authority, tool or wrapper, expected postcondition, and stopping condition; broad capability is not blanket permission.
 
 Human-agent engineering makes the route explicit.
 
@@ -81,7 +83,7 @@ Which smallest layer can prevent a recurrence?
 
 This is a blameless practice in the precise sense: name the error accurately, keep responsibility visible, and repair the system that made the error likely. A good correction may involve the prompt, tool description, wrapper, permission boundary, success criterion, or read-back—not only the agent's future behavior.
 
-Blameless does not mean consequence-free. An unauthorized action, a false success claim, or a skipped verification remains an engineering defect and must be recorded as such.
+Blameless does not mean consequence-free. An unauthorized action, a false success claim, or a skipped verification remains an engineering defect and must be recorded as such. This is an operational rule subordinate to the contract, not a new independent authority to publish or act.
 
 ## A two-way engineering culture
 
@@ -144,3 +146,9 @@ and where to stop”
 ## Relationship to the contract
 
 This methodology document may be clarified without changing the program's core mission. A change that alters consent, autonomy, provenance, sponsor independence, public status, or another core invariant must follow the contract's versioning rules and cannot be smuggled in as mere documentation.
+
+## Research context: ComBodied Agents
+
+The external paper [ComBodied Agents: a New Paradigm of Human-Centric Agentic AI](https://arxiv.org/abs/2608.10915) is a useful adjacent reference for this methodology. It organizes a long-term support loop around event-based perception, longitudinal and correctable memory, personal-state prediction, and an admissible intervention policy. Its central distinction between observation, inferred state, predicted trajectory, and authorized intervention reinforces Theseus's own separation of evidence from interpretation and permission.
+
+The connection is conceptual, not a claim of implementation. Theseus does not thereby become a health agent, a robotics system, or a Human Digital Twin. The paper helps us ask whether continuity, memory, and automation leave the person more able to understand, choose, correct, recover, and grow. Theseus answers those questions through its own contract, evidence, and review process.
