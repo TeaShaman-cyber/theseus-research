@@ -85,6 +85,10 @@ We distinguish historical memory from current operational truth, intention from 
 
 The longer explanation of this method is in [Methodology: Sadhana of Engineering](docs/methodology.md).
 
+## Research notes
+
+- [AutoMem resource and helper-model evaluation — 2026-08-22](docs/research/automem-resource-and-helper-evaluation-2026-08-22.md) · [Русский перевод](docs/research/automem-resource-and-helper-evaluation-2026-08-22.ru.md)
+
 ## Research context
 
 Theseus is part of a wider conversation about human-centered agentic systems.

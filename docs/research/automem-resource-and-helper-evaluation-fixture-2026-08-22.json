@@ -1,0 +1,40 @@
+{
+  "fixture_id": "automem-classification-21-v1",
+  "date": "2026-08-22",
+  "case_count": 21,
+  "cases_per_type": 3,
+  "types": [
+    "Decision",
+    "Pattern",
+    "Preference",
+    "Style",
+    "Habit",
+    "Insight",
+    "Context"
+  ],
+  "evaluated_models": [
+    "poolside/laguna-s-2.1:free",
+    "upstage/solar-pro4:free",
+    "tencent/hy3:free"
+  ],
+  "results": {
+    "poolside/laguna-s-2.1:free": {
+      "valid_json": 21,
+      "correct_labels": 17,
+      "accuracy": 0.81
+    },
+    "upstage/solar-pro4:free": {
+      "valid_json": 21,
+      "correct_labels": 15,
+      "accuracy": 0.714
+    },
+    "tencent/hy3:free": {
+      "valid_json": 21,
+      "correct_labels": 13,
+      "accuracy": 0.619
+    }
+  },
+  "raw_case_text_published": false,
+  "reproducibility_status": "aggregate_reproducible; neutral public fixture required for exact rerun",
+  "privacy_note": "The working fixture contained workflow-specific text and was not copied into the public repository."
+}
