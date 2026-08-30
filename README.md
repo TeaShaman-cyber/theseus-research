@@ -84,6 +84,7 @@ This repository contains the program-level contract, methodology, and public map
 | [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | public · active / root | Program contract, methodology, and research map |
 | [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | public · active | Public-data observation and reproducible verification experiments |
 | [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | public · bootstrapping | Observable and reproducible Needle learning experiments |
+| [`theseus-memory-provider-lab`](https://github.com/TeaShaman-cyber/theseus-memory-provider-lab) | public · bootstrapping | Automatic memory-provider lifecycle, recall/retain semantics, and verifiable provider-contract experiments |
 | Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
 
 This registry lists only research lines explicitly declared part of Theseus; it is not an inventory of every repository owned by the maintainer. Private-incubation lines are named for context without exposing private repository links.
