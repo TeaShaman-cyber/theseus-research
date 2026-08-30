@@ -129,6 +129,8 @@ Progress is real only when the intended postcondition becomes more observable. A
 
 ## Sadhana of Engineering
 
+*Here, “Sadhana” is a metaphorical name for disciplined engineering practice; it does not create a religious or spiritual commitment.*
+
 Sadhana is not a promise never to make a mistake. It is a discipline of returning to reality after a mistake without losing the dignity of the participants or the continuity of the work.
 
 We may confuse Codex Desktop with a remote machine, memory with current runtime, Git with GitHub, a signature with permission, or a successful command with a verified publication. The goal is not to pretend these confusions are impossible. The goal is to maintain a language and a process that can distinguish them, repair them, and preserve the lesson.

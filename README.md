@@ -31,7 +31,7 @@ We explore practical ways to make the technical components of long-term human–
 ### Non-goals
 
 - building a commercial AI product;
-- reselling donated API credits or compute;
+- reselling API credits or compute, donated or otherwise;
 - claiming that agents are people;
 - creating one supposedly permanent artificial mind;
 - replacing human responsibility or decision-making;
@@ -75,7 +75,18 @@ one language over the other.
 
 ### Current boundary
 
-This repository contains the program-level contract only. Specific tools and implementations, including experimental tools such as [Sonar](https://github.com/TeaShaman-cyber/theseus-sonar), are research lines that may support the program, but no single tool defines Theseus.
+This repository contains the program-level contract, methodology, and public map of Theseus research lines. Specific tools and implementations may support the program, but no single tool or repository defines Theseus.
+
+### Theseus research lines
+
+| Research line | Visibility / status | Role |
+| --- | --- | --- |
+| [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | public · active / root | Program contract, methodology, and research map |
+| [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | public · active | Public-data observation and reproducible verification experiments |
+| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | public · bootstrapping | Observable and reproducible Needle learning experiments |
+| Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
+
+This registry lists only research lines explicitly declared part of Theseus; it is not an inventory of every repository owned by the maintainer. Private-incubation lines are named for context without exposing private repository links.
 
 No decision about grants, sponsorship, hardware purchases, or institutional structure is implied by this draft.
 
