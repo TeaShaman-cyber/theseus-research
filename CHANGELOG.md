@@ -12,11 +12,18 @@ Every entry carries exactly one of three states:
 
 A version moves `draft / proposed` → `accepted` only by maintainer merge, and `accepted` → `superseded` only when the next version is accepted.
 
+## 0.3-draft — 2026-08-13
+
+- **Summary:** incorporated the accepted CISO / Zero-Trust / OWASP review directions into the program contract and methodology, including technical interchangeability, bounded external action, contract/methodology authority, non-commercial public-interest status, stronger version compatibility, and experimental-tool boundaries.
+- **Reason:** apply the dispositions recorded in issue #1 and make the public contract clearer and safer without weakening existing invariants.
+- **Review status:** `accepted` — merged by the named maintainer after public review; the `-draft` label means the text remains open to later reviewed revision, not that this merged revision lacks repository acceptance.
+- **Level:** MINOR — compatible clarification and strengthening; no existing invariant was removed or weakened.
+
 ## 0.2-draft — 2026-08
 
 - **Summary:** added the "Methodological foundation" section to the contract and published the explanatory companion [docs/methodology.md](docs/methodology.md) (human-agent engineering, Sadhana of Engineering).
 - **Reason:** first public review round requested methodological grounding for the contract's invariants.
-- **Review status:** `draft / proposed` — open for public review.
+- **Review status:** `superseded` — replaced by 0.3-draft.
 - **Level:** MINOR (compatible clarification; mission, invariants, and non-goals unchanged).
 
 ## 0.1-draft
