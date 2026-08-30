@@ -383,7 +383,7 @@ Capture and read back the created issue URL:
 incident_issue_url=$(GH_CONFIG_DIR=/workspace/.config/gh-write gh issue create \
   --repo TeaShaman-cyber/theseus-research \
   --title "Define durable incident and engineering-defect record boundary" \
-  --body $'Define where operational defects required by the methodology are recorded, including public/private/redacted boundaries, provenance links, privacy constraints, and what must never be published. This follow-up resolves the deferred finding from public review Issue #3 without inventing a public incident ledger prematurely.')
+  --body "Define where operational defects required by the methodology are recorded, including public/private/redacted boundaries, provenance links, privacy constraints, and what must never be published. This follow-up resolves the deferred finding from public review Issue #3 without inventing a public incident ledger prematurely.")
 GH_CONFIG_DIR=/workspace/.config/gh-write gh issue view "$incident_issue_url" \
   --repo TeaShaman-cyber/theseus-research \
   --json number,title,state,url,body
@@ -797,7 +797,7 @@ Run:
 needle_interface_issue_url=$(GH_CONFIG_DIR=/workspace/.config/gh-write gh issue create \
   --repo TeaShaman-cyber/theseus-needle-lab \
   --title "Map the real Needle learning interface and runtime requirements" \
-  --body $'Determine the real executable Needle learning interface before any training CI is written. Record entry points, dependency versions, accepted data formats, CPU/GPU requirements, expected duration, outputs/artifacts, random-seed and reproducibility controls, and measured suitability of GitHub-hosted runners. Do not assume hosted runners are sufficient before measurement.')
+  --body "Determine the real executable Needle learning interface before any training CI is written. Record entry points, dependency versions, accepted data formats, CPU/GPU requirements, expected duration, outputs/artifacts, random-seed and reproducibility controls, and measured suitability of GitHub-hosted runners. Do not assume hosted runners are sufficient before measurement.")
 GH_CONFIG_DIR=/workspace/.config/gh-write gh issue view "$needle_interface_issue_url" \
   --repo TeaShaman-cyber/theseus-needle-lab --json number,title,state,url,body
 ```
@@ -810,7 +810,7 @@ Run:
 receipt_issue_url=$(GH_CONFIG_DIR=/workspace/.config/gh-write gh issue create \
   --repo TeaShaman-cyber/theseus-needle-lab \
   --title "Define experiment receipt schema v0.1" \
-  --body $'Define the smallest machine-readable experiment receipt covering source commit SHA, workflow identity, data/config hashes, random seed, runner/image identity, tool versions, artifact hash and storage/retention class, evaluation metrics, and verification status. Distinguish execution success from scientific/model-quality claims.')
+  --body "Define the smallest machine-readable experiment receipt covering source commit SHA, workflow identity, data/config hashes, random seed, runner/image identity, tool versions, artifact hash and storage/retention class, evaluation metrics, and verification status. Distinguish execution success from scientific/model-quality claims.")
 GH_CONFIG_DIR=/workspace/.config/gh-write gh issue view "$receipt_issue_url" \
   --repo TeaShaman-cyber/theseus-needle-lab --json number,title,state,url,body
 ```
@@ -823,7 +823,7 @@ Run:
 storage_issue_url=$(GH_CONFIG_DIR=/workspace/.config/gh-write gh issue create \
   --repo TeaShaman-cyber/theseus-needle-lab \
   --title "Decide artifact and dataset storage boundaries" \
-  --body $'Define storage boundaries for datasets, learned artifacts, receipts, and evaluation outputs. Compare Git, GitHub Artifacts, Releases, external storage, and private-only storage across retention, SHA-256 integrity, licensing, privacy, size, reproducibility, and public-data constraints.')
+  --body "Define storage boundaries for datasets, learned artifacts, receipts, and evaluation outputs. Compare Git, GitHub Artifacts, Releases, external storage, and private-only storage across retention, SHA-256 integrity, licensing, privacy, size, reproducibility, and public-data constraints.")
 GH_CONFIG_DIR=/workspace/.config/gh-write gh issue view "$storage_issue_url" \
   --repo TeaShaman-cyber/theseus-needle-lab --json number,title,state,url,body
 ```
