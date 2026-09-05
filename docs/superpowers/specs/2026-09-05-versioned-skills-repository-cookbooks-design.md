@@ -97,25 +97,40 @@ docs/cookbook/README.md
 
 Filesystem presence alone does **not** make a cookbook operational authority. Discovery must distinguish accepted repository guidance from candidate branch/worktree content.
 
-Cookbook discovery tracks the accepted baseline and any candidate overlay as **independent state**, not as mutually exclusive branches:
+Cookbook discovery tracks **accepted cookbook existence, accepted rule state, candidate overlay, and durable invalidation receipts independently**. A single cookbook-wide `ACTIVE/UNKNOWN` bit is insufficient because one rule may be invalidated while neighboring rules remain current.
 
 ```text
-ACCEPTED_BASELINE
-  ACTIVE
-  | REPROBE_REQUIRED
-  | UNKNOWN
+ACCEPTED_COOKBOOK_REVISION
+  immutable revision/content identity
   | ABSENT
+
+ACCEPTED_RULES
+  rule_id -> ACTIVE | REPROBE_REQUIRED | UNKNOWN | DEPRECATED
+             + rule/content digest
+             + target-revision/applicability boundary
 
 CANDIDATE_OVERLAY
-  PRESENT
-  | ABSENT
+  rule/cookbook ADD | MODIFY | DELETE_TOMBSTONE | ABSENT
+
+DURABLE_INVALIDATIONS
+  rule_id + accepted-rule digest + evidence digest
+          + effective status + acceptance identity
 ```
 
-For ordinary operational work, active baseline guidance must come from an accepted canonical revision whose provenance is verified against the repository's authoritative remote state and whose applicability is bound to the **target code revision being operated on**. The default branch is not automatically authoritative for work on a release branch or historical SHA. If no accepted cookbook revision can be shown applicable to the target revision, baseline state is `REPROBE_REQUIRED` rather than `ACTIVE`.
+Cookbook **existence or absence is derived only from the accepted canonical revision applicable to the target code revision**, never from the current worktree filesystem alone. If an accepted target revision contains `docs/cookbook/README.md` and a dirty worktree deletes it, discovery still sees the accepted cookbook plus a candidate deletion tombstone. Ordinary work may continue using unaffected accepted rules; the unmerged deletion is not authority to bootstrap a replacement or erase accepted guidance.
 
-Dirty-worktree, contributor-branch, and unmerged PR cookbook changes are candidate overlays, not silently active instructions. A candidate may coexist with a valid accepted baseline; ordinary work continues to use the accepted bytes, never the candidate bytes, unless the user explicitly authorizes candidate evaluation.
+For ordinary operational work, an `ACTIVE` rule must come from an accepted canonical revision whose provenance is verified against the repository's authoritative remote state and whose applicability is bound to the **target code revision being operated on**. The default branch is not automatically authoritative for work on a release branch or historical SHA. Rule state and applicability are evaluated per `rule_id`; lack of currentness for one rule must not withdraw unrelated verified rules, and a target-revision mismatch affects only the rules whose applicability cannot be established.
 
-If fresh evidence invalidates an accepted baseline rule, that affected rule leaves active guidance immediately and becomes `REPROBE_REQUIRED` or `UNKNOWN` even while a candidate replacement remains unmerged and non-authoritative. Review latency must not keep a known-invalid rule operational.
+Dirty-worktree, contributor-branch, and unmerged PR cookbook changes are candidate overlays, not silently active instructions. A candidate add/modify/delete may coexist with accepted guidance; ordinary work uses only the accepted rule bytes that remain effective, unless the user explicitly authorizes candidate evaluation.
+
+A transient observation or candidate-file assertion is **not** sufficient to durably revoke accepted guidance. Immediate invalidation has two layers:
+
+1. a current execution encountering directly verified contradictory evidence must fail closed for the affected rule in that execution/session;
+2. cross-session withdrawal requires a **trusted, durable, rule-scoped invalidation receipt** bound to the exact accepted-rule digest and applicability boundary.
+
+Trusted invalidation evidence must be current, provenance-bound, and independently observable through the operation's required verification/read-back path; dirty candidate text, unverified memory, or an agent inference alone cannot satisfy that predicate. A durable invalidation receipt must identify the affected `rule_id`, accepted rule/content digest, evidence reference/digest, reason, effective status (`REPROBE_REQUIRED` or `UNKNOWN`), acceptance identity, and durable read-back location. The authority allowed to accept such a durable revocation must be explicitly declared; under this design it is an authorized human acceptance event, not an autonomous agent decision.
+
+The invalidation receipt is distinct from any candidate replacement. Until it is durably persisted and read back, the system may report `INVALIDATION_PENDING_PERSISTENCE` and must not claim that cross-session revocation is established. Once accepted and durable, discovery overlays that receipt on the accepted baseline and excludes only the affected rule. Review latency must not reactivate a durably invalidated rule merely because the accepted cookbook bytes themselves have not yet changed.
 
 The root file should be a small index that identifies relevant sections rather than forcing the agent to load the entire cookbook.
 
@@ -133,9 +148,11 @@ The exact section files are repository-specific and should be created only when 
 
 ### 6.2 Missing cookbook
 
-If `docs/cookbook/README.md` is absent:
+If the **accepted canonical revision applicable to the target code revision** has no `docs/cookbook/README.md`:
 
 ```text
+ACCEPTED_COOKBOOK_REVISION = ABSENT
+    ↓
 NO_COOKBOOK
     ↓
 agent tells the user
@@ -147,7 +164,7 @@ explicit user approval required
 BOOTSTRAPPING_COOKBOOK
 ```
 
-The agent must not silently create the directory or files merely because the convention exists.
+A missing file in a dirty worktree, contributor branch, or unmerged PR is not `NO_COOKBOOK` when the accepted baseline still contains one; it is a candidate deletion/tombstone. The agent must not silently create the directory or files merely because the convention exists.
 
 ### 6.3 Bootstrap evidence
 
@@ -190,7 +207,9 @@ Recommended evidence vocabulary:
 - `REPROBE_REQUIRED` — a previously verified rule has a concrete reason to require current verification before use;
 - `DEPRECATED` — previously valid, now confirmed obsolete or no longer recommended/current.
 
-A promoted rule should identify enough applicability context to know when revalidation is required, including the relevant target repository revision or explicitly demonstrated compatible revision range plus any workflow/provider/runtime dependency boundary. A changed dependency, target-revision mismatch, contradictory current evidence, or failed reproduction removes the affected rule from active guidance immediately until it is reverified. There is no requirement for arbitrary time-based expiry when the dependency is stable; invalidation is evidence-, revision-, or contract-triggered.
+Each promoted rule requires a stable `rule_id`, immutable rule/content digest, and enough applicability context to know when revalidation is required, including the relevant target repository revision or explicitly demonstrated compatible revision range plus any workflow/provider/runtime dependency boundary. Rule status is evaluated independently: a changed dependency, target-revision mismatch, contradictory current evidence, or failed reproduction affects only the rule(s) whose applicability/evidence is invalidated.
+
+A current execution with verified contradictory evidence stops using the affected rule immediately. Durable cross-session state changes only through the trusted invalidation-receipt path defined in §6.1; the candidate replacement is a separate object and cannot itself revoke the baseline. There is no requirement for arbitrary time-based expiry when the dependency is stable; invalidation is evidence-, revision-, or contract-triggered.
 
 The cookbook should remain concise. Detailed raw logs stay in issues, artifacts, or evidence files and are linked when useful.
 
@@ -233,13 +252,16 @@ identify repository
         ↓
 look for docs/cookbook/README.md
         ↓
-classify provenance/trust state
-   ├─ accepted baseline ACTIVE -> load minimal relevant accepted bytes
-   ├─ candidate overlay PRESENT -> keep separate; review/evaluate only
-   ├─ accepted baseline REPROBE_REQUIRED/UNKNOWN -> do not use affected rule
-   └─ accepted baseline ABSENT -> propose cookbook creation to user
-                                      ↓
-                                no creation without approval
+classify accepted revision + per-rule trust/applicability + candidate overlay
+   ├─ accepted cookbook ABSENT -> propose cookbook creation to user
+   │                                ↓
+   │                          no creation without approval
+   └─ accepted cookbook PRESENT
+          ↓
+      load only accepted rules with effective state ACTIVE
+          + apply durable rule-scoped invalidation receipts
+          + exclude REPROBE_REQUIRED / UNKNOWN / DEPRECATED rules
+          + keep candidate ADD/MODIFY/DELETE tombstones separate for review/evaluation only
 ```
 
 If the work runs through a runtime with its own operational cookbook, the two layers compose **by concern**, not by textual precedence:
@@ -488,12 +510,15 @@ proposal
   → diff
   → tests/checks
   → bot/peer review
-  → explicit authorized human acceptance
-  → accepted merge/release
+  → derive immutable promoted-artifact identity
+  → explicit authorized human acceptance OF THAT IDENTITY
+  → accepted merge/release only if published identity matches acceptance
   → remote readback
 ```
 
-The human promotion gate is distinct from the later manual runtime-update gate. Automated checks, bot review, or automated merge alone must not promote candidate cookbook guidance into active authority or create a canonical skill release without an explicit authorized human acceptance event.
+The human acceptance record must bind the exact artifact being promoted, not merely the PR number or an earlier chronological approval event. For cookbook promotion this may be an immutable tree/content-set digest (or exact commit when appropriate); for a canonical skill release it includes the required source commit, content SHA-256, and release-tag identity. If candidate bytes, tree identity, or release identity change after acceptance, the acceptance is stale and explicit re-acceptance is required before promotion.
+
+The human promotion gate is distinct from the later manual runtime-update gate. Automated checks, bot review, automated merge, conflict resolution, or release machinery alone must not promote materially different bytes under an older acceptance event.
 
 For GitHub writes, the intended target and operation should be bound before selecting a mutation primitive:
 
