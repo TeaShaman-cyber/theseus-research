@@ -315,13 +315,24 @@ marcopolo-cookbook
 
 ### 9.1 Integration with the Theseus project registry and README projections
 
-The existing semi-automatic project registry work in `theseus-research` is the discovery authority for public Theseus repositories. When `theseus-skills` is created, it must be registered there instead of being added to README tables manually.
+The semi-automatic registry/projection work in `theseus-research` remains the discovery authority for public Theseus repositories. However, the current `research-lines` schema is intentionally narrower than the full project set: `theseus-skills` is shared operational infrastructure, not a research line.
 
-Proposed registry entry under `registry/research-lines.json`:
+The registry contract must therefore distinguish **project kind** from visibility and lifecycle status before `theseus-skills` is registered as active. At minimum the semantic classes must be able to represent:
+
+```text
+program-root          -> theseus-research
+research-line         -> theseus-needle-lab and other labs/experiments
+shared-infrastructure -> theseus-skills and similar cross-project operational repositories
+```
+
+Visibility (`public` / `private-incubation`) and lifecycle status (`active`, etc.) remain separate concerns from project kind.
+
+A semantically compatible entry for `theseus-skills` should be equivalent to:
 
 ```json
 {
   "id": "theseus-skills",
+  "kind": "shared-infrastructure",
   "visibility": "public",
   "repository": "TeaShaman-cyber/theseus-skills",
   "role": {
@@ -329,19 +340,27 @@ Proposed registry entry under `registry/research-lines.json`:
     "ru": "Версионируемые общие навыки агентов и контракты маршрутизации для проектов Theseus"
   },
   "status": "active",
-  "topics": ["theseus", "theseus-research-line", "agent-skills"],
+  "topics": ["theseus", "agent-skills", "cross-project-operations"],
   "release_policy": "checkpoint"
 }
 ```
+
+The exact field names and schema version belong to the registry review. The invariant is semantic: tooling and public projections must distinguish research lines from shared infrastructure without inferring kind from repository names or topics.
 
 The project-level registry `release_policy` remains `checkpoint`; individual skill packages inside `theseus-skills` use the SemVer policy defined below. These are different versioning scopes and must not be conflated.
 
 Expected publication flow:
 
 ```text
-create / accept theseus-skills repository
+generalize + accept project-kind registry contract
         ↓
-add exact registry entry in theseus-research
+create theseus-skills repository boundary
+        ↓
+populate canonical skill files + skill registry
+        ↓
+validate exact canonical artifacts and immutable identities
+        ↓
+only then register theseus-skills as shared-infrastructure / active
         ↓
 registry validate
         ↓
@@ -349,20 +368,18 @@ registry doctor / remote metadata verification
         ↓
 render README.md + README.ru.md from registry
         ↓
-review
-        ↓
-merge
+review + merge
         ↓
 exact remote readback
 ```
 
-The generated `Theseus research lines` tables in `README.md` and `README.ru.md` are projections of the registry. The `theseus-skills` row must therefore appear through the existing projection mechanism, not by hand-editing the generated table.
+README project-map projections must come from registry state, not hand-maintained rows. The renderer may use grouped sections such as `Research lines` and `Shared infrastructure`, or an explicit project-kind column; either representation must preserve the semantic distinction and must not publish `theseus-skills` as a research line.
 
-This design depends on the registry/projection contract currently being developed in `theseus-research` PR #5. If that contract changes before merge, the implementation must adapt to the accepted registry schema rather than freezing assumptions from this design document.
+This design depends on the registry/projection contract currently being developed in `theseus-research` PR #5 or a reviewed successor. That contract must be generalized before `theseus-skills` can be registered as active shared infrastructure.
 
-### 9.2 Skill metadata
+### 9.2 Canonical skill identity and metadata
 
-Each canonical `SKILL.md` should carry at least:
+Each canonical `SKILL.md` carries human-readable metadata:
 
 ```yaml
 metadata:
@@ -370,21 +387,42 @@ metadata:
   update_mode: "manual_user"
 ```
 
-The registry records canonical source state, for example:
+A version string alone is not artifact identity. The canonical skill registry must bind each release to immutable source and exact bytes, for example:
 
 ```json
 {
   "using-theseus-projects": {
     "current_version": "1.0.0",
     "path": "skills/using-theseus-projects/SKILL.md",
+    "source_commit": "<immutable git commit SHA>",
+    "sha256": "<SHA-256 of exact SKILL.md bytes>",
+    "release_tag": "skill/using-theseus-projects/v1.0.0",
     "update_mode": "manual_user"
   }
 }
 ```
 
-A content SHA-256 may be added for exact-byte verification.
+Required release/acceptance validation:
 
-### 9.2 SemVer policy
+```text
+registry.current_version == SKILL.md metadata.version
+registry.update_mode      == SKILL.md metadata.update_mode
+sha256(SKILL.md bytes)    == registry.sha256
+source_commit contains the same path + bytes
+release_tag points to source_commit
+```
+
+The immutable canonical artifact identity is:
+
+```text
+path + source_commit + sha256
+```
+
+SemVer and the release tag are navigation labels over that identity. Moving or reusing a release tag to point at different bytes is a contract defect and must not silently redefine a released skill.
+
+A manually installed copy may be claimed byte-identical to canonical only when its bytes or digest are directly observable and match the canonical digest. If a runtime exposes only a version string, installed artifact identity remains `UNKNOWN` even when that string matches the canonical version.
+
+### 9.3 SemVer policy
 
 - **PATCH** — wording, typo, or compatible routing clarification;
 - **MINOR** — compatible new routing behavior or project-discovery capability;
@@ -427,13 +465,17 @@ Forbidden by this design:
 - treating canonical GitHub version as proof of installed version;
 - claiming auto-selection from repository presence alone.
 
-State must remain explicit:
+State must remain explicit and independently observable:
 
 ```text
-CANONICAL_VERSION = observed from GitHub
-INSTALLED_VERSION = observed only if runtime exposes it, else UNKNOWN
-ACTIVE/AUTO_SELECTED = observed only if runtime exposes evidence, else UNKNOWN
+CANONICAL_ARTIFACT = version + path + source_commit + sha256 from GitHub
+INSTALLED_ARTIFACT = installed version/digest only if runtime or installation acceptance exposes them; else UNKNOWN
+SELECTION_MODE     = AUTO_SELECTED | MANUAL_SELECTED | NOT_SELECTED | UNKNOWN
+ACTIVE_ARTIFACT    = loaded/active version + digest/identity only if runtime exposes it; else UNKNOWN
+EXECUTION_EVIDENCE = observed load/execution evidence | NOT_OBSERVED | UNKNOWN
 ```
+
+These dimensions must not be collapsed. A skill may be manually selected without being auto-selected. A runtime may report an auto-selection decision even if loading or execution later fails. A newer installed copy does not prove a cached older body stopped being active. After manual update, acceptance verifies only the dimensions the runtime actually exposes; the rest remain `UNKNOWN`.
 
 ## 11. Mutation and publication boundaries
 
@@ -502,48 +544,50 @@ Implementation should not begin until this architecture is reviewed and accepted
 When implementation is later approved, minimum acceptance should cover:
 
 1. dedicated canonical `TeaShaman-cyber/theseus-skills` repository with `skills/registry.json` and canonical source for each managed skill;
-2. `theseus-skills` is registered through the accepted `theseus-research` project registry contract;
-3. README and README.ru project-map rows are rendered from the registry rather than hand-maintained;
-4. cookbook discovery distinguishes accepted canonical guidance from dirty/unmerged candidate content;
-5. unresolved currentness prevents promotion into active guidance;
-6. promoted rules have an explicit invalidation/reprobe path;
-7. composed runtime/project cookbook conflicts on the same concern return `BLOCKED` unless authoritative evidence resolves them;
-8. explicit `manual_user` update mode;
-9. no automatic runtime skill mutation;
-10. repository cookbook discovery at `docs/cookbook/README.md`;
-11. missing-cookbook path proposes creation and requires explicit user approval;
-12. bootstrap guidance treats history as evidence, not authority;
-13. promotion requires verification/review before becoming an operational rule;
-14. runtime-specific and project-specific cookbooks compose without silent precedence inversion;
-15. installed/active skill state remains `UNKNOWN` unless directly observable;
-16. GitHub mutation targets and important postconditions receive exact readback.
+2. the `theseus-research` project registry distinguishes project kind so shared infrastructure is not mislabeled as a research line;
+3. README and README.ru project-map projections render `theseus-skills` from registry state according to its explicit infrastructure kind rather than hand-maintained rows;
+4. `theseus-skills` is not registered as `active` until canonical skill files and their validation receipts exist;
+5. canonical skill identity requires exact path + immutable source commit + SHA-256, with registry/SKILL metadata consistency validation;
+6. cookbook discovery distinguishes accepted canonical guidance from dirty/unmerged candidate content;
+7. unresolved currentness prevents promotion into active guidance;
+8. promoted rules have an explicit invalidation/reprobe path;
+9. composed runtime/project cookbook conflicts on the same concern return `BLOCKED` unless authoritative evidence resolves them;
+10. explicit `manual_user` update mode;
+11. no automatic runtime skill mutation;
+12. repository cookbook discovery at `docs/cookbook/README.md`;
+13. missing-cookbook path proposes creation and requires explicit user approval;
+14. bootstrap guidance treats history as evidence, not authority;
+15. promotion requires verification/review before becoming an operational rule;
+16. canonical artifact, installed artifact, selection mode, active artifact, and execution evidence are tracked independently and remain `UNKNOWN` where not directly observable;
+17. GitHub mutation targets and important postconditions receive exact readback.
 
 ## 16. Review questions for Codex and human reviewers
 
 Please review this document specifically for:
 
 1. **Architecture:** does the split `thin skill router / repository-local cookbook` create hidden duplication or authority ambiguity?
-2. **Contracts:** are cookbook discovery, bootstrap, promotion, and manual-update states deterministic enough to implement and test?
-3. **Authority:** can any path accidentally promote historical text into current operational authority?
+2. **Contracts:** are cookbook discovery, bootstrap, promotion, invalidation, and manual-update states deterministic enough to implement and test?
+3. **Authority:** can any path accidentally promote historical or unmerged text into current operational authority?
 4. **Human approval:** is cookbook creation clearly blocked until explicit user approval?
 5. **Skill lifecycle:** is there any hidden path that could be interpreted as automatic installation or self-update?
-6. **Runtime boundaries:** are canonical, installed, and active skill states kept separate?
-7. **Composability:** is runtime guidance plus repository guidance sufficiently ordered without creating conflicting sources of truth?
-8. **Registry integration:** should `theseus-skills` fit the existing `research-lines` registry schema as an active cross-project operational line, or does that reveal a schema naming/scope mismatch that should be resolved first?
-9. **Failure modes:** what important edge cases are missing before implementation begins?
+6. **Artifact identity:** are version, immutable source commit, digest, installed artifact, selection mode, active artifact, and execution evidence sufficiently separated?
+7. **Composability:** is runtime guidance plus repository guidance sufficiently partitioned by concern, with `BLOCKED` for unresolved overlap?
+8. **Registry integration:** does the generalized project-kind contract cleanly distinguish research lines from shared infrastructure without weakening the existing validation/projection workflow?
+9. **Publication order:** can the registry ever advertise an active project before its promised canonical artifacts are present and verified?
+10. **Failure modes:** what important edge cases are missing before implementation begins?
 
 ## 17. Proposed implementation sequence after review
 
 Only after accepted review:
 
-1. create and review the dedicated `TeaShaman-cyber/theseus-skills` repository boundary;
-2. register `theseus-skills` through the accepted `theseus-research` registry/projection workflow and verify README + README.ru projections;
-3. add the shared skill-source registry and canonical skill files inside `theseus-skills`;
-4. adapt the existing MarcoPolo skill source into the canonical GitHub layout without changing runtime installation automatically;
-5. add the generic Theseus project-router skill;
-6. add tests/validation for skill registry and metadata contracts;
-7. separately propose the first repository-local cookbook (Needle is a candidate);
-8. reconstruct that cookbook from project history under a reviewed bootstrap PR;
-9. ask the user to manually install/update any runtime skill version after canonical release.
+1. generalize and review the `theseus-research` project-registry/projection contract so `kind: shared-infrastructure` is representable without pretending infrastructure is a research line;
+2. create the dedicated `TeaShaman-cyber/theseus-skills` repository boundary, but do not yet register it as active;
+3. add `skills/registry.json`, canonical `SKILL.md` sources, CHANGELOGs/READMEs, immutable source-commit/digest identity fields, and validation checks inside `theseus-skills`;
+4. adapt the existing MarcoPolo router source and add the generic Theseus project-router skill under review, then validate the initial canonical release artifacts;
+5. only after step 4 passes, register `theseus-skills` as public `shared-infrastructure` / `active` through the accepted Theseus project registry;
+6. render and verify README.md + README.ru.md project-map projections from that registry entry, then review/merge/read back the exact remote state;
+7. ask the user to manually install/update the approved runtime skill version and record only directly observable installed/selection/active/execution state;
+8. separately propose the first repository-local cookbook (Needle is a candidate);
+9. reconstruct that cookbook from project history under a reviewed bootstrap PR with accepted-baseline trust and currentness gates.
 
 No item in this sequence is authorized by the architecture document alone.
