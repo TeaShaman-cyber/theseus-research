@@ -236,3 +236,105 @@ def run_doctor(
         "candidates": candidates,
         "unreachable": unreachable,
     }
+
+DRIFT_ISSUE_TITLE = "Registry drift: Theseus research-line metadata"
+_DRIFT_DISCLAIMER = (
+    "This issue is a drift report. It does not declare any repository part of Theseus."
+)
+
+
+def render_drift_issue_body(report: Mapping[str, object]) -> str:
+    lines = [
+        _DRIFT_DISCLAIMER,
+        "",
+        f"Doctor status: `{report.get('status')}`",
+        "",
+        "## Declared drift",
+    ]
+    declared = report.get("declared", [])
+    drift_rows = []
+    if isinstance(declared, list):
+        for item in declared:
+            if not isinstance(item, Mapping):
+                continue
+            drift = item.get("drift", [])
+            if not isinstance(drift, list) or not drift:
+                continue
+            line_id = item.get("id", "unknown")
+            repository = item.get("repository", "no repository")
+            drift_rows.append(f"- `{line_id}` (`{repository}`): " + "; ".join(str(x) for x in drift))
+    lines.extend(drift_rows or ["- none"])
+
+    lines.extend(["", "## Advisory undeclared candidates"])
+    candidates = report.get("candidates", [])
+    candidate_rows = []
+    if isinstance(candidates, list):
+        for candidate in candidates:
+            if isinstance(candidate, Mapping) and candidate.get("full_name"):
+                candidate_rows.append(f"- `{candidate['full_name']}`")
+    lines.extend(candidate_rows or ["- none"])
+
+    lines.extend(
+        [
+            "",
+            "Candidates are advisory only. Membership changes require an explicit registry edit and review.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def ensure_drift_issue(
+    repository: str,
+    report: Mapping[str, object],
+    transport: GitHubTransport,
+) -> dict[str, object]:
+    status = report.get("status")
+    if status in {"PASS", "UNREACHABLE"}:
+        raise ValueError(f"drift issue write not allowed for {status}")
+    if status not in {"DECLARED_DRIFT", "CANDIDATE_UNDECLARED"}:
+        raise ValueError(f"drift issue write not allowed for {status}")
+
+    owner, repo = repository.split("/", 1)
+    base = f"/repos/{owner}/{repo}"
+    issues = transport.request("GET", f"{base}/issues?state=open&per_page=100")
+    if not isinstance(issues, list):
+        raise GitHubUnavailable(f"unexpected issues payload: {repository}")
+
+    body = render_drift_issue_body(report)
+    existing = next(
+        (
+            item
+            for item in issues
+            if isinstance(item, Mapping)
+            and "pull_request" not in item
+            and item.get("title") == DRIFT_ISSUE_TITLE
+            and isinstance(item.get("number"), int)
+        ),
+        None,
+    )
+
+    if existing is not None:
+        number = int(existing["number"])
+        response = transport.request(
+            "POST", f"{base}/issues/{number}/comments", {"body": body}
+        )
+        return {
+            "action": "commented",
+            "issue_number": number,
+            "issue_url": existing.get("html_url"),
+            "comment_url": response.get("html_url") if isinstance(response, Mapping) else None,
+        }
+
+    response = transport.request(
+        "POST",
+        f"{base}/issues",
+        {"title": DRIFT_ISSUE_TITLE, "body": body},
+    )
+    if not isinstance(response, Mapping) or not isinstance(response.get("number"), int):
+        raise GitHubUnavailable(f"unexpected issue-create response: {repository}")
+    return {
+        "action": "created",
+        "issue_number": int(response["number"]),
+        "issue_url": response.get("html_url"),
+    }
