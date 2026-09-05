@@ -125,7 +125,7 @@ This is a literal routing weight. It is **not** a neural-model weight.
 
 ### Policy snapshot
 
-An immutable record of the adaptive policy state used for one decision. It allows later replay and audit even if route statistics change afterward.
+An immutable **executable-policy manifest** used for one decision. It binds not only the derived scores but also the scorer/build identity, feature and receipt semantics, evidence set, route-stack epoch, activation/expiry, approval state, and compatible static fallback so later replay does not reinterpret old policy state through new code.
 
 ## 4. Relationship to the externalized-learning architecture
 
@@ -279,8 +279,9 @@ Use a staged architecture:
 ```text
 Stage 0: observation only
 Stage 1: shadow deterministic scorer
-Stage 2: bounded exploit-only adaptive ranking
-Stage 3: low-risk weighted exploration
+CAUSAL-COMPARABILITY GATE: comparable assignments for each promotable route/task stratum
+Stage 2: bounded exploit-only adaptive ranking, only for strata that passed that gate
+Stage 3: low-risk read-only weighted exploration
 Stage 4: contextual-bandit experiment, only if earlier stages justify it
 ```
 
@@ -301,14 +302,17 @@ One decision should follow this order:
 8. load applicable policy snapshot
 9. score/rank admissible routes
 10. choose route
-11. execute
-12. verify exact postcondition
-13. classify outcome
-14. append telemetry receipt
-15. derive future policy state
+11. executor revalidates a short-lived authorization decision bound to the exact principal, target, operation, route, route topology version, approval, and current circuit-breaker state
+12. execute only if that decision is still current; otherwise return `BLOCKED`
+13. verify exact postcondition
+14. classify action, verification, and task outcomes separately
+15. append linked telemetry receipt(s)
+16. derive future policy state
 ```
 
 If steps 1–7 produce no admissible route, the result is `BLOCKED` or `UNKNOWN`.
+
+Step 11 is owned by the executor/authorization boundary, not by the adaptive scorer. A previously admissible route is not authority to execute later. The same immediate reauthorization is required when the system falls back to the reviewed static route order. A stale or mismatched decision returns `BLOCKED` with a reason such as `authorization_stale`; it is never silently refreshed by the scorer.
 
 The adaptive scorer must never expand the candidate set to make progress.
 
@@ -321,6 +325,7 @@ A route observation should bind at minimum:
 ```text
 route_id
 route_topology_version
+route_stack_epoch
 runtime_profile
 task_class
 risk_class
@@ -331,7 +336,9 @@ policy_snapshot_id
 
 Context dimensions that materially affect performance should be explicit, but the system should avoid exploding into an unlearnable Cartesian product.
 
-A connector upgrade, auth-mode change, wrapper rewrite, model/runtime switch, or major policy-contract change may invalidate older route evidence.
+`route_stack_epoch` is mandatory even when a provider or connector exposes no useful version. It is an immutable fingerprint or administratively bumped epoch covering all behaviorally relevant dependencies of the route: connector/wrapper build, auth mode, endpoint/provider behavior boundary, model/harness/runtime class, and other dependencies declared by that route contract. Optional provider/version fields are descriptive evidence; they are not a substitute for the epoch.
+
+A connector upgrade, auth-mode change, wrapper rewrite, model/runtime switch, endpoint/provider behavior change, or major policy-contract change invalidates the prior epoch. If the runtime cannot establish which route-stack epoch an observation or policy belongs to, prior statistics are not reused and the adaptive policy becomes `POLICY_STALE` for that route/stratum.
 
 Old evidence must not silently retain full weight after a route changes meaning.
 
@@ -339,16 +346,18 @@ Old evidence must not silently retain full weight after a route changes meaning.
 
 The telemetry layer should store structured receipts, not raw conversational transcripts by default.
 
-A candidate receipt:
+A candidate task receipt should preserve linked attempts rather than collapse action and verification into one Boolean:
 
 ```json
 {
+  "task_id": "immutable-id",
   "decision_id": "immutable-id",
   "observed_at": "timestamp",
   "task_class": "github.mutation",
   "risk_class": "bounded_mutation",
   "runtime_profile": "M0-MARCOPOLO",
   "route_topology_version": "immutable-ref",
+  "route_stack_epoch": "immutable-ref",
   "policy_snapshot_id": "immutable-ref",
   "eligible_routes": ["route-a", "route-b"],
   "excluded_routes": [
@@ -356,20 +365,54 @@ A candidate receipt:
   ],
   "selected_route": "route-a",
   "selection_mode": "static|shadow|adaptive|explore",
+  "attempts": [
+    {
+      "attempt_id": "immutable-attempt-id",
+      "sequence": 1,
+      "parent_attempt_id": null,
+      "route_id": "route-a",
+      "route_role": "action",
+      "fallback_trigger": null,
+      "action_outcome": "CONTROL_PLANE_FAILURE",
+      "verification_outcome": null,
+      "evidence_digest": "sha256:minimized-evidence"
+    },
+    {
+      "attempt_id": "immutable-attempt-id-2",
+      "sequence": 2,
+      "parent_attempt_id": "immutable-attempt-id",
+      "route_id": "route-b",
+      "route_role": "action",
+      "fallback_trigger": "CONTROL_PLANE_FAILURE",
+      "action_outcome": "ACTION_REPORTED_SUCCESS",
+      "verification_outcome": null,
+      "evidence_digest": "sha256:minimized-evidence"
+    },
+    {
+      "attempt_id": "immutable-attempt-id-3",
+      "sequence": 3,
+      "parent_attempt_id": "immutable-attempt-id-2",
+      "route_id": "route-c",
+      "route_role": "verification",
+      "fallback_trigger": null,
+      "verifies_attempt_id": "immutable-attempt-id-2",
+      "action_outcome": null,
+      "verification_outcome": "VERIFIED_SUCCESS",
+      "evidence_digest": "sha256:minimized-evidence"
+    }
+  ],
+  "task_outcome": "VERIFIED_SUCCESS",
   "metrics": {
     "elapsed_ms": 0,
     "tool_calls": 0,
     "token_cost": "number-or-UNKNOWN",
-    "retry_count": 0,
+    "retry_count": 1,
     "human_interventions": 0
-  },
-  "outcome": "VERIFIED_SUCCESS",
-  "postcondition_verified": true,
-  "failure_class": null
+  }
 }
 ```
 
-The exact schema belongs to a later implementation spec.
+The exact storage schema belongs to a later implementation spec, but the separation of task identity, attempt identity/order, route role, fallback trigger, action outcome, verification outcome, and minimized evidence binding is a contract requirement. A successful mutation with unavailable verification must remain distinguishable from both a failed mutation and a verified success; it must not trigger a blind duplicate retry.
 
 ### Privacy / minimization boundary
 
@@ -456,16 +499,25 @@ Verification/provenance floors are preferably constraints before optimization, n
 
 Dynamic does not mean untraceable.
 
-Each adaptive decision should be attributable to:
+Each adaptive decision should bind an immutable policy manifest containing at minimum:
 
 ```text
-route topology version
-+ telemetry window / evidence set
+policy_contract_version
++ scorer / algorithm build identity
++ feature_schema_version
++ receipt_schema_version
++ route_topology_version
++ route_stack_epoch
++ exact evidence cutoff and/or evidence-set digest
 + policy configuration
-+ derived policy snapshot
++ derived policy snapshot id
++ activation time
++ expiry / revalidation boundary
++ approval state / acceptance identity
++ compatible static_fallback_version
 ```
 
-Policy snapshots should be reproducible from evidence where practical.
+Policy snapshots should be reproducible from the bound evidence and executable contract where practical. An old snapshot must not be loaded by a scorer/runtime that cannot prove compatibility with those schema/build identities; incompatibility yields `POLICY_STALE` and the compatible reviewed static fallback.
 
 A route-policy update should be rollbackable independently from skill topology.
 
@@ -531,14 +583,14 @@ Exploration is the dangerous part.
 The default roadmap rule is:
 
 ```text
-read-only / reversible low-risk work
+read-only low-risk work
     -> exploration may eventually be allowed within an explicit budget
 
 mutation / expensive / irreversible / externally visible work
-    -> exploit-only until separately reviewed and approved
+    -> NO exploration by default; exploit/static choice only
 ```
 
-A later design may authorize narrowly bounded mutation exploration, but it requires a separate human-reviewed contract.
+A later design may authorize narrowly bounded mutation or externally visible exploration only through a **separately versioned mutation-experiment contract** with explicit human acceptance, its own authority/rollback/receipt rules, and immediate executor reauthorization. Nominal reversibility is not sufficient: notifications, billing, audit trails, third-party observations, and external side effects may be irreversible even when local state can be rolled back.
 
 Exploration budget, minimum evidence, and confidence thresholds must be explicit preregistered experiment parameters before any experimental activation. This roadmap intentionally does not invent universal numeric thresholds.
 
@@ -573,12 +625,13 @@ route A fails control plane
 
 It would be misleading to label only the final route as `success`.
 
-Telemetry should preserve both:
+Telemetry must preserve:
 
-1. **attempt-level outcomes** — what happened on each route;
-2. **task-level outcome** — whether the full requested postcondition was reached.
+1. **action-attempt outcomes** — what each action route actually did or failed to do;
+2. **verification-attempt outcomes** — what independent read-back established, including unavailable/inconclusive verification;
+3. **task-level outcome** — whether the full requested postcondition was reached.
 
-Later scoring must decide how to attribute recovery cost without erasing the evidence that the first route failed.
+These are linked by stable task/attempt identities and ordering. Later scoring must decide how to attribute recovery cost without erasing the evidence that the first route failed or treating missing verification as failed action. Verification routes may be scored independently while still contributing cost/provenance to the parent task.
 
 This is a major review question for Codex.
 
@@ -619,10 +672,11 @@ A compact decision receipt should answer:
 What task class was recognized?
 Which routes were considered?
 Which routes were excluded, and why?
-What policy snapshot was used?
-What measurable evidence favored the selected route?
+What policy snapshot and route-stack epoch were used?
+What measurable and causally comparable evidence favored the selected route?
 Was selection exploit or exploration?
-What postcondition was observed afterward?
+Was executor authorization revalidated immediately before dispatch?
+What action outcome and verification outcome were observed afterward?
 ```
 
 This is operational provenance, not chain-of-thought.
@@ -692,11 +746,21 @@ Exit gate:
 
 > Shadow policy is reproducible and does not recommend inadmissible routes.
 
+Shadow agreement, offline replay, and historical fallback receipts are **not sufficient causal evidence** that an alternative route is better. Fallback observations are conditional on incumbent failure and therefore come from a systematically different population.
+
+Before any route/task stratum may enter Phase 2, a causal-comparability gate must identify contemporaneous comparable assignments, for example:
+
+- naturally overlapping assignments within a fixed preregistered stratum;
+- a separately approved safe randomized **read-only** evidence-collection trial;
+- another explicitly justified assignment mechanism that supports comparison without relying on fallback-only selection bias.
+
+The assignment mechanism, strata, evidence window, and exclusion rules must be preregistered. If comparable evidence does not exist, the ranking remains `SHADOW_ONLY` regardless of its historical score.
+
 ### Phase 2 — bounded exploit-only adaptive routing
 
 Goal: let evidence alter route priority without deliberate exploration.
 
-- activate only in approved low-risk task classes;
+- activate only in approved low-risk task classes and route/task strata that passed the causal-comparability gate;
 - choose best admissible route using deterministic ranking;
 - preserve reviewed static fallback;
 - immutable policy snapshot per decision;
@@ -710,11 +774,11 @@ Exit gate:
 
 Goal: collect evidence on alternatives that static exploitation would rarely try.
 
-- low-risk/reversible tasks only;
+- read-only low-risk tasks only by default;
 - explicit exploration budget;
 - weighted randomized selection or equivalent;
 - independent monitoring for regressions;
-- no high-risk mutation exploration.
+- no mutation or externally visible exploration unless a separately versioned mutation-experiment contract is active and explicitly accepted.
 
 Exit gate:
 
@@ -753,7 +817,9 @@ Evaluation should include:
 
 - offline replay where possible;
 - a time-separated holdout window;
-- route-version-aware grouping;
+- route-topology and mandatory route-stack-epoch-aware grouping;
+- fixed-stratum causal/comparability analysis for any ranking proposed for activation;
+- explicit treatment of fallback-only historical data as biased diagnostic evidence rather than counterfactual proof;
 - failure-class breakdown;
 - cold-start behavior;
 - degraded-provider scenarios;
