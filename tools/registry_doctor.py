@@ -69,6 +69,20 @@ def _repo_paths(repository: str) -> tuple[str, str]:
     return owner, f"/repos/{owner}/{repo}"
 
 
+def _paginated_list(transport: GitHubTransport, path: str) -> list[object]:
+    items: list[object] = []
+    page = 1
+    while True:
+        page_path = path if page == 1 else f"{path}&page={page}"
+        payload = transport.request("GET", page_path)
+        if not isinstance(payload, list):
+            raise GitHubUnavailable(f"unexpected paginated list payload: {page_path}")
+        items.extend(payload)
+        if len(payload) < 100:
+            return items
+        page += 1
+
+
 def observe_declared_line(line: Mapping[str, object], transport: GitHubTransport) -> dict[str, object]:
     line_id = str(line["id"])
     repository = line.get("repository")
@@ -95,7 +109,7 @@ def observe_declared_line(line: Mapping[str, object], transport: GitHubTransport
     if not isinstance(metadata, Mapping):
         raise GitHubUnavailable(f"unexpected repository metadata shape: {repository}")
     topics_payload = transport.request("GET", f"{base}/topics")
-    labels_payload = transport.request("GET", f"{base}/labels?per_page=100")
+    labels_payload = _paginated_list(transport, f"{base}/labels?per_page=100")
     releases_payload = transport.request("GET", f"{base}/releases?per_page=100")
 
     if not isinstance(topics_payload, Mapping) or not isinstance(topics_payload.get("names"), list):

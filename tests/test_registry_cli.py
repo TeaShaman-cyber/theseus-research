@@ -57,6 +57,28 @@ class RegistryCliTests(unittest.TestCase):
             self.assertEqual(original_en, readme_en.read_bytes())
             self.assertEqual(original_ru, readme_ru.read_bytes())
 
+    def test_doctor_creates_json_output_parent_before_invalid_early_return(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            invalid_registry = root / "invalid.json"
+            invalid_registry.write_text("{}", encoding="utf-8")
+            output = root / "nested" / "doctor" / "report.json"
+            saved_registry = check_registry.REGISTRY
+            check_registry.REGISTRY = invalid_registry
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="off",
+                    )
+                )
+            finally:
+                check_registry.REGISTRY = saved_registry
+            self.assertEqual(4, code)
+            self.assertTrue(output.exists())
+            self.assertEqual("INVALID", json.loads(output.read_text(encoding="utf-8"))["status"])
+
     def test_unknown_subcommand_fails_with_argparse_error(self):
         result = run_cli("unknown-command")
         self.assertNotEqual(0, result.returncode)

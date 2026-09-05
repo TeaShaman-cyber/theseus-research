@@ -65,8 +65,8 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
                 parts = repository.split("/")
                 if len(parts) != 2 or any(not part.strip() for part in parts):
                     errors.append(f"public line {line_id} requires repository")
-        elif repository is not None and not isinstance(repository, str):
-            errors.append(f"repository for {line_id} must be string when present")
+        elif visibility == "private-incubation" and repository is not None:
+            errors.append(f"private-incubation line {line_id} must omit repository")
 
         role = raw_line.get("role")
         if not isinstance(role, Mapping):
@@ -82,6 +82,16 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
             errors.append(f"status for {line_id} must be non-empty string")
         elif status not in VALID_STATUSES:
             errors.append(f"invalid status for {line_id}: {status}")
+        elif visibility in VALID_VISIBILITIES:
+            allowed_statuses = (
+                {"active-root", "active"}
+                if visibility == "public"
+                else {"private-incubation"}
+            )
+            if status not in allowed_statuses:
+                errors.append(
+                    f"visibility/status mismatch for {line_id}: {visibility}/{status}"
+                )
 
         topics = raw_line.get("topics")
         if not isinstance(topics, list) or any(

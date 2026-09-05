@@ -61,6 +61,31 @@ class RegistryContractTests(unittest.TestCase):
         self.assertNotIn("repository", sonar)
         self.assertEqual([], validate_registry(doc))
 
+    def test_private_incubation_line_must_not_publish_repository_identity(self):
+        doc = load_registry(REGISTRY)
+        sonar = next(x for x in doc["lines"] if x["id"] == "sonar")
+        sonar["repository"] = "TeaShaman-cyber/private-sonar"
+        self.assertIn(
+            "private-incubation line sonar must omit repository",
+            validate_registry(doc),
+        )
+
+    def test_visibility_and_status_must_form_a_supported_pair(self):
+        cases = (
+            ("theseus-needle-lab", "public", "private-incubation"),
+            ("sonar", "private-incubation", "active"),
+        )
+        for line_id, visibility, status in cases:
+            with self.subTest(line_id=line_id):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == line_id)
+                line["visibility"] = visibility
+                line["status"] = status
+                self.assertIn(
+                    f"visibility/status mismatch for {line_id}: {visibility}/{status}",
+                    validate_registry(doc),
+                )
+
     def test_invalid_status_is_rejected(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")

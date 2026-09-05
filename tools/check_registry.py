@@ -80,16 +80,19 @@ def cmd_render(args: argparse.Namespace) -> int:
 
 
 def cmd_doctor(args: argparse.Namespace) -> int:
+    output = Path(args.json_output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+
     document, errors = _load_valid_registry()
     if document is None or errors:
         payload = {"status": "INVALID", "errors": errors}
-        Path(args.json_output).write_text(_dump(payload), encoding="utf-8")
+        output.write_text(_dump(payload), encoding="utf-8")
         return 4
 
     mismatches = _projection_mismatches(document)
     if mismatches:
         payload = {"status": "PROJECTION_MISMATCH", "mismatched_files": mismatches}
-        Path(args.json_output).write_text(_dump(payload), encoding="utf-8")
+        output.write_text(_dump(payload), encoding="utf-8")
         return 4
 
     transport = UrllibGitHubTransport()
@@ -100,8 +103,6 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     }:
         report["drift_issue"] = ensure_drift_issue(DRIFT_REPOSITORY, report, transport)
 
-    output = Path(args.json_output)
-    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(_dump(report), encoding="utf-8")
 
     return {

@@ -92,6 +92,19 @@ class RegistryDoctorTests(unittest.TestCase):
         root = next(x for x in report["declared"] if x["id"] == "theseus-research")
         self.assertIn("missing managed label: evidence:required", root["drift"])
 
+    def test_managed_labels_are_collected_across_all_pages_before_drift(self):
+        responses = healthy_responses(self.document)
+        base = "/repos/TeaShaman-cyber/theseus-research"
+        first = f"{base}/labels?per_page=100"
+        second = f"{base}/labels?per_page=100&page=2"
+        responses[("GET", first)] = [{"name": f"unmanaged-{n}"} for n in range(100)]
+        responses[("GET", second)] = [{"name": name} for name in MANAGED_LABELS]
+        report, transport = self._run(responses)
+        self.assertEqual("PASS", report["status"])
+        root = next(x for x in report["declared"] if x["id"] == "theseus-research")
+        self.assertFalse(any(item.startswith("missing managed label:") for item in root["drift"]))
+        self.assertIn(("GET", second, None), transport.calls)
+
     def test_missing_repository_is_drift_not_deletion(self):
         responses = healthy_responses(self.document)
         path = "/repos/TeaShaman-cyber/theseus-session-search-lab"
