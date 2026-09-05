@@ -329,11 +329,21 @@ def ensure_drift_issue(
         response = transport.request(
             "POST", f"{base}/issues/{number}/comments", {"body": body}
         )
+        if not isinstance(response, Mapping) or not isinstance(response.get("id"), int):
+            raise GitHubUnavailable(f"unexpected issue-comment response: {repository}")
+        comment_id = int(response["id"])
+        readback = transport.request("GET", f"{base}/issues/comments/{comment_id}")
+        if (
+            not isinstance(readback, Mapping)
+            or readback.get("id") != comment_id
+            or readback.get("body") != body
+        ):
+            raise GitHubUnavailable(f"drift issue comment readback mismatch: {repository}")
         return {
             "action": "commented",
             "issue_number": number,
             "issue_url": existing.get("html_url"),
-            "comment_url": response.get("html_url") if isinstance(response, Mapping) else None,
+            "comment_url": readback.get("html_url"),
         }
 
     response = transport.request(
@@ -343,8 +353,17 @@ def ensure_drift_issue(
     )
     if not isinstance(response, Mapping) or not isinstance(response.get("number"), int):
         raise GitHubUnavailable(f"unexpected issue-create response: {repository}")
+    number = int(response["number"])
+    readback = transport.request("GET", f"{base}/issues/{number}")
+    if (
+        not isinstance(readback, Mapping)
+        or readback.get("number") != number
+        or readback.get("title") != DRIFT_ISSUE_TITLE
+        or readback.get("body") != body
+    ):
+        raise GitHubUnavailable(f"drift issue readback mismatch: {repository}")
     return {
         "action": "created",
-        "issue_number": int(response["number"]),
-        "issue_url": response.get("html_url"),
+        "issue_number": number,
+        "issue_url": readback.get("html_url"),
     }

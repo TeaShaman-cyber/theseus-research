@@ -44,6 +44,17 @@ class RegistryContractTests(unittest.TestCase):
             validate_registry(doc),
         )
 
+    def test_public_repository_requires_nonempty_owner_and_repo(self):
+        for repository in ("TeaShaman-cyber/", "/theseus-research"):
+            with self.subTest(repository=repository):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+                line["repository"] = repository
+                self.assertIn(
+                    "public line theseus-needle-lab requires repository",
+                    validate_registry(doc),
+                )
+
     def test_private_line_may_omit_repository(self):
         doc = load_registry(REGISTRY)
         sonar = next(x for x in doc["lines"] if x["id"] == "sonar")

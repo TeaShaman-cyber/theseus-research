@@ -59,8 +59,12 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
 
         repository = raw_line.get("repository")
         if visibility == "public":
-            if not isinstance(repository, str) or repository.count("/") != 1:
+            if not isinstance(repository, str):
                 errors.append(f"public line {line_id} requires repository")
+            else:
+                parts = repository.split("/")
+                if len(parts) != 2 or any(not part.strip() for part in parts):
+                    errors.append(f"public line {line_id} requires repository")
         elif repository is not None and not isinstance(repository, str):
             errors.append(f"repository for {line_id} must be string when present")
 

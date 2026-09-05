@@ -60,6 +60,12 @@ class RegistryIssueTests(unittest.TestCase):
                     "number": 41,
                     "html_url": "https://github.com/TeaShaman-cyber/theseus-research/issues/41",
                 },
+                ("GET", "/repos/TeaShaman-cyber/theseus-research/issues/41"): {
+                    "number": 41,
+                    "title": DRIFT_ISSUE_TITLE,
+                    "body": render_drift_issue_body(drift_report()),
+                    "html_url": "https://github.com/TeaShaman-cyber/theseus-research/issues/41",
+                },
             }
         )
         result = ensure_drift_issue(self.repository, drift_report(), transport)
@@ -80,6 +86,11 @@ class RegistryIssueTests(unittest.TestCase):
                     {"number": 12, "title": DRIFT_ISSUE_TITLE, "html_url": "https://example/12"}
                 ],
                 ("POST", comment_path): {"id": 55, "html_url": "https://example/comment/55"},
+                ("GET", "/repos/TeaShaman-cyber/theseus-research/issues/comments/55"): {
+                    "id": 55,
+                    "body": render_drift_issue_body(drift_report()),
+                    "html_url": "https://example/comment/55",
+                },
             }
         )
         result = ensure_drift_issue(self.repository, drift_report(), transport)
@@ -101,6 +112,11 @@ class RegistryIssueTests(unittest.TestCase):
                     {"number": 212, "title": DRIFT_ISSUE_TITLE, "html_url": "https://example/212"}
                 ],
                 ("POST", comment_path): {"id": 88, "html_url": "https://example/comment/88"},
+                ("GET", "/repos/TeaShaman-cyber/theseus-research/issues/comments/88"): {
+                    "id": 88,
+                    "body": render_drift_issue_body(drift_report()),
+                    "html_url": "https://example/comment/88",
+                },
             }
         )
         result = ensure_drift_issue(self.repository, drift_report(), transport)
@@ -108,11 +124,63 @@ class RegistryIssueTests(unittest.TestCase):
         self.assertEqual(212, result["issue_number"])
         self.assertNotIn(("POST", self.create_path), [(m, p) for m, p, _ in transport.calls])
 
+    def test_created_issue_requires_verified_remote_readback(self):
+        issue_path = "/repos/TeaShaman-cyber/theseus-research/issues/41"
+        body = render_drift_issue_body(drift_report())
+        transport = FakeTransport({
+            ("GET", self.list_path): [],
+            ("POST", self.create_path): {"number": 41, "html_url": "https://example/41"},
+            ("GET", issue_path): {"number": 41, "title": DRIFT_ISSUE_TITLE, "body": body, "html_url": "https://example/41"},
+        })
+        result = ensure_drift_issue(self.repository, drift_report(), transport)
+        self.assertEqual("created", result["action"])
+        self.assertIn(("GET", issue_path, None), transport.calls)
+
+    def test_created_issue_rejects_mismatched_remote_readback(self):
+        issue_path = "/repos/TeaShaman-cyber/theseus-research/issues/41"
+        transport = FakeTransport({
+            ("GET", self.list_path): [],
+            ("POST", self.create_path): {"number": 41, "html_url": "https://example/41"},
+            ("GET", issue_path): {"number": 41, "title": "wrong title", "body": "wrong body", "html_url": "https://example/41"},
+        })
+        with self.assertRaisesRegex(Exception, "readback"):
+            ensure_drift_issue(self.repository, drift_report(), transport)
+
+    def test_existing_issue_comment_requires_verified_remote_readback(self):
+        comment_path = "/repos/TeaShaman-cyber/theseus-research/issues/12/comments"
+        comment_readback_path = "/repos/TeaShaman-cyber/theseus-research/issues/comments/55"
+        body = render_drift_issue_body(drift_report())
+        transport = FakeTransport({
+            ("GET", self.list_path): [{"number": 12, "title": DRIFT_ISSUE_TITLE, "html_url": "https://example/12"}],
+            ("POST", comment_path): {"id": 55, "html_url": "https://example/comment/55"},
+            ("GET", comment_readback_path): {"id": 55, "body": body, "html_url": "https://example/comment/55"},
+        })
+        result = ensure_drift_issue(self.repository, drift_report(), transport)
+        self.assertEqual("commented", result["action"])
+        self.assertIn(("GET", comment_readback_path, None), transport.calls)
+
+    def test_existing_issue_comment_rejects_mismatched_remote_readback(self):
+        comment_path = "/repos/TeaShaman-cyber/theseus-research/issues/12/comments"
+        comment_readback_path = "/repos/TeaShaman-cyber/theseus-research/issues/comments/55"
+        transport = FakeTransport({
+            ("GET", self.list_path): [{"number": 12, "title": DRIFT_ISSUE_TITLE, "html_url": "https://example/12"}],
+            ("POST", comment_path): {"id": 55, "html_url": "https://example/comment/55"},
+            ("GET", comment_readback_path): {"id": 55, "body": "wrong body", "html_url": "https://example/comment/55"},
+        })
+        with self.assertRaisesRegex(Exception, "readback"):
+            ensure_drift_issue(self.repository, drift_report(), transport)
+
     def test_multiple_drift_entries_still_produce_one_write_action(self):
         transport = FakeTransport(
             {
                 ("GET", self.list_path): [],
                 ("POST", self.create_path): {"number": 9, "html_url": "https://example/9"},
+                ("GET", "/repos/TeaShaman-cyber/theseus-research/issues/9"): {
+                    "number": 9,
+                    "title": DRIFT_ISSUE_TITLE,
+                    "body": render_drift_issue_body(drift_report()),
+                    "html_url": "https://example/9",
+                },
             }
         )
         ensure_drift_issue(self.repository, drift_report(), transport)
@@ -129,6 +197,12 @@ class RegistryIssueTests(unittest.TestCase):
                     }
                 ],
                 ("POST", self.create_path): {"number": 78, "html_url": "https://example/78"},
+                ("GET", "/repos/TeaShaman-cyber/theseus-research/issues/78"): {
+                    "number": 78,
+                    "title": DRIFT_ISSUE_TITLE,
+                    "body": render_drift_issue_body(drift_report()),
+                    "html_url": "https://example/78",
+                },
             }
         )
         result = ensure_drift_issue(self.repository, drift_report(), transport)
