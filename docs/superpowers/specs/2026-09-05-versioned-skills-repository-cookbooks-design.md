@@ -509,7 +509,73 @@ existing skill routes to updated guidance
 
 Only a change to the routing contract itself requires a skill version change.
 
-## 13. Example: Needle
+## 13. Relationship to externalized learning / AutoMem
+
+This architecture is also an engineering realization of an older Theseus research hypothesis: useful long-horizon adaptation can be externalized into memory policy and experience-to-skill distillation even when the base model weights cannot be updated.
+
+The useful boundary is:
+
+```text
+base model weights
+        -> fixed from the operator's point of view
+
+dynamic harness state
+        -> memory, retrieval, cookbooks, skills, routing, task state,
+           verification, tools, and helper models
+
+effective agent policy
+        -> behavior produced by the composition of both
+```
+
+A compact working formulation is:
+
+```text
+fixed model weights + dynamic harness state = effective agent policy
+```
+
+This is **functional weighting, not literal neural-weight mutation**. The terms `external weights` or `dynamic weights` may be used as engineering metaphors only when that distinction is explicit.
+
+The adaptation layers operate at different speeds:
+
+```text
+context / session state     -> fastest, ephemeral
+memory                      -> fast, plastic experience state
+repository cookbook         -> slower, verified operational lessons
+shared skill                -> slower still, generalized procedural routing
+base model weights          -> outside this architecture's update authority
+```
+
+The intended learning loop is therefore:
+
+```text
+experience
+   ↓
+OBSERVED memory / evidence
+   ↓ currentness + reproduction + review
+VERIFIED reusable lesson
+   ↓
+repository cookbook
+   ↓ repeated cross-task or cross-project generalization
+candidate skill change
+   ↓ PR + review + immutable release identity
+canonical skill version
+   ↓ explicit manual user update
+future inference behavior changes
+```
+
+This extends the earlier `collect trajectories -> score decisions -> propose scaffold/policy diff -> bounded A/B -> readback` AutoMem direction with stronger governance around procedural consolidation. A single bad episode must not become a durable procedure merely because it was memorable.
+
+The layers remain distinct:
+
+- **memory** preserves experience and task-relevant semantic state;
+- **cookbooks** preserve reviewed repository/runtime-specific operational lessons;
+- **skills** preserve slower-changing generalized routing/procedural policy;
+- **tests, reviewers, currentness checks, and readback** decide what experience is promotable;
+- **the human update gate** controls promotion of a canonical skill release into a managed runtime.
+
+This relationship is an architectural synthesis, not evidence that AutoMem, internal model learning, J-space/global-workspace mechanisms, and skill routing are the same mechanism. Mechanistic equivalence remains `UNKNOWN` unless separately demonstrated.
+
+## 14. Example: Needle
 
 Needle motivates the design but does not receive special implementation in this architecture PR.
 
@@ -526,7 +592,7 @@ The bootstrap should be reconstructed from actual Needle issues, PR reviews, wor
 
 This design does **not** create those files yet.
 
-## 14. Failure handling
+## 15. Failure handling
 
 If cookbook discovery, currentness, skill-version state, or runtime selection cannot be established, fail honestly:
 
@@ -537,7 +603,7 @@ If cookbook discovery, currentness, skill-version state, or runtime selection ca
 
 A search miss is not evidence that no guidance exists outside the searched scope.
 
-## 15. Acceptance criteria for implementation phase
+## 16. Acceptance criteria for implementation phase
 
 Implementation should not begin until this architecture is reviewed and accepted.
 
@@ -561,7 +627,7 @@ When implementation is later approved, minimum acceptance should cover:
 16. canonical artifact, installed artifact, selection mode, active artifact, and execution evidence are tracked independently and remain `UNKNOWN` where not directly observable;
 17. GitHub mutation targets and important postconditions receive exact readback.
 
-## 16. Review questions for Codex and human reviewers
+## 17. Review questions for Codex and human reviewers
 
 Please review this document specifically for:
 
@@ -576,7 +642,7 @@ Please review this document specifically for:
 9. **Publication order:** can the registry ever advertise an active project before its promised canonical artifacts are present and verified?
 10. **Failure modes:** what important edge cases are missing before implementation begins?
 
-## 17. Proposed implementation sequence after review
+## 18. Proposed implementation sequence after review
 
 Only after accepted review:
 
