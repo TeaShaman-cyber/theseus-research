@@ -69,12 +69,18 @@ Theseus — независимая, добровольная, этическая
 
 ### Исследовательские направления Theseus
 
+<!-- BEGIN THESEUS_RESEARCH_LINES -->
 | Направление | Публичность / статус | Роль |
 | --- | --- | --- |
 | [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | публичное · активно / корень | Контракт программы, методология и карта исследований |
 | [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | публичное · активно | Наблюдение за публичными данными и воспроизводимые эксперименты по верификации |
-| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | публичное · разворачивается | Наблюдаемые и воспроизводимые эксперименты по обучению Needle |
+| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | публичное · активно | Наблюдаемые и воспроизводимые эксперименты по обучению Needle |
+| [`theseus-memory-provider-lab`](https://github.com/TeaShaman-cyber/theseus-memory-provider-lab) | публичное · активно | Автоматический жизненный цикл провайдера памяти, семантика recall/retain и проверяемые контракты провайдеров |
+| [`theseus-model-usage-lab`](https://github.com/TeaShaman-cyber/theseus-model-usage-lab) | публичное · активно | Наблюдаемое использование моделей, окна провайдерских подписок и маршрутизация агентов с учётом бюджета |
+| [`theseus-session-search-lab`](https://github.com/TeaShaman-cyber/theseus-session-search-lab) | публичное · активно | Проверяемый захват сессий, переносимые артефакты исторического поиска и независимый от браузера поиск по сессиям |
+| [`theseus-tech-review-graph`](https://github.com/TeaShaman-cyber/theseus-tech-review-graph) | публичное · активно | Theseus KnowledgeOps и информационный CI/CD для заменяемых исследовательских модулей и модулей памяти |
 | Sonar | приватная инкубация | Экспериментальное направление по непрерывности и извлечению контекста; реализация остаётся приватной |
+<!-- END THESEUS_RESEARCH_LINES -->
 
 В реестре перечисляются только направления, явно отнесённые к Theseus; это не перечень всех репозиториев мейнтейнера. Приватные инкубационные направления называются для контекста без раскрытия ссылок на приватные репозитории.
 

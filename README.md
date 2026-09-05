@@ -79,12 +79,18 @@ This repository contains the program-level contract, methodology, and public map
 
 ### Theseus research lines
 
+<!-- BEGIN THESEUS_RESEARCH_LINES -->
 | Research line | Visibility / status | Role |
 | --- | --- | --- |
 | [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | public · active / root | Program contract, methodology, and research map |
 | [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | public · active | Public-data observation and reproducible verification experiments |
-| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | public · bootstrapping | Observable and reproducible Needle learning experiments |
+| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | public · active | Observable and reproducible Needle learning experiments |
+| [`theseus-memory-provider-lab`](https://github.com/TeaShaman-cyber/theseus-memory-provider-lab) | public · active | Automatic memory-provider lifecycle, recall/retain semantics, and verifiable provider contracts |
+| [`theseus-model-usage-lab`](https://github.com/TeaShaman-cyber/theseus-model-usage-lab) | public · active | Observable model usage, provider subscription windows, and budget-aware agent routing |
+| [`theseus-session-search-lab`](https://github.com/TeaShaman-cyber/theseus-session-search-lab) | public · active | Verifiable session capture, portable historical search artifacts, and browser-independent session search |
+| [`theseus-tech-review-graph`](https://github.com/TeaShaman-cyber/theseus-tech-review-graph) | public · active | Theseus KnowledgeOps and informational CI/CD for replaceable research and memory modules |
 | Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
+<!-- END THESEUS_RESEARCH_LINES -->
 
 This registry lists only research lines explicitly declared part of Theseus; it is not an inventory of every repository owned by the maintainer. Private-incubation lines are named for context without exposing private repository links.
 
