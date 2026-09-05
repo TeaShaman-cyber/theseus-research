@@ -97,24 +97,25 @@ docs/cookbook/README.md
 
 Filesystem presence alone does **not** make a cookbook operational authority. Discovery must distinguish accepted repository guidance from candidate branch/worktree content.
 
+Cookbook discovery tracks the accepted baseline and any candidate overlay as **independent state**, not as mutually exclusive branches:
+
 ```text
-accepted canonical revision contains cookbook
-        -> COOKBOOK_ACTIVE
+ACCEPTED_BASELINE
+  ACTIVE
+  | REPROBE_REQUIRED
+  | UNKNOWN
+  | ABSENT
 
-cookbook exists only in an unmerged branch,
-or differs from the accepted canonical revision
-        -> COOKBOOK_CANDIDATE
-
-accepted baseline/currentness cannot be established
-        -> COOKBOOK_REPROBE_REQUIRED
-
-accepted canonical revision has no cookbook
-        -> NO_COOKBOOK
+CANDIDATE_OVERLAY
+  PRESENT
+  | ABSENT
 ```
 
-For ordinary operational work, `COOKBOOK_ACTIVE` guidance must come from an accepted canonical revision verified against the repository's authoritative remote state (normally the default branch or another explicitly accepted ref). Dirty-worktree, contributor-branch, and unmerged PR cookbook changes are review candidates, not silently active instructions.
+For ordinary operational work, active baseline guidance must come from an accepted canonical revision whose provenance is verified against the repository's authoritative remote state and whose applicability is bound to the **target code revision being operated on**. The default branch is not automatically authoritative for work on a release branch or historical SHA. If no accepted cookbook revision can be shown applicable to the target revision, baseline state is `REPROBE_REQUIRED` rather than `ACTIVE`.
 
-When an active cookbook is being modified in a branch, the accepted baseline remains operational guidance until the candidate change is reviewed and accepted. A user may explicitly authorize evaluating candidate guidance, but that does not promote it into repository authority.
+Dirty-worktree, contributor-branch, and unmerged PR cookbook changes are candidate overlays, not silently active instructions. A candidate may coexist with a valid accepted baseline; ordinary work continues to use the accepted bytes, never the candidate bytes, unless the user explicitly authorizes candidate evaluation.
+
+If fresh evidence invalidates an accepted baseline rule, that affected rule leaves active guidance immediately and becomes `REPROBE_REQUIRED` or `UNKNOWN` even while a candidate replacement remains unmerged and non-authoritative. Review latency must not keep a known-invalid rule operational.
 
 The root file should be a small index that identifies relevant sections rather than forcing the agent to load the entire cookbook.
 
@@ -170,7 +171,7 @@ historical observation
 CANDIDATE LESSON
         ↓ currentness / reproduction / evidence check
 VERIFIED LESSON
-        ↓ review and accepted repository change
+        ↓ tests/review + explicit authorized human acceptance + accepted repository change
 PROMOTED COOKBOOK RULE
         ↓ dependency/contract change, failed reprobe,
           contradictory current evidence, or applicability drift
@@ -189,7 +190,7 @@ Recommended evidence vocabulary:
 - `REPROBE_REQUIRED` — a previously verified rule has a concrete reason to require current verification before use;
 - `DEPRECATED` — previously valid, now confirmed obsolete or no longer recommended/current.
 
-A promoted rule should identify enough applicability context to know when revalidation is required, for example the relevant workflow/provider/runtime contract or repository behavior. A changed dependency or failed reproduction removes the rule from active guidance until it is reverified. There is no requirement for arbitrary time-based expiry when the dependency is stable; invalidation is evidence- or contract-triggered.
+A promoted rule should identify enough applicability context to know when revalidation is required, including the relevant target repository revision or explicitly demonstrated compatible revision range plus any workflow/provider/runtime dependency boundary. A changed dependency, target-revision mismatch, contradictory current evidence, or failed reproduction removes the affected rule from active guidance immediately until it is reverified. There is no requirement for arbitrary time-based expiry when the dependency is stable; invalidation is evidence-, revision-, or contract-triggered.
 
 The cookbook should remain concise. Detailed raw logs stay in issues, artifacts, or evidence files and are linked when useful.
 
@@ -233,12 +234,12 @@ identify repository
 look for docs/cookbook/README.md
         ↓
 classify provenance/trust state
-   ├─ COOKBOOK_ACTIVE -> load minimal relevant accepted section
-   ├─ COOKBOOK_CANDIDATE -> review/evaluate only; do not treat as authority
-   ├─ COOKBOOK_REPROBE_REQUIRED -> verify accepted/current source first
-   └─ NO_COOKBOOK -> propose cookbook creation to user
-                         ↓
-                   no creation without approval
+   ├─ accepted baseline ACTIVE -> load minimal relevant accepted bytes
+   ├─ candidate overlay PRESENT -> keep separate; review/evaluate only
+   ├─ accepted baseline REPROBE_REQUIRED/UNKNOWN -> do not use affected rule
+   └─ accepted baseline ABSENT -> propose cookbook creation to user
+                                      ↓
+                                no creation without approval
 ```
 
 If the work runs through a runtime with its own operational cookbook, the two layers compose **by concern**, not by textual precedence:
@@ -428,7 +429,7 @@ A manually installed copy may be claimed byte-identical to canonical only when i
 - **MINOR** — compatible new routing behavior or project-discovery capability;
 - **MAJOR** — incompatible behavior or a changed approval/authority/update boundary.
 
-Optional namespaced Git tags may preserve release points without coupling unrelated skill versions:
+Canonical skill releases require immutable namespaced Git tags so the required `release_tag -> source_commit` acceptance check has one meaning. Candidate/unreleased work has no release tag.
 
 ```text
 skill/using-theseus-projects/v1.0.0
@@ -470,20 +471,29 @@ State must remain explicit and independently observable:
 ```text
 CANONICAL_ARTIFACT = version + path + source_commit + sha256 from GitHub
 INSTALLED_ARTIFACT = installed version/digest only if runtime or installation acceptance exposes them; else UNKNOWN
-SELECTION_MODE     = AUTO_SELECTED | MANUAL_SELECTED | NOT_SELECTED | UNKNOWN
-ACTIVE_ARTIFACT    = loaded/active version + digest/identity only if runtime exposes it; else UNKNOWN
-EXECUTION_EVIDENCE = observed load/execution evidence | NOT_OBSERVED | UNKNOWN
+SELECTION_MODE      = AUTO_SELECTED | MANUAL_SELECTED | NOT_SELECTED | UNKNOWN
+ACTIVE_ARTIFACT     = loaded/active version + digest/identity only if runtime exposes it; else UNKNOWN
+LOAD_EVIDENCE       = observed successful load/activation | NOT_OBSERVED | UNKNOWN
+EXECUTION_EVIDENCE  = observed invocation/execution | NOT_OBSERVED | UNKNOWN
 ```
 
-These dimensions must not be collapsed. A skill may be manually selected without being auto-selected. A runtime may report an auto-selection decision even if loading or execution later fails. A newer installed copy does not prove a cached older body stopped being active. After manual update, acceptance verifies only the dimensions the runtime actually exposes; the rest remain `UNKNOWN`.
+These dimensions must not be collapsed. A skill may be manually selected without being auto-selected. A runtime may report an auto-selection decision even if loading later fails. A successful load does **not** count as execution evidence; invocation remains `NOT_OBSERVED` or `UNKNOWN` until execution is actually observed. A newer installed copy does not prove a cached older body stopped being active. After manual update, acceptance verifies only the dimensions the runtime actually exposes; the rest remain `UNKNOWN`.
 
 ## 11. Mutation and publication boundaries
 
-Cookbook and skill changes use normal repository governance:
+Cookbook and skill changes use normal repository governance, but automation is evidence rather than promotion authority:
 
 ```text
-proposal → diff → tests/checks → review → accepted merge → remote readback
+proposal
+  → diff
+  → tests/checks
+  → bot/peer review
+  → explicit authorized human acceptance
+  → accepted merge/release
+  → remote readback
 ```
+
+The human promotion gate is distinct from the later manual runtime-update gate. Automated checks, bot review, or automated merge alone must not promote candidate cookbook guidance into active authority or create a canonical skill release without an explicit authorized human acceptance event.
 
 For GitHub writes, the intended target and operation should be bound before selecting a mutation primitive:
 
@@ -511,7 +521,7 @@ Only a change to the routing contract itself requires a skill version change.
 
 ## 13. Relationship to externalized learning / AutoMem
 
-This architecture is also an engineering realization of an older Theseus research hypothesis: useful long-horizon adaptation can be externalized into memory policy and experience-to-skill distillation even when the base model weights cannot be updated.
+This architecture is a **proposed, testable synthesis** of an older Theseus research hypothesis: useful long-horizon adaptation may be externalized into memory policy and experience-to-skill distillation even when the base model weights cannot be updated. The current design is not implementation evidence or proof of long-horizon adaptation.
 
 The useful boundary is:
 
@@ -555,23 +565,26 @@ OBSERVED memory / evidence
 VERIFIED reusable lesson
    ↓
 repository cookbook
-   ↓ repeated cross-task or cross-project generalization
-candidate skill change
-   ↓ PR + review + immutable release identity
-canonical skill version
+   ↓ repeated cross-task or cross-project evidence
+routing-contract change actually required?
+   ├─ no  -> keep the generalized procedure in cookbooks or higher-level methodology
+   └─ yes -> candidate thin-skill routing change
+                 ↓ PR + review + explicit human promotion + immutable release identity
+              canonical skill version
    ↓ explicit manual user update
 future inference behavior changes
 ```
 
-This extends the earlier `collect trajectories -> score decisions -> propose scaffold/policy diff -> bounded A/B -> readback` AutoMem direction with stronger governance around procedural consolidation. A single bad episode must not become a durable procedure merely because it was memorable.
+If implemented and evaluated, this design would test one governed path adjacent to the earlier `collect trajectories -> score decisions -> propose scaffold/policy diff -> bounded A/B -> readback` AutoMem direction. A single bad episode must not become a durable procedure merely because it was memorable. Broader experience-to-procedure distillation that does not change routing remains outside the thin-skill contract and belongs in cookbook/methodology or a separate future design.
 
 The layers remain distinct:
 
 - **memory** preserves experience and task-relevant semantic state;
 - **cookbooks** preserve reviewed repository/runtime-specific operational lessons;
-- **skills** preserve slower-changing generalized routing/procedural policy;
-- **tests, reviewers, currentness checks, and readback** decide what experience is promotable;
-- **the human update gate** controls promotion of a canonical skill release into a managed runtime.
+- **skills** preserve slower-changing generalized **routing** policy, not arbitrary procedural encyclopedias;
+- **tests, reviewers, currentness checks, and readback** provide evidence about what experience may be promotable;
+- **an explicit authorized human promotion gate** decides whether candidate guidance becomes active cookbook authority or a canonical skill release;
+- **a separate manual user update gate** controls installation of a canonical skill release into a managed runtime.
 
 This relationship is an architectural synthesis, not evidence that AutoMem, internal model learning, J-space/global-workspace mechanisms, and skill routing are the same mechanism. Mechanistic equivalence remains `UNKNOWN` unless separately demonstrated.
 
@@ -614,18 +627,21 @@ When implementation is later approved, minimum acceptance should cover:
 3. README and README.ru project-map projections render `theseus-skills` from registry state according to its explicit infrastructure kind rather than hand-maintained rows;
 4. `theseus-skills` is not registered as `active` until canonical skill files and their validation receipts exist;
 5. canonical skill identity requires exact path + immutable source commit + SHA-256, with registry/SKILL metadata consistency validation;
-6. cookbook discovery distinguishes accepted canonical guidance from dirty/unmerged candidate content;
-7. unresolved currentness prevents promotion into active guidance;
-8. promoted rules have an explicit invalidation/reprobe path;
-9. composed runtime/project cookbook conflicts on the same concern return `BLOCKED` unless authoritative evidence resolves them;
-10. explicit `manual_user` update mode;
-11. no automatic runtime skill mutation;
-12. repository cookbook discovery at `docs/cookbook/README.md`;
-13. missing-cookbook path proposes creation and requires explicit user approval;
-14. bootstrap guidance treats history as evidence, not authority;
-15. promotion requires verification/review before becoming an operational rule;
-16. canonical artifact, installed artifact, selection mode, active artifact, and execution evidence are tracked independently and remain `UNKNOWN` where not directly observable;
-17. GitHub mutation targets and important postconditions receive exact readback.
+6. cookbook discovery tracks accepted baseline and candidate overlay independently; candidate bytes never silently replace accepted bytes;
+7. active cookbook guidance is bound to the target code revision or an explicitly demonstrated compatible revision range;
+8. unresolved currentness or invalidating evidence removes the affected baseline rule from active guidance immediately and enters `REPROBE_REQUIRED`/`UNKNOWN`;
+9. promoted rules have an explicit invalidation/reprobe path;
+10. composed runtime/project cookbook conflicts on the same concern return `BLOCKED` unless authoritative evidence resolves them;
+11. canonical skill releases require immutable namespaced release tags bound to the exact source commit;
+12. explicit `manual_user` update mode and no automatic runtime skill mutation;
+13. repository cookbook discovery at `docs/cookbook/README.md`;
+14. missing-cookbook path proposes creation and requires explicit user approval;
+15. bootstrap guidance treats history as evidence, not authority;
+16. promotion requires verification/review **and explicit authorized human acceptance** before becoming active cookbook authority or a canonical skill release;
+17. canonical artifact, installed artifact, selection mode, active artifact, load evidence, and execution evidence are tracked independently and remain `UNKNOWN` where not directly observable;
+18. successful load never counts as execution evidence without observed invocation;
+19. repeated procedural lessons do not enter a thin skill unless they require an actual routing-contract change;
+20. GitHub mutation targets and important postconditions receive exact readback.
 
 ## 17. Review questions for Codex and human reviewers
 
