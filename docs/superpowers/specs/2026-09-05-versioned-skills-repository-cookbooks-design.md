@@ -87,7 +87,7 @@ Authority rules:
 
 ## 6. Repository-local cookbook contract
 
-### 6.1 Discovery
+### 6.1 Discovery and trust state
 
 The canonical discovery path is:
 
@@ -95,7 +95,26 @@ The canonical discovery path is:
 docs/cookbook/README.md
 ```
 
-If that file exists, the repository is `COOKBOOK_ACTIVE`.
+Filesystem presence alone does **not** make a cookbook operational authority. Discovery must distinguish accepted repository guidance from candidate branch/worktree content.
+
+```text
+accepted canonical revision contains cookbook
+        -> COOKBOOK_ACTIVE
+
+cookbook exists only in an unmerged branch,
+or differs from the accepted canonical revision
+        -> COOKBOOK_CANDIDATE
+
+accepted baseline/currentness cannot be established
+        -> COOKBOOK_REPROBE_REQUIRED
+
+accepted canonical revision has no cookbook
+        -> NO_COOKBOOK
+```
+
+For ordinary operational work, `COOKBOOK_ACTIVE` guidance must come from an accepted canonical revision verified against the repository's authoritative remote state (normally the default branch or another explicitly accepted ref). Dirty-worktree, contributor-branch, and unmerged PR cookbook changes are review candidates, not silently active instructions.
+
+When an active cookbook is being modified in a branch, the accepted baseline remains operational guidance until the candidate change is reviewed and accepted. A user may explicitly authorize evaluating candidate guidance, but that does not promote it into repository authority.
 
 The root file should be a small index that identifies relevant sections rather than forcing the agent to load the entire cookbook.
 
@@ -141,9 +160,9 @@ After user approval, candidate lessons may be reconstructed from:
 - current README/contracts/runbooks;
 - repeated operational failures observed across sessions.
 
-History is a discovery corpus, not authority. Before promotion, each lesson must be checked against current repository/runtime state when practical.
+History is a discovery corpus, not authority. Before promotion into active guidance, each lesson must have its current applicability checked against the repository/runtime state relevant to the rule. If currentness cannot be established, the lesson is `UNKNOWN` and is **not promotable** as an active cookbook rule. It may remain linked as historical evidence or an incident note.
 
-### 6.4 Promotion lifecycle
+### 6.4 Promotion, invalidation, and revalidation lifecycle
 
 ```text
 historical observation
@@ -153,16 +172,24 @@ CANDIDATE LESSON
 VERIFIED LESSON
         ↓ review and accepted repository change
 PROMOTED COOKBOOK RULE
+        ↓ dependency/contract change, failed reprobe,
+          contradictory current evidence, or applicability drift
+REPROBE_REQUIRED / UNKNOWN
+        ↓ confirmed obsolete
+DEPRECATED
 ```
 
-A lesson should not be promoted solely because an old issue says it once worked.
+A lesson should not be promoted solely because an old issue says it once worked, and promotion is not permanent authority.
 
 Recommended evidence vocabulary:
 
 - `OBSERVED` — directly seen, mechanism not yet established;
-- `VERIFIED` — mechanism or workaround reproduced or independently checked;
-- `UNKNOWN` — insufficient evidence or currentness unresolved;
-- `DEPRECATED` — previously valid, no longer recommended/current.
+- `VERIFIED` — mechanism or workaround reproduced or independently checked against a stated applicability boundary;
+- `UNKNOWN` — insufficient evidence or currentness unresolved; not active guidance;
+- `REPROBE_REQUIRED` — a previously verified rule has a concrete reason to require current verification before use;
+- `DEPRECATED` — previously valid, now confirmed obsolete or no longer recommended/current.
+
+A promoted rule should identify enough applicability context to know when revalidation is required, for example the relevant workflow/provider/runtime contract or repository behavior. A changed dependency or failed reproduction removes the rule from active guidance until it is reverified. There is no requirement for arbitrary time-based expiry when the dependency is stable; invalidation is evidence- or contract-triggered.
 
 The cookbook should remain concise. Detailed raw logs stay in issues, artifacts, or evidence files and are linked when useful.
 
@@ -205,30 +232,36 @@ identify repository
         ↓
 look for docs/cookbook/README.md
         ↓
-found? ── yes ──> load minimal relevant section
-   │
-   no
-   ↓
-propose cookbook creation to user
-        ↓
-no creation without approval
+classify provenance/trust state
+   ├─ COOKBOOK_ACTIVE -> load minimal relevant accepted section
+   ├─ COOKBOOK_CANDIDATE -> review/evaluate only; do not treat as authority
+   ├─ COOKBOOK_REPROBE_REQUIRED -> verify accepted/current source first
+   └─ NO_COOKBOOK -> propose cookbook creation to user
+                         ↓
+                   no creation without approval
 ```
 
-If the work runs through a runtime with its own operational cookbook, apply both layers:
+If the work runs through a runtime with its own operational cookbook, the two layers compose **by concern**, not by textual precedence:
 
 ```text
-runtime cookbook + repository cookbook → bounded action
+program/project contract
+        ↓
+repository cookbook -> project-specific procedure, scientific/CI invariants
+runtime cookbook    -> runtime-specific transport, shell, auth, tool routing
+live runtime state  -> current capability/availability evidence
 ```
 
 Example:
 
 ```text
-MarcoPolo operational rules
+MarcoPolo operational rules: how to invoke GitHub/shell safely
         +
-Needle scientific/CI rules
+Needle rules: exact SHA, heldout, replica, scientific interpretation
         ↓
 actual Needle work through MarcoPolo
 ```
+
+If runtime and repository guidance make incompatible claims about the **same concern**, and current authoritative evidence does not resolve the conflict, the route is `BLOCKED`. The agent must not silently choose one cookbook, merge the instructions heuristically, or infer precedence from file location. Resolve the conflict through the higher-level contract, current authoritative state, or explicit human decision before mutation.
 
 ### 8.2 Skill stability
 
@@ -471,15 +504,19 @@ When implementation is later approved, minimum acceptance should cover:
 1. dedicated canonical `TeaShaman-cyber/theseus-skills` repository with `skills/registry.json` and canonical source for each managed skill;
 2. `theseus-skills` is registered through the accepted `theseus-research` project registry contract;
 3. README and README.ru project-map rows are rendered from the registry rather than hand-maintained;
-4. explicit `manual_user` update mode;
-5. no automatic runtime skill mutation;
-6. repository cookbook discovery at `docs/cookbook/README.md`;
-7. missing-cookbook path proposes creation and requires explicit user approval;
-8. bootstrap guidance treats history as evidence, not authority;
-9. promotion requires verification/review before becoming an operational rule;
-10. runtime-specific and project-specific cookbooks compose without silent precedence inversion;
-11. installed/active skill state remains `UNKNOWN` unless directly observable;
-12. GitHub mutation targets and important postconditions receive exact readback.
+4. cookbook discovery distinguishes accepted canonical guidance from dirty/unmerged candidate content;
+5. unresolved currentness prevents promotion into active guidance;
+6. promoted rules have an explicit invalidation/reprobe path;
+7. composed runtime/project cookbook conflicts on the same concern return `BLOCKED` unless authoritative evidence resolves them;
+8. explicit `manual_user` update mode;
+9. no automatic runtime skill mutation;
+10. repository cookbook discovery at `docs/cookbook/README.md`;
+11. missing-cookbook path proposes creation and requires explicit user approval;
+12. bootstrap guidance treats history as evidence, not authority;
+13. promotion requires verification/review before becoming an operational rule;
+14. runtime-specific and project-specific cookbooks compose without silent precedence inversion;
+15. installed/active skill state remains `UNKNOWN` unless directly observable;
+16. GitHub mutation targets and important postconditions receive exact readback.
 
 ## 16. Review questions for Codex and human reviewers
 
