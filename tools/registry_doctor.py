@@ -297,9 +297,19 @@ def ensure_drift_issue(
 
     owner, repo = repository.split("/", 1)
     base = f"/repos/{owner}/{repo}"
-    issues = transport.request("GET", f"{base}/issues?state=open&per_page=100")
-    if not isinstance(issues, list):
-        raise GitHubUnavailable(f"unexpected issues payload: {repository}")
+    issues = []
+    page = 1
+    while True:
+        path = f"{base}/issues?state=open&per_page=100"
+        if page > 1:
+            path += f"&page={page}"
+        batch = transport.request("GET", path)
+        if not isinstance(batch, list):
+            raise GitHubUnavailable(f"unexpected issues payload: {repository}")
+        issues.extend(batch)
+        if len(batch) < 100:
+            break
+        page += 1
 
     body = render_drift_issue_body(report)
     existing = next(

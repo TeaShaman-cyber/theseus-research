@@ -87,6 +87,27 @@ class RegistryIssueTests(unittest.TestCase):
         self.assertEqual(12, result["issue_number"])
         self.assertEqual(1, len([call for call in transport.calls if call[0] == "POST"]))
 
+    def test_existing_issue_on_second_page_is_reused_not_duplicated(self):
+        second_page = self.list_path + "&page=2"
+        comment_path = "/repos/TeaShaman-cyber/theseus-research/issues/212/comments"
+        first_page = [
+            {"number": n, "title": f"Other issue {n}", "html_url": f"https://example/{n}"}
+            for n in range(1, 101)
+        ]
+        transport = FakeTransport(
+            {
+                ("GET", self.list_path): first_page,
+                ("GET", second_page): [
+                    {"number": 212, "title": DRIFT_ISSUE_TITLE, "html_url": "https://example/212"}
+                ],
+                ("POST", comment_path): {"id": 88, "html_url": "https://example/comment/88"},
+            }
+        )
+        result = ensure_drift_issue(self.repository, drift_report(), transport)
+        self.assertEqual("commented", result["action"])
+        self.assertEqual(212, result["issue_number"])
+        self.assertNotIn(("POST", self.create_path), [(m, p) for m, p, _ in transport.calls])
+
     def test_multiple_drift_entries_still_produce_one_write_action(self):
         transport = FakeTransport(
             {

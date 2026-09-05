@@ -6,6 +6,7 @@ from typing import Mapping
 
 VALID_VISIBILITIES = frozenset({"public", "private-incubation"})
 VALID_RELEASE_POLICIES = frozenset({"none", "checkpoint", "product"})
+VALID_STATUSES = frozenset({"active-root", "active", "private-incubation"})
 MANAGED_LABELS = (
     "kind:research",
     "kind:engineering",
@@ -75,6 +76,8 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         status = raw_line.get("status")
         if not isinstance(status, str) or not status:
             errors.append(f"status for {line_id} must be non-empty string")
+        elif status not in VALID_STATUSES:
+            errors.append(f"invalid status for {line_id}: {status}")
 
         topics = raw_line.get("topics")
         if not isinstance(topics, list) or any(

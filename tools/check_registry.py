@@ -64,9 +64,12 @@ def cmd_render(args: argparse.Namespace) -> int:
     rendered = ((README_EN, "en"), (README_RU, "ru"))
     written = []
     try:
+        outputs = []
         for path, language in rendered:
             source = path.read_text(encoding="utf-8")
             output = replace_projection(source, render_table(document, language))
+            outputs.append((path, output))
+        for path, output in outputs:
             path.write_text(output, encoding="utf-8")
             written.append(path.name)
     except (OSError, ValueError) as exc:

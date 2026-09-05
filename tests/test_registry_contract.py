@@ -50,6 +50,12 @@ class RegistryContractTests(unittest.TestCase):
         self.assertNotIn("repository", sonar)
         self.assertEqual([], validate_registry(doc))
 
+    def test_invalid_status_is_rejected(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["status"] = "activ"
+        self.assertIn("invalid status for theseus-needle-lab: activ", validate_registry(doc))
+
     def test_invalid_release_policy_is_rejected(self):
         doc = load_registry(REGISTRY)
         doc["lines"][0]["release_policy"] = "continuous"
