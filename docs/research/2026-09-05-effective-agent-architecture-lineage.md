@@ -1,7 +1,7 @@
 # Effective Agent Architecture Lineage
 
-**Status:** research note / synthesis  
-**Date:** 2026-09-05  
+**Status:** research note / synthesis
+**Date:** 2026-09-05
 **Scope:** reconstructed Theseus design lineage; this note is not an implementation contract.
 
 ## Why this note exists
