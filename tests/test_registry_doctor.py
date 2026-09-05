@@ -157,3 +157,16 @@ class RegistryDoctorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class RegistryDoctorWorkflowTests(unittest.TestCase):
+    def test_workflow_is_weekly_manual_and_read_only(self):
+        workflow = ROOT / ".github" / "workflows" / "registry-doctor.yml"
+        text = workflow.read_text(encoding="utf-8")
+        self.assertIn("schedule:", text)
+        self.assertIn('cron: "17 6 * * 1"', text)
+        self.assertIn("workflow_dispatch:", text)
+        self.assertIn("permissions:\n  contents: read", text)
+        self.assertNotIn("issues: write", text)
+        self.assertNotIn("--drift-issue write", text)
+        self.assertRegex(text, r"actions/checkout@[0-9a-f]{40}")
+        self.assertIn("python3 tools/check_registry.py doctor", text)
