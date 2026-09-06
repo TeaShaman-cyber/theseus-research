@@ -232,7 +232,47 @@ Relevant public work:
 - [MarcoPolo skill router PR #15](https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/15)
 - [MarcoPolo write-route priority PR #16](https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/16)
 
-## 8. Provenance note
+## 8. Harness orientation is a runtime layer, not a model-weight property
+
+A further field observation is that rapidly changing agent harnesses cannot safely rely on base-model weights to describe their own current affordances. The useful distinction is:
+
+```text
+capability exists
+!= model knows it exists
+!= agent discovers it
+!= agent knows when to use it
+!= agent invokes it
+!= result is verified
+```
+
+This is not primarily a model-training defect. Harness capabilities, tool contracts, Skills, persistence surfaces, and diagnostics can change faster than large-model training cycles. A current harness therefore needs an explicit orientation layer that tells the agent where it is and how to inspect the environment now.
+
+A minimal candidate boot/orientation contract is:
+
+```text
+1. identify the current harness / runtime
+2. enumerate current capabilities and Skills
+3. load workspace / project guidance
+4. expose diagnostics for missing or broken capabilities
+5. distinguish configured, exposed, loaded, invoked, completed, and verified
+```
+
+Two current field specimens make the hypothesis concrete.
+
+**MarcoPolo — negative discoverability specimen.** The official MarcoPolo plugin describes `/workspace/RULES.md` as workspace-wide long-term memory, instructs relevant Skills to read it before connection work, and permits agent-assisted updates. Yet in repeated real onboarding, independently connected agents did not surface this mechanism until later documentation/source archaeology. The feature existed and was documented, but the boot path did not reliably make it salient. See [MarcoPolo discoverability issue #20](https://github.com/immersa-co/marcopolo-plugin/issues/20) and the local [`RULES.md` research line](https://github.com/TeaShaman-cyber/marcopolo-cookbook/issues/27).
+
+**Hermes Agent — positive but incomplete comparison.** Current Hermes documentation says a compact `skills_list()` is loaded at session start and full Skills are disclosed progressively when needed. Hermes also ships a `hermes-agent` Skill about the harness itself, with an explicit instruction to consult current docs/source rather than infer missing features from memory, and exposes `hermes doctor` as a runtime diagnostic surface. These mechanisms reduce dependence on stale model knowledge without requiring every feature document to live in the base prompt. See [Working with Skills](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/guides/work-with-skills.md), the bundled [Hermes Agent Skill](https://github.com/NousResearch/hermes-agent/blob/main/skills/autonomous-ai-agents/hermes-agent/SKILL.md), and [installation/doctor guidance](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/getting-started/installation.md).
+
+The comparison does **not** establish that Hermes has solved onboarding or that MarcoPolo should copy its implementation. It supports the narrower research claim:
+
+```text
+model weights provide general competence
+harness orientation provides current local affordances
+```
+
+A good harness should therefore make its own capability map discoverable at runtime, rather than assuming the model was trained on the current product generation. This remains a research observation, not a promoted Theseus methodology invariant.
+
+## 9. Provenance note
 
 This document is a compact public synthesis. The private Session Search corpus remains evidence for the conversation-level reconstruction, while public GitHub issues and PRs remain the preferred durable references for the engineering contracts that were promoted from those discussions.
 
