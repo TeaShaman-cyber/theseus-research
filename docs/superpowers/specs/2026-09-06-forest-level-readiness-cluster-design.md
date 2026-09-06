@@ -45,7 +45,7 @@ Only the currently interacting cluster is modeled:
 - `N` — Needle integration canary;
 - `A` — accepted baseline(s) used to interpret candidates.
 
-`A` is a role, not one universal SHA.
+`A` is a role, not one universal SHA. Every reviewed transition must bind the exact baseline identity it depends on; a moving or ambiguous baseline is a `HOLD`.
 
 Out of scope:
 
@@ -68,6 +68,7 @@ The source/state is required to interpret a proposed step.
 ```text
 N DEPENDS_ON C
 N DEPENDS_ON M
+N DEPENDS_ON A
 ```
 
 Dependency is not authority.
@@ -92,7 +93,7 @@ C CAN_INFLUENCE N
 M CAN_INFLUENCE N
 ```
 
-This relation exposes confounders and feedback loops.
+This relation exposes confounders and feedback loops. If the accepted baseline materially changes execution or evaluation, record `A CAN_INFLUENCE N`; otherwise `N DEPENDS_ON A` is sufficient to mark the baseline as an interpretive input.
 
 ### `GRANTS_AUTHORITY`
 
@@ -135,6 +136,7 @@ Important directions:
 ```text
 C --CAN_INFLUENCE------> N
 M --CAN_INFLUENCE------> N
+N --DEPENDS_ON----------> A
 N --PROVIDES_EVIDENCE--> G
 G + human acceptance --> A
 
@@ -167,6 +169,20 @@ candidate
 ```
 
 Therefore evidence-to-authority promotion remains a separate governance event with explicit human acceptance.
+
+### Measurement provenance check
+
+The four relation types stay unchanged. For any experiment transition, the review input must also name three provenance fields:
+
+```text
+measurement_definition_source
+evaluator_source
+control_or_baseline_source
+```
+
+These are attributes of the reviewed transition, not new graph nodes or authority. If the measured candidate supplies its own success criterion or evaluator and no independent control makes the intended claim interpretable, the transition is `BLOCKED`. If any source is unknown, the transition is at least `HOLD`.
+
+The exact accepted baseline identity must be pinned for the transition. If baseline content changes during evaluation, or incorporates prior candidate results in a way that affects interpretation, record that dependency/influence explicitly and reassess before drawing the intended claim.
 
 ## 7. Readiness states
 
@@ -250,138 +266,41 @@ promote a canary result into accepted guidance
 -> forest-level check
 ```
 
-## 10. Current-cluster snapshot
+## 10. Candidate-methodology and snapshot boundary
 
-This dated snapshot validates the model. It is **not a registry or source of authority**.
+This spec is **candidate methodology/provenance**, not accepted Theseus methodology. Accepted lessons require a separate human promotion decision into both `docs/methodology.md` and `docs/methodology.ru.md`, preserving semantic parity. Reviewing or merging this spec alone grants no methodological authority.
 
-Snapshot date: **2026-09-06**.
+The snapshot below is a dated derived view, not a registry or policy. Source Issues, PRs, exact review artifacts, commits, receipts, and accepted methodology remain authoritative in their own scopes.
 
-### G — governance candidate
+Snapshot assembled at: **2026-09-06T09:32:43Z**.
 
-`TeaShaman-cyber/theseus-research#8`  
-Observed head: `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`
+## 11. Current-cluster snapshot
 
-State for treating this candidate as settled cross-project authority: **HOLD**.
+- **G — HOLD** for treating `theseus-research#8@4ebaae08fa15c4c7e77b1db7879186b7d3d78056` as settled cross-project authority. Evidence: <https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132724>. The review still questions exact human-acceptance verification. Suggested next check: finish governance review, then rebuild this derived state.
 
-Reason:
+- **C — HOLD** for using `marcopolo-cookbook#25@bd3c6d70e8c7522a6d91c0ad1921624dfcd29c59` as a frozen canary input. Exact-head evidence: <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/25#discussion_r3943399561>, <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/25#discussion_r3943399564>, <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/25#discussion_r3943399568>, <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/25#discussion_r3943399571>. These findings can change compiled context/classification/budget behavior. Suggested next check: bounded fixes + full gate + exact-head review.
 
-- design remains unmerged;
-- fresh review still questions exact human-acceptance verification and invalidation/discovery behavior.
+- **M — HOLD** for using `marcopolo-cookbook#20@05bde60d5571b15103d3e0830073e0c4bd18b5d3` as a frozen canary input. Exact-head evidence: <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/20#discussion_r3943264425>, <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/20#discussion_r3943264427>. These findings affect credential admission and canonical persistence/readback. Suggested next check: resolve them, verify exact head, then rebuild this state.
 
-Only allowed next action:
+- **N — HOLD** for executing `theseus-needle-lab#46`. Source: <https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/46>, whose state remains `EXPERIMENT PROPOSED / DESIGN ONLY / IMPLEMENTATION NOT RUN`. `N DEPENDS_ON C`, `N DEPENDS_ON M`, and `N DEPENDS_ON` an exact accepted baseline `A`; the review must also pin `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`. Suggested next check: freeze those inputs only after C and M become suitable immutable candidates.
 
-```text
-finish/review the governance contract itself;
-do not treat candidate design as active authority.
-```
+- **N -> A automatic promotion — BLOCKED.** `N PROVIDES_EVIDENCE_FOR C/M` is valid; `N GRANTS_AUTHORITY TO C/M` is not valid without separate governance + explicit human acceptance. The existing authority boundary creates this block, not this snapshot. Suggested next check: retain the canary result as evidence and use the accepted promotion process.
 
-### C — cookbook/query-router candidate
-
-`TeaShaman-cyber/marcopolo-cookbook#25`  
-Observed head: `bd3c6d70e8c7522a6d91c0ad1921624dfcd29c59`
-
-State for using C as a frozen canary input: **HOLD**.
-
-Reason:
-
-- fresh review still has bounded correctness findings affecting exact compiled context/classification/budget behavior.
-
-Only allowed next action:
-
-```text
-close bounded review findings;
-run full gate;
-request exact-head review;
-then reassess.
-```
-
-### M — memory-provider candidate
-
-`TeaShaman-cyber/marcopolo-cookbook#20`  
-Observed head: `05bde60d5571b15103d3e0830073e0c4bd18b5d3`
-
-State for using M as a frozen canary input: **HOLD**.
-
-Reason:
-
-- fresh review still has admission/persistence findings that can alter what canonical bytes are accepted, retained, or reconstructed.
-
-Only allowed next action:
-
-```text
-close bounded adapter-contract findings;
-verify exact-head behavior;
-then reassess.
-```
-
-### N — Needle integration canary
-
-`TeaShaman-cyber/theseus-needle-lab#46`
-
-State for execution: **HOLD**.
-
-Reason:
-
-- C and M are not frozen inputs;
-- the exact Needle runtime revision is not yet selected;
-- exact context injection/rendered prompt identity is not yet frozen well enough to exclude representation confounding.
-
-Only allowed next action:
-
-```text
-refine/freeze experiment inputs and measurement contract only;
-do not execute A/B/C/D yet.
-```
-
-### N -> A automatic promotion
-
-Proposed transition:
-
-```text
-Needle canary result
--> automatic accepted cookbook or memory authority
-```
-
-State: **BLOCKED**.
-
-Reason:
-
-```text
-N PROVIDES_EVIDENCE_FOR C/M  = valid
-N GRANTS_AUTHORITY TO C/M    = invalid
-```
-
-Only allowed next action:
-
-```text
-none under v0.1;
-retain canary output as evidence;
-use separate governance + explicit human acceptance for promotion.
-```
-
-## 11. Snapshot table
-
-| Proposed transition | State | Immediate reason | Only allowed next action |
-|---|---|---|---|
-| Use G candidate as settled authority | HOLD | parent authority contract still under review | finish governance review |
-| Use C as frozen canary input | HOLD | relevant router findings remain | bounded fixes + exact-head review |
-| Use M as frozen canary input | HOLD | relevant adapter findings remain | bounded fixes + exact-head review |
-| Execute N with C + M | HOLD | moving/unfrozen dependencies and input contract | freeze inputs/measurement only |
-| Promote N directly into A | BLOCKED | evidence cannot grant authority | separate governance + human acceptance |
-
-Linked issues, PRs, commits, reviews, and receipts remain source state. This table is a rebuildable view.
+These are derived claims tied to the cited evidence and observation time. They do not issue directives.
 
 ## 12. Decision protocol
 
+
 For a proposed cross-project step:
 
-1. name the exact transition;
-2. identify `DEPENDS_ON`, `CAN_INFLUENCE`, and `PROVIDES_EVIDENCE_FOR` relations;
-3. check for any implicit `GRANTS_AUTHORITY` shortcut;
-4. apply STOP-1 through STOP-6;
-5. return `SAFE`, `HOLD`, or `BLOCKED` with reasons;
-6. for `HOLD`, name the condition that triggers reassessment;
-7. for `BLOCKED`, change the route/design before reassessment.
+1. name the exact transition and observation time;
+2. pin exact candidate identities, exact accepted baseline `A`, and the source evidence used for the derived claim;
+3. identify `DEPENDS_ON`, `CAN_INFLUENCE`, and `PROVIDES_EVIDENCE_FOR` relations;
+4. record `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`;
+5. check for any implicit `GRANTS_AUTHORITY` shortcut;
+6. apply STOP-1 through STOP-6;
+7. return a derived `SAFE`, `HOLD`, or `BLOCKED` assessment with reasons;
+8. for `HOLD`, name a non-binding reassessment condition; for `BLOCKED`, identify the existing authority/contract that makes the route invalid.
 
 v0.1 output stays prose or a small review table. No machine-readable schema is required.
 
@@ -391,7 +310,7 @@ v0.1 output stays prose or a small review table. No machine-readable schema is r
 A local component can be healthy while the next cross-project transition remains unsafe or uninterpretable.
 
 **What changes?**  
-Only the review lens for boundary-crossing steps: four relation meanings, six stop conditions, three readiness states.
+Only the review lens for boundary-crossing steps: four relation meanings, three measurement-provenance fields, six stop conditions, and three readiness states. No new authority source is introduced.
 
 **What stays fixed?**  
 GitHub issues/PRs/commits/reviews remain source state; project-local tests and review gates remain unchanged.
@@ -448,8 +367,9 @@ and stop.
 
 1. **Start with one cluster.** The goal is to test the lens, not build a Theseus ontology.
 2. **Source state stays where it lives.** Readiness snapshots are rebuildable views, not authority.
-3. **No automatic authority.** Evidence informs promotion; governance + explicit human acceptance changes baseline authority.
-4. **No automation in v0.1.** First prove better cross-project reasoning.
+3. **Candidate methodology stays candidate.** Accepted lessons are promoted separately into both `docs/methodology.md` and `docs/methodology.ru.md`.
+4. **No automatic authority.** Evidence informs promotion; governance + explicit human acceptance changes baseline authority.
+5. **No automation in v0.1.** First prove better cross-project reasoning.
 
 ## 17. Review questions
 
