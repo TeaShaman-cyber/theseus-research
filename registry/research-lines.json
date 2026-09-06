@@ -1,0 +1,107 @@
+{
+  "schema_version": "theseus-research-lines-v1",
+  "managed_labels": [
+    "kind:research",
+    "kind:engineering",
+    "kind:operations",
+    "scope:cross-project",
+    "evidence:required"
+  ],
+  "lines": [
+    {
+      "id": "theseus-research",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-research",
+      "role": {
+        "en": "Program contract, methodology, and research map",
+        "ru": "Контракт программы, методология и карта исследований"
+      },
+      "status": "active-root",
+      "topics": ["theseus", "theseus-research-line", "research-program"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-public-observatory",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-public-observatory",
+      "role": {
+        "en": "Public-data observation and reproducible verification experiments",
+        "ru": "Наблюдение за публичными данными и воспроизводимые эксперименты по верификации"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "observability"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-needle-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-needle-lab",
+      "role": {
+        "en": "Observable and reproducible Needle learning experiments",
+        "ru": "Наблюдаемые и воспроизводимые эксперименты по обучению Needle"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "needle"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-memory-provider-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-memory-provider-lab",
+      "role": {
+        "en": "Automatic memory-provider lifecycle, recall/retain semantics, and verifiable provider contracts",
+        "ru": "Автоматический жизненный цикл провайдера памяти, семантика recall/retain и проверяемые контракты провайдеров"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "memory"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-model-usage-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-model-usage-lab",
+      "role": {
+        "en": "Observable model usage, provider subscription windows, and budget-aware agent routing",
+        "ru": "Наблюдаемое использование моделей, окна провайдерских подписок и маршрутизация агентов с учётом бюджета"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "model-routing"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-session-search-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-session-search-lab",
+      "role": {
+        "en": "Verifiable session capture, portable historical search artifacts, and browser-independent session search",
+        "ru": "Проверяемый захват сессий, переносимые артефакты исторического поиска и независимый от браузера поиск по сессиям"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "session-search"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-tech-review-graph",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-tech-review-graph",
+      "role": {
+        "en": "Theseus KnowledgeOps and informational CI/CD for replaceable research and memory modules",
+        "ru": "Theseus KnowledgeOps и информационный CI/CD для заменяемых исследовательских модулей и модулей памяти"
+      },
+      "status": "active",
+      "topics": ["theseus", "theseus-research-line", "knowledgeops"],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "sonar",
+      "visibility": "private-incubation",
+      "role": {
+        "en": "Experimental continuity and retrieval research line; implementation remains private",
+        "ru": "Экспериментальное направление по непрерывности и извлечению контекста; реализация остаётся приватной"
+      },
+      "status": "private-incubation",
+      "topics": [],
+      "release_policy": "none"
+    }
+  ]
+}

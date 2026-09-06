@@ -1,0 +1,51 @@
+name: Registry Doctor
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  registry-doctor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Unit tests
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+
+      - name: Validate registry contract
+        run: |
+          python3 tools/check_registry.py validate
+          python3 tools/check_registry.py render --check
+
+      - name: Run registry doctor
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          report="$RUNNER_TEMP/registry-doctor.json"
+          set +e
+          python3 tools/check_registry.py doctor \
+            --owner TeaShaman-cyber \
+            --json-output "$report"
+          code=$?
+          set -e
+
+          {
+            echo '## Registry Doctor'
+            echo
+            echo '```json'
+            cat "$report"
+            echo '```'
+            echo
+            echo "exit_code=$code"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          cat "$report"
+          exit "$code"
