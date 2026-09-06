@@ -172,7 +172,7 @@ Therefore evidence-to-authority promotion remains a separate governance event wi
 
 ### Measurement provenance check
 
-The four relation types stay unchanged. For any experiment transition, the review input must also name three provenance fields:
+The four relation types stay unchanged. For any experiment transition, the review input must also pin three provenance artifacts by immutable revision or content digest:
 
 ```text
 measurement_definition_source
@@ -180,7 +180,7 @@ evaluator_source
 control_or_baseline_source
 ```
 
-These are attributes of the reviewed transition, not new graph nodes or authority. If the measured candidate supplies its own success criterion or evaluator and no independent control makes the intended claim interpretable, the transition is `BLOCKED`. If any source is unknown, the transition is at least `HOLD`.
+These are attributes of the reviewed transition, not new graph nodes or authority. A mutable branch name, URL, or unversioned label is insufficient provenance. If the measured candidate supplies its own success criterion or evaluator and no independent control makes the intended claim interpretable, the transition is `BLOCKED`. If any artifact identity is unknown, the transition is at least `HOLD`.
 
 The exact accepted baseline identity must be pinned for the transition. If baseline content changes during evaluation, or incorporates prior candidate results in a way that affects interpretation, record that dependency/influence explicitly and reassess before drawing the intended claim.
 
@@ -282,9 +282,9 @@ Snapshot assembled at: **2026-09-06T09:32:43Z**.
 
 - **M — HOLD** for using `marcopolo-cookbook#20@05bde60d5571b15103d3e0830073e0c4bd18b5d3` as a frozen canary input. Exact-head evidence: <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/20#discussion_r3943264425>, <https://github.com/TeaShaman-cyber/marcopolo-cookbook/pull/20#discussion_r3943264427>. These findings affect credential admission and canonical persistence/readback. Suggested next check: resolve them, verify exact head, then rebuild this state.
 
-- **N — HOLD** for executing `theseus-needle-lab#46`. Source: <https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/46>, whose state remains `EXPERIMENT PROPOSED / DESIGN ONLY / IMPLEMENTATION NOT RUN`. `N DEPENDS_ON C`, `N DEPENDS_ON M`, and `N DEPENDS_ON` an exact accepted baseline `A`; the review must also pin `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`. Suggested next check: freeze those inputs only after C and M become suitable immutable candidates.
+- **N — HOLD** for executing `theseus-needle-lab#46`. Source: <https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/46>, whose state remains `EXPERIMENT PROPOSED / DESIGN ONLY / IMPLEMENTATION NOT RUN`. `N DEPENDS_ON C`, `N DEPENDS_ON M`, and `N DEPENDS_ON` an exact accepted baseline `A`; the review must also pin immutable revisions or digests for `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`. Suggested next check: freeze those inputs only after C and M become suitable immutable candidates.
 
-- **N -> A automatic promotion — BLOCKED.** `N PROVIDES_EVIDENCE_FOR C/M` is valid; `N GRANTS_AUTHORITY TO C/M` is not valid without separate governance + explicit human acceptance. The existing authority boundary creates this block, not this snapshot. Suggested next check: retain the canary result as evidence and use the accepted promotion process.
+- **N -> A automatic promotion — candidate assessment: BLOCKED.** Under this candidate model, `N PROVIDES_EVIDENCE_FOR C/M` is valid while direct `N GRANTS_AUTHORITY TO C/M` collapses evidence into authority. No accepted authority artifact governing this exact transition is cited here, so this `BLOCKED` status is non-binding candidate methodology, not an operational prohibition. Suggested next check: retain canary output as evidence; if this boundary is accepted, promote it separately into the bilingual methodology before treating it as authority.
 
 These are derived claims tied to the cited evidence and observation time. They do not issue directives.
 
@@ -296,11 +296,11 @@ For a proposed cross-project step:
 1. name the exact transition and observation time;
 2. pin exact candidate identities, exact accepted baseline `A`, and the source evidence used for the derived claim;
 3. identify `DEPENDS_ON`, `CAN_INFLUENCE`, and `PROVIDES_EVIDENCE_FOR` relations;
-4. record `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`;
+4. pin immutable revisions or digests for `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`;
 5. check for any implicit `GRANTS_AUTHORITY` shortcut;
 6. apply STOP-1 through STOP-6;
 7. return a derived `SAFE`, `HOLD`, or `BLOCKED` assessment with reasons;
-8. for `HOLD`, name a non-binding reassessment condition; for `BLOCKED`, identify the existing authority/contract that makes the route invalid.
+8. for `HOLD`, name a non-binding reassessment condition; for `BLOCKED`, cite the accepted authority/contract that makes the route invalid, or explicitly label the result a non-binding candidate assessment when no such authority exists.
 
 v0.1 output stays prose or a small review table. No machine-readable schema is required.
 
