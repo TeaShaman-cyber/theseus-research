@@ -1,6 +1,6 @@
 # Theseus Methodology: Sadhana of Engineering
 
-**Status:** explanatory and operational companion to the `0.3-draft` program contract
+**Status:** explanatory and operational companion to the `1.0` program contract
 
 **Languages:** English (international reference) · [Русский перевод](methodology.ru.md)
 
