@@ -272,7 +272,79 @@ harness orientation provides current local affordances
 
 A good harness should therefore make its own capability map discoverable at runtime, rather than assuming the model was trained on the current product generation. This remains a research observation, not a promoted Theseus methodology invariant.
 
-## 9. Provenance note
+## 9. ChatGPT project boot and degraded fallback layers
+
+A 2026-09-06 field study adds a third harness specimen: ChatGPT Projects now expose a project-scoped instruction surface that applies only inside the project and overrides global Custom Instructions. This makes Project Instructions a plausible **pre-tool boot layer**: a small contract can tell the agent which operational environment to enter before the environment-specific `RULES.md`, Skills, or cookbook are even discoverable.
+
+Current OpenAI documentation also distinguishes reusable Skills from Plugins. Skills are reusable workflows with instructions, examples, supporting resources, and code; ChatGPT can automatically use installed Skills when helpful. First-party ChatGPT Skills are currently documented for eligible Business, Enterprise, Healthcare, and Edu users rather than as a general Personal/Plus surface. Plugins, however, are the cross-plan discovery container and may package apps, Skills, or both; some plugins can be Skills-only.
+
+This suggests a layered boot model rather than another large global prompt:
+
+```text
+ChatGPT Project Instructions
+        |  native, project-scoped survival kernel
+        v
+primary operational harness (for example MarcoPolo)
+        |
+        v
+workspace RULES / Skills / cookbook
+        |
+        v
+runtime action + verification
+```
+
+The earlier `thin-router-v5` project contract should therefore be treated as an overgrown precursor rather than discarded. Its durable invariants remain useful -- currentness, authority, runtime-scoped capability, permission, verification, bounded fallback, persistence/readback, and runtime boundaries -- while subsystem implementations such as Sonar algorithms, Hot Layer details, Registry cards, provider bindings, and formal verifier procedures should move below the project boot layer.
+
+A candidate `thin-router-v6` principle is:
+
+```text
+Project Instructions know where to go for current operational knowledge;
+they do not try to contain all current operational knowledge themselves.
+```
+
+### Optional mirrored fallback: Sleuth Skills
+
+A second field observation is the current ChatGPT Plugin Directory listing for **Sleuth Skills**. Its public listing describes a read-only connection to a personal `skills.new` vault containing Skills, rules, agents, and slash commands, with on-demand discovery and loading. Sleuth's public documentation describes versioned distribution of agent assets and an OAuth-backed MCP service for AI clients.
+
+This is a candidate **read-only mirror**, not a new authority layer. Its useful failure domain is narrower than "fallback for everything":
+
+```text
+MarcoPolo unavailable + ChatGPT plugin layer healthy
+    -> Sleuth mirror may provide reviewed bootstrap / procedural guidance
+
+GitHub unavailable + local MarcoPolo workspace healthy
+    -> runtime should continue from verified local projections; GitHub is not required for boot
+
+OpenAI plugin layer unavailable
+    -> MarcoPolo plugin and Sleuth plugin may both be unavailable
+    -> fall back only to the native Project Instructions survival kernel and project-native evidence
+```
+
+Therefore a resilient design should avoid common-mode dependency on external plugins for the minimum safe behavior. The native project contract must remain sufficient to:
+
+- identify degraded routing explicitly;
+- avoid claiming live workspace or repository state without evidence;
+- preserve authority and permission boundaries;
+- use built-in retrieval only as a disclosed fallback when allowed;
+- refuse to promote mirrored instructions into write authority;
+- identify the mirror revision/hash when provenance matters.
+
+The Sleuth candidate also introduces a separate trust/privacy boundary: the ChatGPT plugin listing says relevant chat/memory context may be shared with the app when used, and Sleuth documents an OAuth-backed MCP exchange. Any experiment should therefore use a small non-secret bootstrap/Skill mirror first, not credentials, private topology, or canonical mutable state.
+
+The research question is not "replace MarcoPolo with Sleuth". It is whether an independently hosted, read-only procedural mirror can reduce continuity loss when one operational harness is unavailable without creating hidden authority or common-mode failure.
+
+Public references checked 2026-09-06:
+
+- [OpenAI: Projects in ChatGPT](https://help.openai.com/en/articles/10169521)
+- [OpenAI: Skills in ChatGPT](https://help.openai.com/en/articles/20001066)
+- [OpenAI: Plugins in ChatGPT and Codex](https://help.openai.com/en/articles/20001256-plugins-in-chatgpt-and-codex)
+- [ChatGPT Plugin Directory: Sleuth Skills](https://chatgpt.com/plugins/plugin_asdk_app_6a058c8ecc248191b7d013eb03fd2727)
+- [Sleuth Skills distribution](https://skills.new/product/distribution/)
+- [Sleuth privacy / MCP data flow](https://skills.new/privacy/)
+
+This remains a research observation, not a promoted Theseus methodology invariant. A controlled fresh-chat canary is required before treating Project Instructions or a mirrored Skill as reliably applied routing state.
+
+## 10. Provenance note
 
 This document is a compact public synthesis. The private Session Search corpus remains evidence for the conversation-level reconstruction, while public GitHub issues and PRs remain the preferred durable references for the engineering contracts that were promoted from those discussions.
 
