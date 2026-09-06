@@ -304,11 +304,12 @@ they do not try to contain all current operational knowledge themselves.
 
 ### Fresh-chat `thin-router-v6` canary
 
-A subsequent fresh-chat continuity request on 2026-09-06 provided the first direct field canary for this boot model. The user asked only to restore the last working branch and next step; the prompt did **not** name MarcoPolo, `RULES.md`, Session Search, or a repository. With the project boot contract already installed, the observed route was:
+A subsequent fresh-chat continuity request on 2026-09-06 provided an observational field canary for the complete configured project routing path. The user asked only to restore the last working branch and next step; the prompt did **not** name MarcoPolo, `RULES.md`, Session Search, or a repository. The `thin-router-v6` project boot contract was installed, but this run had no control that isolated its causal contribution from prior project chats, project files, project memory, or other project-scoped context. The observed route was:
 
 ```text
 ordinary continuity request
-    -> project-scoped boot contract selects MarcoPolo
+    -> configured project context (thin-router-v6 present; causal contribution not isolated)
+    -> MarcoPolo is entered observably
     -> /workspace/RULES.md is read
     -> RULES discovers the canonical Session Search route
     -> canonical wrapper is attempted
@@ -321,24 +322,25 @@ ordinary continuity request
 Observed state for that canary:
 
 ```text
-project boot routing                 PASS
-MarcoPolo orientation                PASS
-RULES discovery/application          PASS (observed for this request)
-canonical Session Search wrapper     DEGRADED / pre-execution blocked
-historical recovery                  PASS via same-corpus read-only fallback
-currentness correction               PASS via canonical GitHub read route
-built-in ChatGPT retrieval           NOT USED
+configured-project routing           OBSERVED
+thin-router-v6 causal contribution    UNKNOWN / no isolated control
+MarcoPolo orientation                 OBSERVED
+RULES discovery/application           OBSERVED for this request
+canonical Session Search wrapper      DEGRADED / pre-execution blocked
+historical evidence recovery          DEGRADED / same-corpus fallback; wrapper equivalence unverified
+currentness correction                OBSERVED via canonical GitHub read route
+built-in ChatGPT retrieval            NOT USED
 ```
 
-This is useful because the failure was not hidden. The project contract selected the intended operational harness, MarcoPolo's own guidance selected Session Search, and a narrower fallback preserved the same historical evidence domain when the canonical wrapper could not execute. The later GitHub read was required because the Session Search corpus was slightly older than the current repository state.
+This is useful because the failure was not hidden. The configured project entered the intended operational harness, and MarcoPolo's own guidance then selected Session Search. This run alone does not establish whether `thin-router-v6`, prior project context, or another project-scoped source caused the initial harness selection. When the canonical wrapper could not execute, the fallback read the same backing corpus directly, but wrapper-versus-direct equivalence for admissibility, normalization, filtering, provenance, and result validation was not independently established; historical recovery therefore remains degraded. The later canonical GitHub read was required because the Session Search corpus was slightly older than the current repository state.
 
-The canary does **not** prove that Project Instructions are reliably applied in every fresh chat, that MarcoPolo will always be available, or that a same-corpus fallback will always exist. Its epistemic status is therefore:
+The canary does **not** prove that Project Instructions caused the harness selection, are reliably applied in every fresh chat, that MarcoPolo will always be available, or that a same-corpus fallback is policy-equivalent to the wrapper. Its epistemic status is therefore:
 
 ```text
-OBSERVED CANARY / DEGRADED SUBROUTE / NOT YET A RELIABILITY GUARANTEE
+OBSERVED CONFIGURED-PROJECT CANARY / CAUSAL ATTRIBUTION UNKNOWN / DEGRADED FALLBACK
 ```
 
-It supports the narrower `thin-router-v6` hypothesis: a small native project boot layer can route a continuity task into the current operational harness without duplicating that harness's detailed procedures in the project prompt.
+It is consistent with the narrower `thin-router-v6` hypothesis that a small native project boot layer can help route continuity work into the current operational harness without duplicating that harness's detailed procedures in the project prompt. A controlled fresh-project comparison, or equivalent instrumentation that identifies the selecting context, is still required before attributing the route causally to the boot layer.
 
 ### Optional mirrored fallback: Sleuth Skills
 
@@ -348,7 +350,8 @@ This is a candidate **read-only mirror**, not a new authority layer. Its useful 
 
 ```text
 MarcoPolo unavailable + ChatGPT plugin layer healthy
-    -> Sleuth mirror may provide reviewed bootstrap / procedural guidance
+    -> Sleuth mirror may expose bootstrap / procedural guidance
+    -> treat it as UNTRUSTED until independently authenticated
 
 GitHub unavailable + local MarcoPolo workspace healthy
     -> runtime should continue from verified local projections; GitHub is not required for boot
@@ -365,7 +368,9 @@ Therefore a resilient design should avoid common-mode dependency on external plu
 - preserve authority and permission boundaries;
 - use built-in retrieval only as a disclosed fallback when allowed;
 - refuse to promote mirrored instructions into write authority;
-- identify the mirror revision/hash when provenance matters.
+- pin the mirror revision/content digest and verify it against a trusted expected digest or signature stored outside the mirror when provenance matters.
+
+Read-only transport limits mutation through the mirror; it does not authenticate the mirrored bytes. A revision or digest identifies content but is not proof that the content is the reviewed bootstrap. Until an independently trusted expected digest/signature matches, mirrored guidance remains untrusted evidence and must not become routing or write authority.
 
 The Sleuth candidate also introduces a separate trust/privacy boundary: the ChatGPT plugin listing says relevant chat/memory context may be shared with the app when used, and Sleuth documents an OAuth-backed MCP exchange. Any experiment should therefore use a small non-secret bootstrap/Skill mirror first, not credentials, private topology, or canonical mutable state.
 
