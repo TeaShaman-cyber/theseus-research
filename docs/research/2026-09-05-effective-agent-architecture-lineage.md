@@ -302,6 +302,44 @@ Project Instructions know where to go for current operational knowledge;
 they do not try to contain all current operational knowledge themselves.
 ```
 
+### Fresh-chat `thin-router-v6` canary
+
+A subsequent fresh-chat continuity request on 2026-09-06 provided the first direct field canary for this boot model. The user asked only to restore the last working branch and next step; the prompt did **not** name MarcoPolo, `RULES.md`, Session Search, or a repository. With the project boot contract already installed, the observed route was:
+
+```text
+ordinary continuity request
+    -> project-scoped boot contract selects MarcoPolo
+    -> /workspace/RULES.md is read
+    -> RULES discovers the canonical Session Search route
+    -> canonical wrapper is attempted
+    -> wrapper is blocked before execution by the platform
+    -> bounded read-only fallback queries the same Session Search corpus directly
+    -> live GitHub read corrects historical staleness
+    -> continuity is reconstructed
+```
+
+Observed state for that canary:
+
+```text
+project boot routing                 PASS
+MarcoPolo orientation                PASS
+RULES discovery/application          PASS (observed for this request)
+canonical Session Search wrapper     DEGRADED / pre-execution blocked
+historical recovery                  PASS via same-corpus read-only fallback
+currentness correction               PASS via canonical GitHub read route
+built-in ChatGPT retrieval           NOT USED
+```
+
+This is useful because the failure was not hidden. The project contract selected the intended operational harness, MarcoPolo's own guidance selected Session Search, and a narrower fallback preserved the same historical evidence domain when the canonical wrapper could not execute. The later GitHub read was required because the Session Search corpus was slightly older than the current repository state.
+
+The canary does **not** prove that Project Instructions are reliably applied in every fresh chat, that MarcoPolo will always be available, or that a same-corpus fallback will always exist. Its epistemic status is therefore:
+
+```text
+OBSERVED CANARY / DEGRADED SUBROUTE / NOT YET A RELIABILITY GUARANTEE
+```
+
+It supports the narrower `thin-router-v6` hypothesis: a small native project boot layer can route a continuity task into the current operational harness without duplicating that harness's detailed procedures in the project prompt.
+
 ### Optional mirrored fallback: Sleuth Skills
 
 A second field observation is the current ChatGPT Plugin Directory listing for **Sleuth Skills**. Its public listing describes a read-only connection to a personal `skills.new` vault containing Skills, rules, agents, and slash commands, with on-demand discovery and loading. Sleuth's public documentation describes versioned distribution of agent assets and an OAuth-backed MCP service for AI clients.
