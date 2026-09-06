@@ -284,7 +284,7 @@ Snapshot assembled at: **2026-09-06T09:32:43Z**.
 
 - **N — HOLD** for executing `theseus-needle-lab#46`. Source: <https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/46>, whose state remains `EXPERIMENT PROPOSED / DESIGN ONLY / IMPLEMENTATION NOT RUN`. `N DEPENDS_ON C`, `N DEPENDS_ON M`, and `N DEPENDS_ON` an exact accepted baseline `A`; the review must also pin immutable revisions or digests for `measurement_definition_source`, `evaluator_source`, and `control_or_baseline_source`. Suggested next check: freeze those inputs only after C and M become suitable immutable candidates.
 
-- **N -> A automatic promotion — candidate assessment: BLOCKED.** Under this candidate model, `N PROVIDES_EVIDENCE_FOR C/M` is valid while direct `N GRANTS_AUTHORITY TO C/M` collapses evidence into authority. No accepted authority artifact governing this exact transition is cited here, so this `BLOCKED` status is non-binding candidate methodology, not an operational prohibition. Suggested next check: retain canary output as evidence; if this boundary is accepted, promote it separately into the bilingual methodology before treating it as authority.
+- **N -> A automatic promotion — candidate assessment: BLOCKED.** Under this candidate model, `N PROVIDES_EVIDENCE_FOR C/M` is valid, but direct `N GRANTS_AUTHORITY TO A` would let experiment output change the accepted baseline without the separate `G + human acceptance -> A` promotion event. No accepted authority artifact governing this exact transition is pinned here, so this `BLOCKED` status is non-binding candidate methodology, not an operational prohibition. Suggested next check: retain canary output as evidence; if this boundary is accepted, promote it separately into the bilingual methodology before treating it as authority.
 
 These are derived claims tied to the cited evidence and observation time. They do not issue directives.
 
@@ -300,7 +300,7 @@ For a proposed cross-project step:
 5. check for any implicit `GRANTS_AUTHORITY` shortcut;
 6. apply STOP-1 through STOP-6;
 7. return a derived `SAFE`, `HOLD`, or `BLOCKED` assessment with reasons;
-8. for `HOLD`, name a non-binding reassessment condition; for `BLOCKED`, cite the accepted authority/contract that makes the route invalid, or explicitly label the result a non-binding candidate assessment when no such authority exists.
+8. for `HOLD`, name a non-binding reassessment condition; for binding `BLOCKED`, cite and pin the accepted authority/contract by immutable revision or content digest, or explicitly label the result a non-binding candidate assessment when no such pinned authority exists.
 
 v0.1 output stays prose or a small review table. No machine-readable schema is required.
 
