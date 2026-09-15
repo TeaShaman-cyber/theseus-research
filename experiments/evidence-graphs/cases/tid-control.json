@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "case_id": "tid-emulation-60-control",
+  "label": "Historical TID Millennium-problem analogy sketch",
+  "outcome_class": "failed_or_inconclusive",
+  "notes": "Frozen negative/control candidate previously identified in issue #37. Current Session Search no longer returns the historical session id, so the canonical issue checkpoint is used as the durable provenance record; this degradation is explicit rather than silently reconstructed.",
+  "sources": [
+    {"id": "session_record", "kind": "historical_record", "locator": "session-search://6e034f73-3511-4e3e-a379-397dce923f95#ordinal=1379", "note": "Coverage recorded as COMPLETE_EXPOSED_CONVERSATION when originally retrieved; heading: EMULATION 60: ЗАДАЧИ ТЫСЯЧЕЛЕТИЯ И ТЕОРИЯ МОСТА."},
+    {"id": "issue_checkpoint", "kind": "historical_record", "locator": "https://github.com/TeaShaman-cyber/theseus-research/issues/37#issuecomment-5682812644", "note": "Durable checkpoint freezing this exact control candidate before scoring."},
+    {"id": "later_audit", "kind": "historical_record", "locator": "https://github.com/TeaShaman-cyber/theseus-research/issues/37#issuecomment-5683940836", "note": "Later audit rejecting several overstrong TID/Riemann implications while retaining narrower bridge objects."}
+  ],
+  "nodes": [
+    {"id": "rh", "label": "Riemann hypothesis", "role": "problem"},
+    {"id": "icrit", "label": "I_crit approximately 0.25 as universal critical marker", "role": "analogy"},
+    {"id": "noise", "label": "1/f or critical-noise pattern", "role": "analogy"},
+    {"id": "critical_line", "label": "Critical line Re(s)=1/2", "role": "analogy"},
+    {"id": "coherence", "label": "High-coherence/attractor interpretation", "role": "analogy"},
+    {"id": "rh_claim", "label": "RH treated as supported by the shared critical pattern", "role": "consequence"},
+    {"id": "retrospective", "label": "Later audit: analogy does not establish RH", "role": "verification"}
+  ],
+  "edges": [
+    {"source": "rh", "target": "critical_line", "role": "depends_on", "evidence": "historical_record", "source_refs": ["session_record", "issue_checkpoint"]},
+    {"source": "icrit", "target": "critical_line", "role": "analogy", "evidence": "analogy_only", "source_refs": ["session_record", "issue_checkpoint"]},
+    {"source": "noise", "target": "coherence", "role": "analogy", "evidence": "analogy_only", "source_refs": ["session_record", "issue_checkpoint"]},
+    {"source": "critical_line", "target": "coherence", "role": "analogy", "evidence": "analogy_only", "source_refs": ["session_record", "issue_checkpoint"]},
+    {"source": "coherence", "target": "rh_claim", "role": "analogy", "evidence": "analogy_only", "source_refs": ["session_record", "issue_checkpoint"]},
+    {"source": "rh_claim", "target": "retrospective", "role": "verifies", "evidence": "historical_record", "source_refs": ["later_audit"]}
+  ]
+}

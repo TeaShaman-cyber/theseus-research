@@ -1,0 +1,93 @@
+{
+  "case_count": 3,
+  "experiment": "issue-37-evidence-graph-first-pass",
+  "metrics": [
+    {
+      "analogy_edge_count": 0,
+      "analogy_edge_fraction": 0.0,
+      "case_id": "flt-wiles-lean-2026",
+      "cheap_baseline": {
+        "pass": true,
+        "path_edge_indexes": [
+          0,
+          3,
+          5,
+          6
+        ],
+        "source_refs": [
+          "ddt",
+          "taylor_wiles",
+          "wiles"
+        ]
+      },
+      "distinct_edge_source_refs": 5,
+      "edge_count": 8,
+      "is_dag": true,
+      "label": "Wiles/Taylor-Wiles FLT path with 2026 Lean verification",
+      "longest_directed_path": 5,
+      "node_count": 8,
+      "outcome_class": "successful",
+      "repair_edge_count": 1,
+      "theorem_level_edge_count": 8,
+      "theorem_level_edge_fraction": 1.0,
+      "verification_edge_count": 1,
+      "weak_component_count": 1
+    },
+    {
+      "analogy_edge_count": 0,
+      "analogy_edge_fraction": 0.0,
+      "case_id": "perelman-poincare",
+      "cheap_baseline": {
+        "pass": true,
+        "path_edge_indexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "source_refs": [
+          "clay_poincare",
+          "geom_overview",
+          "morgan_tian"
+        ]
+      },
+      "distinct_edge_source_refs": 3,
+      "edge_count": 7,
+      "is_dag": true,
+      "label": "Perelman Poincare/geometrization dependency path",
+      "longest_directed_path": 7,
+      "node_count": 8,
+      "outcome_class": "successful",
+      "repair_edge_count": 0,
+      "theorem_level_edge_count": 5,
+      "theorem_level_edge_fraction": 0.7142857142857143,
+      "verification_edge_count": 1,
+      "weak_component_count": 1
+    },
+    {
+      "analogy_edge_count": 4,
+      "analogy_edge_fraction": 0.6666666666666666,
+      "case_id": "tid-emulation-60-control",
+      "cheap_baseline": {
+        "pass": false,
+        "path_edge_indexes": [],
+        "source_refs": []
+      },
+      "distinct_edge_source_refs": 3,
+      "edge_count": 6,
+      "is_dag": true,
+      "label": "Historical TID Millennium-problem analogy sketch",
+      "longest_directed_path": 4,
+      "node_count": 7,
+      "outcome_class": "failed_or_inconclusive",
+      "repair_edge_count": 0,
+      "theorem_level_edge_count": 0,
+      "theorem_level_edge_fraction": 0.0,
+      "verification_edge_count": 1,
+      "weak_component_count": 1
+    }
+  ],
+  "schema_version": "1.0"
+}

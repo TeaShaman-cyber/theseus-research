@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "case_id": "flt-wiles-lean-2026",
+  "label": "Wiles/Taylor-Wiles FLT path with 2026 Lean verification",
+  "outcome_class": "successful",
+  "notes": "High-level dependency graph only. The 2026 Prove2Me/Lean artifact is used as an independent verification layer, not as permission to label every hand-extracted edge kernel-checked.",
+  "sources": [
+    {"id": "ddt", "kind": "expert_exposition", "locator": "https://www.math.mcgill.ca/darmon/pub/Articles/Expository/05.DDT/paper.pdf", "note": "Darmon-Diamond-Taylor exposition followed by the 2026 formalization."},
+    {"id": "wiles", "kind": "primary", "locator": "https://doi.org/10.2307/2118559", "note": "Wiles, Modular elliptic curves and Fermat's Last Theorem."},
+    {"id": "taylor_wiles", "kind": "primary", "locator": "https://doi.org/10.2307/2118560", "note": "Taylor-Wiles, Ring-theoretic properties of certain Hecke algebras."},
+    {"id": "anthropic_2026", "kind": "primary", "locator": "https://www.anthropic.com/research/formalizing-fermats-last-theorem", "note": "Reports the complete Lean-checked formalization and Prove2Me DAG."},
+    {"id": "lean_artifact", "kind": "formal_artifact", "locator": "https://github.com/anthropics/fermats-last-theorem", "note": "Published Lean proof artifact."}
+  ],
+  "nodes": [
+    {"id": "counterexample", "label": "Hypothetical FLT counterexample", "role": "problem"},
+    {"id": "frey", "label": "Construct associated Frey curve", "role": "construction"},
+    {"id": "ribet", "label": "Ribet bridge: Frey curve would be non-modular", "role": "bridge_theorem"},
+    {"id": "gap_repair", "label": "Taylor-Wiles repair of modularity proof gap", "role": "repair"},
+    {"id": "modularity", "label": "Semistable elliptic curves are modular", "role": "bridge_theorem"},
+    {"id": "contradiction", "label": "Frey curve forced both modular and non-modular", "role": "reduction"},
+    {"id": "flt", "label": "Fermat's Last Theorem", "role": "consequence"},
+    {"id": "lean", "label": "Lean kernel checks complete formal proof", "role": "verification"}
+  ],
+  "edges": [
+    {"source": "counterexample", "target": "frey", "role": "constructs", "evidence": "established_theorem", "source_refs": ["ddt"]},
+    {"source": "frey", "target": "ribet", "role": "bridges", "evidence": "established_theorem", "source_refs": ["ddt"]},
+    {"source": "gap_repair", "target": "modularity", "role": "repairs", "evidence": "established_theorem", "source_refs": ["taylor_wiles"]},
+    {"source": "frey", "target": "modularity", "role": "bridges", "evidence": "established_theorem", "source_refs": ["wiles", "taylor_wiles"]},
+    {"source": "ribet", "target": "contradiction", "role": "depends_on", "evidence": "established_theorem", "source_refs": ["ddt"]},
+    {"source": "modularity", "target": "contradiction", "role": "depends_on", "evidence": "established_theorem", "source_refs": ["wiles", "taylor_wiles"]},
+    {"source": "contradiction", "target": "flt", "role": "implies", "evidence": "established_theorem", "source_refs": ["ddt", "wiles"]},
+    {"source": "flt", "target": "lean", "role": "verifies", "evidence": "kernel_checked", "source_refs": ["anthropic_2026", "lean_artifact"]}
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "case_id": "perelman-poincare",
+  "label": "Perelman Poincare/geometrization dependency path",
+  "outcome_class": "successful",
+  "notes": "High-level dependency graph grounded in Clay/Morgan-Tian expositions; it intentionally does not pretend to encode the full analytic proof.",
+  "sources": [
+    {"id": "clay_poincare", "kind": "expert_exposition", "locator": "https://www.claymath.org/millennium/poincare-conjecture/", "note": "Clay overview and links to Perelman's three papers."},
+    {"id": "morgan_tian", "kind": "expert_exposition", "locator": "https://www.claymath.org/resource/ricci-flow-and-the-poincare-conjecture/", "note": "Detailed complete proof following Perelman."},
+    {"id": "geom_overview", "kind": "expert_exposition", "locator": "https://www.claymath.org/wp-content/uploads/2022/03/cmip19.pdf", "note": "Overview of singularity, surgery, long-time behavior, and geometrization."}
+  ],
+  "nodes": [
+    {"id": "poincare", "label": "Poincare conjecture", "role": "problem"},
+    {"id": "ricci", "label": "Hamilton Ricci-flow program", "role": "reformulation"},
+    {"id": "noncollapse", "label": "Perelman length/entropy and non-collapsing", "role": "invariant"},
+    {"id": "ancient", "label": "Classification/control of ancient non-collapsed solutions", "role": "bridge_theorem"},
+    {"id": "surgery", "label": "Ricci flow with surgery exists for all positive time", "role": "construction"},
+    {"id": "extinction", "label": "Finite-time extinction for finite fundamental group", "role": "bridge_theorem"},
+    {"id": "poincare_proved", "label": "Simply connected closed 3-manifold is S^3", "role": "consequence"},
+    {"id": "detailed_check", "label": "Morgan-Tian detailed proof/exposition", "role": "verification"}
+  ],
+  "edges": [
+    {"source": "poincare", "target": "ricci", "role": "reduces_to", "evidence": "primary_exposition", "source_refs": ["clay_poincare", "morgan_tian"]},
+    {"source": "ricci", "target": "noncollapse", "role": "depends_on", "evidence": "established_theorem", "source_refs": ["morgan_tian"]},
+    {"source": "noncollapse", "target": "ancient", "role": "depends_on", "evidence": "established_theorem", "source_refs": ["morgan_tian"]},
+    {"source": "ancient", "target": "surgery", "role": "bridges", "evidence": "established_theorem", "source_refs": ["morgan_tian", "geom_overview"]},
+    {"source": "surgery", "target": "extinction", "role": "depends_on", "evidence": "established_theorem", "source_refs": ["morgan_tian"]},
+    {"source": "extinction", "target": "poincare_proved", "role": "implies", "evidence": "established_theorem", "source_refs": ["morgan_tian", "clay_poincare"]},
+    {"source": "poincare_proved", "target": "detailed_check", "role": "verifies", "evidence": "primary_exposition", "source_refs": ["morgan_tian"]}
+  ]
+}
