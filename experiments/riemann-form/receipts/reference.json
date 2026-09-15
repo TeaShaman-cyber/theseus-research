@@ -1,0 +1,84 @@
+{
+  "functional_involution": {
+    "difference": "0",
+    "one_minus_s_maps_to_reciprocal": true
+  },
+  "mobius": {
+    "critical_line_iff_unit_circle": true,
+    "difference": "(2*x - 1)/(x**2 - 2*x + y**2 + 1)",
+    "domain_note": "s != 1; denominator=(1-x)^2+y^2",
+    "map": "u=s/(1-s)"
+  },
+  "negative_control": {
+    "all_roots_real": false,
+    "charpoly": [
+      1,
+      0,
+      1
+    ],
+    "discriminant": -4,
+    "matrix": [
+      [
+        0,
+        -1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "symmetric": false
+  },
+  "schema": "riemann-form-check/v1",
+  "self_adjoint_canaries": {
+    "path_3x3": {
+      "all_roots_real": true,
+      "charpoly": [
+        1,
+        -6,
+        10,
+        -4
+      ],
+      "discriminant": 32,
+      "matrix": [
+        [
+          2,
+          1,
+          0
+        ],
+        [
+          1,
+          2,
+          1
+        ],
+        [
+          0,
+          1,
+          2
+        ]
+      ],
+      "symmetric": true
+    },
+    "swap_2x2": {
+      "all_roots_real": true,
+      "charpoly": [
+        1,
+        0,
+        -1
+      ],
+      "discriminant": 4,
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "symmetric": true
+    }
+  },
+  "status": "PASS"
+}

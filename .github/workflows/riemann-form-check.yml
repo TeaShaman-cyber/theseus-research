@@ -1,0 +1,46 @@
+name: Riemann form checks
+
+on:
+  pull_request:
+    paths:
+      - "experiments/riemann-form/**"
+      - ".github/workflows/riemann-form-check.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "experiments/riemann-form/**"
+      - ".github/workflows/riemann-form-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run tests
+        run: python -m unittest discover -s experiments/riemann-form/tests -p 'test_*.py'
+
+      - name: Generate deterministic receipt
+        run: python experiments/riemann-form/check.py --receipt "$RUNNER_TEMP/riemann-form-receipt.json"
+
+      - name: Compare with versioned reference
+        run: diff -u experiments/riemann-form/receipts/reference.json "$RUNNER_TEMP/riemann-form-receipt.json"
+
+      - name: Upload receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: riemann-form-receipt
+          path: ${{ runner.temp }}/riemann-form-receipt.json
+          if-no-files-found: error
