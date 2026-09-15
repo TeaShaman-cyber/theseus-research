@@ -1,0 +1,35 @@
+name: Evidence graph experiment
+
+on:
+  push:
+    paths:
+      - "experiments/evidence-graphs/**"
+      - ".github/workflows/evidence-graphs.yml"
+  pull_request:
+    paths:
+      - "experiments/evidence-graphs/**"
+      - ".github/workflows/evidence-graphs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python -m unittest discover -s experiments/evidence-graphs/tests -v
+      - name: Compare frozen cases
+        run: |
+          python experiments/evidence-graphs/compare.py \
+            --cases experiments/evidence-graphs/cases \
+            --receipt experiments/evidence-graphs/receipts/latest.json
+      - name: Upload receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-graph-receipt
+          path: experiments/evidence-graphs/receipts/latest.json
