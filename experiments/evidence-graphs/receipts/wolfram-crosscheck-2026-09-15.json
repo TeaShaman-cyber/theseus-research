@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "backend": "Wolfram Language",
+  "observed_date": "2026-09-15",
+  "scope": [
+    "node_count",
+    "edge_count",
+    "is_dag",
+    "weak_component_count",
+    "longest_directed_path"
+  ],
+  "cases": {
+    "flt-wiles-lean-2026": {
+      "node_count": 8,
+      "edge_count": 8,
+      "is_dag": true,
+      "weak_component_count": 1,
+      "longest_directed_path": 5
+    },
+    "perelman-poincare": {
+      "node_count": 8,
+      "edge_count": 7,
+      "is_dag": true,
+      "weak_component_count": 1,
+      "longest_directed_path": 7
+    },
+    "tid-emulation-60-control": {
+      "node_count": 7,
+      "edge_count": 6,
+      "is_dag": true,
+      "weak_component_count": 1,
+      "longest_directed_path": 4
+    }
+  },
+  "comparison_to_local_receipt": "MATCH",
+  "note": "Independent Wolfram pass was run only after the cases and preregistered features were frozen. An earlier malformed AssociationMap invocation was rejected and is not evidence. No additional post-hoc feature is used for disposition."
+}
