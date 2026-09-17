@@ -7,9 +7,23 @@ import pathlib
 def verify_case(case):
     required = case.get("claim", {}).get("required_bindings", {})
     observed = case.get("evidence", {}).get("bindings", {})
+    scope = case.get("scope", {})
+    declared_observable = scope.get("observable_bindings")
+    observable = (
+        set(required) if declared_observable is None else set(declared_observable)
+    )
     counterexamples = []
+    coverage_gaps = []
 
     for key, expected in sorted(required.items()):
+        if key not in observable:
+            coverage_gaps.append(
+                {
+                    "binding": key,
+                    "kind": "UNOBSERVABLE_BINDING",
+                }
+            )
+            continue
         if key not in observed:
             counterexamples.append(
                 {
@@ -31,11 +45,23 @@ def verify_case(case):
                 }
             )
 
+    if counterexamples:
+        scope_status = "UNSAFE"
+        disposition = "REJECT"
+    elif coverage_gaps:
+        scope_status = "UNOBSERVABLE_AT_THIS_LAYER"
+        disposition = "DEFER"
+    else:
+        scope_status = "SAFE_WITHIN_SCOPE"
+        disposition = "ACCEPT"
+
     return {
         "id": case.get("id"),
         "domain": case.get("domain"),
-        "disposition": "REJECT" if counterexamples else "ACCEPT",
+        "scope_status": scope_status,
+        "disposition": disposition,
         "counterexamples": counterexamples,
+        "coverage_gaps": coverage_gaps,
     }
 
 

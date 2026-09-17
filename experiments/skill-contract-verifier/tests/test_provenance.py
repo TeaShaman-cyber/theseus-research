@@ -44,6 +44,38 @@ class ProvenanceInvariantTests(unittest.TestCase):
             else:
                 self.assertEqual([], result["counterexamples"], case["id"])
 
+    def test_checker_marks_unrepresentable_binding_unobservable_not_safe(self):
+        checker = load_checker()
+        case = {
+            "id": "plan-layer-runtime-binding",
+            "domain": "scope-probe",
+            "claim": {"required_bindings": {"runtime_value": "ready"}},
+            "scope": {"observable_bindings": []},
+            "evidence": {"bindings": {}},
+        }
+        result = checker.verify_case(case)
+        self.assertEqual("UNOBSERVABLE_AT_THIS_LAYER", result["scope_status"])
+        self.assertEqual("DEFER", result["disposition"])
+        self.assertEqual(
+            [{"binding": "runtime_value", "kind": "UNOBSERVABLE_BINDING"}],
+            result["coverage_gaps"],
+        )
+
+    def test_observable_but_missing_binding_is_unsafe(self):
+        checker = load_checker()
+        case = {
+            "id": "plan-layer-missing-binding",
+            "domain": "scope-probe",
+            "claim": {"required_bindings": {"runtime_value": "ready"}},
+            "scope": {"observable_bindings": ["runtime_value"]},
+            "evidence": {"bindings": {}},
+        }
+        result = checker.verify_case(case)
+        self.assertEqual("UNSAFE", result["scope_status"])
+        self.assertEqual("REJECT", result["disposition"])
+        self.assertEqual([], result["coverage_gaps"])
+        self.assertEqual("MISSING_BINDING", result["counterexamples"][0]["kind"])
+
     def test_checker_does_not_receive_human_verdicts(self):
         checker = load_checker()
         self.assertNotIn("verdict", checker.verify_case.__code__.co_names)
