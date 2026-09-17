@@ -1,0 +1,10 @@
+{
+  "repo-search-db-artifact-bad": "REJECT",
+  "repo-search-db-artifact-fixed": "ACCEPT",
+  "session-search-membership-bad": "REJECT",
+  "session-search-membership-fixed": "ACCEPT",
+  "needle-experiment-sha-bad": "REJECT",
+  "needle-experiment-sha-fixed": "ACCEPT",
+  "memory-provider-version-bad": "REJECT",
+  "memory-provider-version-fixed": "ACCEPT"
+}

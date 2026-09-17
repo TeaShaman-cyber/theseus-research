@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "invariant": "Every evidence object used to establish a claim must preserve each exact identity/provenance binding required by that claim.",
+  "cases": [
+    {
+      "id": "repo-search-db-artifact-bad",
+      "domain": "repository-search",
+      "source": "https://github.com/TeaShaman-cyber/theseus-repo-search-lab/pull/7#discussion_r4025952964",
+      "claim": {"required_bindings": {"producer_run": "build-A"}},
+      "evidence": {"bindings": {"producer_run": "build-B"}}
+    },
+    {
+      "id": "repo-search-db-artifact-fixed",
+      "domain": "repository-search",
+      "source": "https://github.com/TeaShaman-cyber/theseus-repo-search-lab/pull/7#discussion_r4025952964",
+      "claim": {"required_bindings": {"producer_run": "build-A"}},
+      "evidence": {"bindings": {"producer_run": "build-A"}}
+    },
+    {
+      "id": "session-search-membership-bad",
+      "domain": "session-search",
+      "source": "https://github.com/TeaShaman-cyber/theseus-session-search-lab/pull/17#discussion_r3931519457",
+      "claim": {"required_bindings": {"conversation_id": "conversation-A"}},
+      "evidence": {"bindings": {}}
+    },
+    {
+      "id": "session-search-membership-fixed",
+      "domain": "session-search",
+      "source": "https://github.com/TeaShaman-cyber/theseus-session-search-lab/pull/17#discussion_r3931519457",
+      "claim": {"required_bindings": {"conversation_id": "conversation-A"}},
+      "evidence": {"bindings": {"conversation_id": "conversation-A"}}
+    },
+    {
+      "id": "needle-experiment-sha-bad",
+      "domain": "needle",
+      "source": "https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/26#issuecomment-5518778644",
+      "claim": {"required_bindings": {"experiment_commit": "e82cc7d594a619a00b05781489e336303d3f0fd9"}},
+      "evidence": {"bindings": {"experiment_commit": "launcher-main-sha"}}
+    },
+    {
+      "id": "needle-experiment-sha-fixed",
+      "domain": "needle",
+      "source": "https://github.com/TeaShaman-cyber/theseus-needle-lab/issues/26#issuecomment-5518778644",
+      "claim": {"required_bindings": {"experiment_commit": "e82cc7d594a619a00b05781489e336303d3f0fd9"}},
+      "evidence": {"bindings": {"experiment_commit": "e82cc7d594a619a00b05781489e336303d3f0fd9"}}
+    },
+    {
+      "id": "memory-provider-version-bad",
+      "domain": "memory-provider",
+      "source": "https://github.com/TeaShaman-cyber/theseus-memory-provider-lab/pull/4#discussion_r3978284118",
+      "claim": {"required_bindings": {"operation_version": 1}},
+      "evidence": {"bindings": {"operation_version": 2}}
+    },
+    {
+      "id": "memory-provider-version-fixed",
+      "domain": "memory-provider",
+      "source": "https://github.com/TeaShaman-cyber/theseus-memory-provider-lab/pull/4#discussion_r3978284118",
+      "claim": {"required_bindings": {"operation_version": 1}},
+      "evidence": {"bindings": {"operation_version": 1}}
+    }
+  ]
+}

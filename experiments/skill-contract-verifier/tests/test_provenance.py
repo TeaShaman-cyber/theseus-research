@@ -1,0 +1,54 @@
+import importlib.util
+import json
+import pathlib
+import unittest
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+CORPUS = json.loads((ROOT / "corpus" / "provenance_cases.json").read_text())
+VERDICTS = json.loads((ROOT / "corpus" / "verdicts.json").read_text())
+
+
+def load_checker():
+    path = ROOT / "verify.py"
+    spec = importlib.util.spec_from_file_location("skill_contract_verify", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ProvenanceInvariantTests(unittest.TestCase):
+    def test_frozen_corpus_has_matched_bad_fixed_pairs_across_four_domains(self):
+        ids = {case["id"] for case in CORPUS["cases"]}
+        self.assertEqual(8, len(ids))
+        self.assertEqual(
+            {"repository-search", "session-search", "needle", "memory-provider"},
+            {case["domain"] for case in CORPUS["cases"]},
+        )
+        for prefix in (
+            "repo-search-db-artifact",
+            "session-search-membership",
+            "needle-experiment-sha",
+            "memory-provider-version",
+        ):
+            self.assertIn(prefix + "-bad", ids)
+            self.assertIn(prefix + "-fixed", ids)
+
+    def test_checker_matches_separate_frozen_verdicts_and_emits_counterexamples(self):
+        checker = load_checker()
+        for case in CORPUS["cases"]:
+            result = checker.verify_case(case)
+            expected = VERDICTS[case["id"]]
+            self.assertEqual(expected, result["disposition"], case["id"])
+            if expected == "REJECT":
+                self.assertTrue(result["counterexamples"], case["id"])
+            else:
+                self.assertEqual([], result["counterexamples"], case["id"])
+
+    def test_checker_does_not_receive_human_verdicts(self):
+        checker = load_checker()
+        self.assertNotIn("verdict", checker.verify_case.__code__.co_names)
+        self.assertNotIn("VERDICTS", checker.verify_case.__code__.co_names)
+
+
+if __name__ == "__main__":
+    unittest.main()
