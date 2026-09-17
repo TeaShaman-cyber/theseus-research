@@ -8,6 +8,8 @@ import re
 
 STEP_RE = re.compile(r"^- \[[ xX]\] \*\*Step (\d+):.*\*\*$")
 UNITTEST_DISCOVER_RE = re.compile(r"(?:^|\s)python3\s+-m\s+unittest\s+discover(?:\s|$)")
+VAR_USE_RE = re.compile(r"\$(?:\{([A-Za-z_][A-Za-z0-9_]*)\}|([A-Za-z_][A-Za-z0-9_]*))")
+EXPORT_ASSIGN_RE = re.compile(r"^\s*export\s+([A-Za-z_][A-Za-z0-9_]*)=")
 
 
 def canonical_json(payload):
@@ -104,6 +106,158 @@ def extract_witnesses(block):
     return sorted(witnesses, key=lambda item: (item["span"]["start_line"], item["name"]))
 
 
+
+def workflow_yaml_blocks(lines):
+    whole_file = {"start_line": 0, "end_line": len(lines)}
+    return [
+        block
+        for block in fenced_blocks(lines, whole_file)
+        if block["language"] in {"yaml", "yml"}
+    ]
+
+
+def indentation(raw):
+    return len(raw) - len(raw.lstrip(" "))
+
+
+def parse_run_script(item_lines, item_start_line):
+    for offset, raw in enumerate(item_lines):
+        match = re.match(r"^\s*(?:-\s+)?run:\s*(.*)$", raw)
+        if not match:
+            continue
+        value = match.group(1).strip()
+        run_line = item_start_line + offset
+        if value.startswith("|") or value.startswith(">"):
+            run_indent = indentation(raw)
+            script = []
+            for child_offset, child in enumerate(item_lines[offset + 1 :], start=offset + 1):
+                if child.strip() and indentation(child) <= run_indent:
+                    break
+                if child.strip():
+                    script.append(
+                        {
+                            "text": child.lstrip(),
+                            "line": item_start_line + child_offset,
+                        }
+                    )
+            return {"span": {"start_line": run_line, "end_line": script[-1]["line"] if script else run_line}, "lines": script}
+        if value:
+            return {
+                "span": {"start_line": run_line, "end_line": run_line},
+                "lines": [{"text": value, "line": run_line}],
+            }
+        return {"span": {"start_line": run_line, "end_line": run_line}, "lines": []}
+    return None
+
+
+def parse_actions_step_groups(block):
+    rows = block["lines"]
+    groups = []
+    for steps_pos, raw in enumerate(rows):
+        match = re.match(r"^(\s*)steps:\s*$", raw)
+        if not match:
+            continue
+        steps_indent = len(match.group(1))
+        starts = []
+        list_indent = None
+        pos = steps_pos + 1
+        while pos < len(rows):
+            candidate = rows[pos]
+            if candidate.strip() and indentation(candidate) <= steps_indent:
+                break
+            item = re.match(r"^(\s*)-\s+", candidate)
+            if item and len(item.group(1)) > steps_indent:
+                current_indent = len(item.group(1))
+                if list_indent is None:
+                    list_indent = current_indent
+                if current_indent == list_indent:
+                    starts.append(pos)
+            pos += 1
+        if not starts:
+            continue
+        steps = []
+        boundary = pos
+        for index, start in enumerate(starts, start=1):
+            end = starts[index] if index < len(starts) else boundary
+            item_lines = rows[start:end]
+            global_start = block["content_start_line"] + start
+            global_end = block["content_start_line"] + end - 1
+            steps.append(
+                {
+                    "index": index,
+                    "span": {"start_line": global_start, "end_line": global_end},
+                    "run": parse_run_script(item_lines, global_start),
+                }
+            )
+        groups.append(steps)
+    return groups
+
+
+def run_variable_uses(run):
+    uses = []
+    seen = set()
+    if not run:
+        return uses
+    for row in run["lines"]:
+        for match in VAR_USE_RE.finditer(row["text"]):
+            name = match.group(1) or match.group(2)
+            if name in {"GITHUB_ENV", "PWD"} or name in seen:
+                continue
+            seen.add(name)
+            uses.append({"binding": name, "span": {"start_line": row["line"], "end_line": row["line"]}})
+    return uses
+
+
+def actions_producer_for_binding(run, binding):
+    if not run:
+        return None, {"kind": "unknown"}
+    for row in run["lines"]:
+        text = row["text"]
+        line_span = {"start_line": row["line"], "end_line": row["line"]}
+        if "$GITHUB_ENV" in text and ">>" in text:
+            before_redirect = text.split(">>", 1)[0]
+            if re.search(rf"(?<![A-Za-z0-9_]){re.escape(binding)}=", before_redirect):
+                return (
+                    {"kind": "github_env_write", "boundary": "github_actions_run_step", "span": line_span},
+                    {"kind": "github_env_next_steps"},
+                )
+        export_match = EXPORT_ASSIGN_RE.match(text)
+        if export_match and export_match.group(1) == binding:
+            return (
+                {"kind": "shell_export", "boundary": "github_actions_run_step", "span": line_span},
+                {"kind": "process_local"},
+            )
+    return None, {"kind": "unknown"}
+
+
+def extract_actions_runtime_relations(lines):
+    relations = []
+    for block in workflow_yaml_blocks(lines):
+        for steps in parse_actions_step_groups(block):
+            for pos, consumer_step in enumerate(steps):
+                if pos == 0 or not consumer_step["run"]:
+                    continue
+                producer_step = steps[pos - 1]
+                for use in run_variable_uses(consumer_step["run"]):
+                    producer, transport = actions_producer_for_binding(producer_step["run"], use["binding"])
+                    relations.append(
+                        {
+                            "kind": "RUNTIME_BINDING",
+                            "binding": use["binding"],
+                            "producer_step": {"index": producer_step["index"], "span": producer_step["span"]},
+                            "consumer_step": {"index": consumer_step["index"], "span": consumer_step["span"]},
+                            "producer": producer,
+                            "transport": transport,
+                            "consumer": {
+                                "kind": "shell_variable_expansion",
+                                "boundary": "github_actions_run_step",
+                                "span": use["span"],
+                            },
+                        }
+                    )
+    return relations
+
+
 def extract_payload(source_bytes):
     text = source_bytes.decode("utf-8")
     lines = text.splitlines()
@@ -150,6 +304,7 @@ def extract_payload(source_bytes):
                             "witnesses": witnesses,
                         }
                     )
+    relations.extend(extract_actions_runtime_relations(lines))
     return {
         "schema_version": 1,
         "source": {
