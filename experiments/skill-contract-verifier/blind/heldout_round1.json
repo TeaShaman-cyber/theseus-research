@@ -1,0 +1,38 @@
+{
+  "round": "heldout-round1",
+  "selection_rule": "PR7 review comments excluding previously inspected IDs, ranked by sha256(checker_commit:id); take first two",
+  "checker_commit": "c0468fcbb019bdc9a711f792fc4289645a69e3d4",
+  "review_bodies_revealed": false,
+  "cases": [
+    {
+      "id": "heldout-4033015975",
+      "review_comment_id": 4033015975,
+      "pre_review_commit": "0adc53b841dc7711891dffe4ff77c80a90b8172c",
+      "plan_line": 393,
+      "projection_basis": "Plan excerpt specifies source-root containment tests and resolve_source_root behavior. Current checker only evaluates exact binding equality; containment semantics are not represented in its observable binding vocabulary.",
+      "claim": {"required_bindings": {"source_root_containment": "within_checkout_or_declared_subdir"}},
+      "scope": {"observable_bindings": []},
+      "evidence": {"bindings": {}}
+    },
+    {
+      "id": "heldout-4028363652",
+      "review_comment_id": 4028363652,
+      "pre_review_commit": "12956a2927e1ac31d2c4eca498bda7fed1e81d8d",
+      "plan_line": 821,
+      "projection_basis": "Plan excerpt explicitly requires exact DB artifact_identity equality and exact manifest source_repo/source_commit/source_subdir equality with the selected descriptor before PASS.",
+      "claim": {
+        "required_bindings": {
+          "artifact_identity": "selected_artifact",
+          "source_repo_commit_subdir": "selected_descriptor"
+        }
+      },
+      "scope": {"observable_bindings": ["artifact_identity", "source_repo_commit_subdir"]},
+      "evidence": {
+        "bindings": {
+          "artifact_identity": "selected_artifact",
+          "source_repo_commit_subdir": "selected_descriptor"
+        }
+      }
+    }
+  ]
+}

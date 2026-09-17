@@ -1,0 +1,23 @@
+[
+  {
+    "counterexamples": [],
+    "coverage_gaps": [
+      {
+        "binding": "source_root_containment",
+        "kind": "UNOBSERVABLE_BINDING"
+      }
+    ],
+    "disposition": "DEFER",
+    "domain": null,
+    "id": "heldout-4033015975",
+    "scope_status": "UNOBSERVABLE_AT_THIS_LAYER"
+  },
+  {
+    "counterexamples": [],
+    "coverage_gaps": [],
+    "disposition": "ACCEPT",
+    "domain": null,
+    "id": "heldout-4028363652",
+    "scope_status": "SAFE_WITHIN_SCOPE"
+  }
+]
