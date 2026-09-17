@@ -361,6 +361,61 @@ def extract_actions_transport_relations(lines):
                     )
     return relations
 
+def extract_provenance_relations(lines):
+    whole_file = {"start_line": 0, "end_line": len(lines)}
+    relations = []
+    for block in fenced_blocks(lines, whole_file):
+        if block["language"] != "provenance-contract":
+            continue
+        span = {
+            "start_line": block["fence_line"],
+            "end_line": block["content_end_line"] + 1,
+        }
+        raw = "\n".join(block["lines"])
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            relations.append(
+                {
+                    "kind": "CLAIM_PROVENANCE_UNPARSEABLE",
+                    "reason": "INVALID_JSON",
+                    "span": span,
+                }
+            )
+            continue
+
+        claim = payload.get("claim") if isinstance(payload, dict) else None
+        evidence = payload.get("evidence") if isinstance(payload, dict) else None
+        scope = payload.get("scope", {}) if isinstance(payload, dict) else {}
+        valid = (
+            isinstance(claim, dict)
+            and isinstance(claim.get("required_bindings"), dict)
+            and bool(claim.get("required_bindings"))
+            and isinstance(evidence, dict)
+            and isinstance(evidence.get("bindings"), dict)
+            and isinstance(scope, dict)
+        )
+        if not valid:
+            relations.append(
+                {
+                    "kind": "CLAIM_PROVENANCE_UNPARSEABLE",
+                    "reason": "INVALID_SCHEMA",
+                    "span": span,
+                }
+            )
+            continue
+
+        relations.append(
+            {
+                "kind": "CLAIM_PROVENANCE",
+                "claim": claim,
+                "evidence": evidence,
+                "scope": scope,
+                "contract": {"span": span},
+            }
+        )
+    return relations
+
 def extract_payload(source_bytes):
     text = source_bytes.decode("utf-8")
     lines = text.splitlines()
@@ -409,6 +464,7 @@ def extract_payload(source_bytes):
                     )
     relations.extend(extract_actions_runtime_relations(lines))
     relations.extend(extract_actions_transport_relations(lines))
+    relations.extend(extract_provenance_relations(lines))
     return {
         "schema_version": 1,
         "source": {

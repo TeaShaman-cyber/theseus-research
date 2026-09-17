@@ -7,6 +7,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parent
 
 CHECKERS = {
+    "CLAIM_PROVENANCE": "check_claim_provenance.py",
     "RUNTIME_BINDING": "check_runtime_binding.py",
     "TDD_RUNNER_WITNESS": "check_tdd.py",
     "TRANSPORT_BOUNDARY": "check_transport_boundary.py",
