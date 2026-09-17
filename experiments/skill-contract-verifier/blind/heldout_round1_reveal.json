@@ -1,0 +1,27 @@
+{
+  "round": "heldout-round1",
+  "frozen_commit": "c98f1aeef3309e6ad2351f4969285ab553e12943",
+  "projection_sha256": "0904b796e14592587356343ad388f0a549f805e79a9c01ebe391aaaf0b3cae87",
+  "result_sha256": "a42f2d315af32ed1f940602ba1d35d486bdbae8c01ea0f6b7876d39924a24bba",
+  "revealed_cases": [
+    {
+      "review_comment_id": 4033015975,
+      "frozen_scope_status": "UNOBSERVABLE_AT_THIS_LAYER",
+      "reviewer_finding": "Tests for source-root containment/missing-root behavior were added after production behavior, so they start GREEN and do not demonstrate required RED.",
+      "comparison": "CONSISTENT_SCOPE_BOUNDARY",
+      "reason": "The frozen provenance checker explicitly declared containment/test-order semantics unobservable; the reviewer found a PHASE/CLAIM/TDD-ordering defect rather than a provenance-binding defect."
+    },
+    {
+      "review_comment_id": 4028363652,
+      "frozen_scope_status": "SAFE_WITHIN_SCOPE",
+      "reviewer_finding": "source_root became optional but the existing unconditional baseline call still consumed it, so the no-source-root replay path fails before receipt production.",
+      "comparison": "LOCAL_SAFE_GLOBAL_DEFECT",
+      "reason": "The pre-review plan did explicitly bind DB/artifact and descriptor provenance, so the provenance invariant was satisfied; the reviewer found a separate runtime/PHASE defect outside that invariant."
+    }
+  ],
+  "interpretation": {
+    "fact": "The three-state semantics prevented both held-out cases from being misreported as globally safe by the provenance layer.",
+    "not_established": "The current checker did not prospectively detect either reviewer defect class itself.",
+    "next_hypothesis": "Add the already-preregistered PHASE invariant as a separate layer, then evaluate on new held-out cases rather than re-scoring these revealed specimens."
+  }
+}
