@@ -258,6 +258,109 @@ def extract_actions_runtime_relations(lines):
     return relations
 
 
+
+def parse_supported_shell_literal(raw):
+    raw = raw.strip()
+    if len(raw) >= 2 and raw.startswith("'") and raw.endswith("'"):
+        body = raw[1:-1]
+        if "'" in body:
+            return None
+        return body
+    if len(raw) >= 3 and raw.startswith("$'") and raw.endswith("'"):
+        body = raw[2:-1]
+        out = []
+        index = 0
+        escapes = {"n": "\n", "r": "\r", "t": "\t", "\\": "\\", "'": "'"}
+        while index < len(body):
+            char = body[index]
+            if char != "\\":
+                out.append(char)
+                index += 1
+                continue
+            index += 1
+            if index >= len(body) or body[index] not in escapes:
+                return None
+            out.append(escapes[body[index]])
+            index += 1
+        return "".join(out)
+    return None
+
+
+def simple_github_env_write(run, binding):
+    if not run:
+        return None
+    escaped = re.escape(binding)
+    pattern = re.compile(
+        rf"^\s*echo\s+[\"']{escaped}=\$(?:{escaped}|\{{{escaped}\}})[\"']\s*>>\s*[\"']?\$GITHUB_ENV[\"']?\s*$"
+    )
+    matches = [row for row in run["lines"] if pattern.match(row["text"])]
+    return matches[0] if len(matches) == 1 else None
+
+
+def source_semantics_for_binding(run, binding, before_line):
+    if not run:
+        return {"kind": "unknown"}
+    escaped = re.escape(binding)
+    assignment = re.compile(rf"^\s*{escaped}=(.*)$")
+    candidates = []
+    for row in run["lines"]:
+        if row["line"] >= before_line:
+            continue
+        match = assignment.match(row["text"])
+        if match:
+            candidates.append((row, match.group(1)))
+    if not candidates:
+        return {"kind": "unknown"}
+    row, raw = candidates[-1]
+    value = parse_supported_shell_literal(raw)
+    if value is None:
+        return {"kind": "unknown", "span": {"start_line": row["line"], "end_line": row["line"]}}
+    value_bytes = value.encode("utf-8")
+    return {
+        "kind": "literal_string",
+        "bytes": len(value_bytes),
+        "sha256": hashlib.sha256(value_bytes).hexdigest(),
+        "contains_line_break": "\n" in value or "\r" in value,
+        "span": {"start_line": row["line"], "end_line": row["line"]},
+    }
+
+
+def extract_actions_transport_relations(lines):
+    relations = []
+    for block in workflow_yaml_blocks(lines):
+        for steps in parse_actions_step_groups(block):
+            for pos, consumer_step in enumerate(steps):
+                if pos == 0 or not consumer_step["run"]:
+                    continue
+                producer_step = steps[pos - 1]
+                if not producer_step["run"]:
+                    continue
+                for use in run_variable_uses(consumer_step["run"]):
+                    binding = use["binding"]
+                    write = simple_github_env_write(producer_step["run"], binding)
+                    if write is None:
+                        continue
+                    relations.append(
+                        {
+                            "kind": "TRANSPORT_BOUNDARY",
+                            "binding": binding,
+                            "producer_step": {"index": producer_step["index"], "span": producer_step["span"]},
+                            "consumer_step": {"index": consumer_step["index"], "span": consumer_step["span"]},
+                            "source_semantics": source_semantics_for_binding(
+                                producer_step["run"], binding, write["line"]
+                            ),
+                            "encoding": {
+                                "kind": "github_env_simple_line",
+                                "span": {"start_line": write["line"], "end_line": write["line"]},
+                            },
+                            "consumer": {
+                                "kind": "shell_variable_expansion",
+                                "span": use["span"],
+                            },
+                        }
+                    )
+    return relations
+
 def extract_payload(source_bytes):
     text = source_bytes.decode("utf-8")
     lines = text.splitlines()
@@ -305,6 +408,7 @@ def extract_payload(source_bytes):
                         }
                     )
     relations.extend(extract_actions_runtime_relations(lines))
+    relations.extend(extract_actions_transport_relations(lines))
     return {
         "schema_version": 1,
         "source": {
