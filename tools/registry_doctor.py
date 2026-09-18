@@ -83,7 +83,11 @@ def _paginated_list(transport: GitHubTransport, path: str) -> list[object]:
         page += 1
 
 
-def observe_declared_line(line: Mapping[str, object], transport: GitHubTransport) -> dict[str, object]:
+def observe_declared_line(
+    line: Mapping[str, object],
+    transport: GitHubTransport,
+    managed_topics: set[str] | None = None,
+) -> dict[str, object]:
     line_id = str(line["id"])
     repository = line.get("repository")
     if not isinstance(repository, str):
@@ -122,10 +126,13 @@ def observe_declared_line(line: Mapping[str, object], transport: GitHubTransport
     expected_topics = set(str(topic) for topic in line.get("topics", []))
     observed_topics = set(str(topic) for topic in topics_payload["names"])
     missing_topics = sorted(expected_topics - observed_topics)
+    managed_topic_vocabulary = managed_topics or set()
     unexpected_managed_topics = sorted(
         topic
         for topic in observed_topics - expected_topics
-        if topic == "theseus" or topic.startswith("theseus-")
+        if topic in managed_topic_vocabulary
+        or topic == "theseus"
+        or topic.startswith("theseus-")
     )
     unmanaged_topics = sorted(
         topic
@@ -210,9 +217,15 @@ def run_doctor(
     unreachable: list[dict[str, str]] = []
 
     public = public_lines(document)
+    managed_topics = {
+        str(topic)
+        for line in public
+        for topic in line.get("topics", [])
+        if isinstance(topic, str)
+    }
     for line in public:
         try:
-            declared_results.append(observe_declared_line(line, transport))
+            declared_results.append(observe_declared_line(line, transport, managed_topics))
         except GitHubUnavailable as exc:
             line_id = str(line.get("id"))
             repository = str(line.get("repository"))
