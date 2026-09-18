@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +57,37 @@ class RegistryCliTests(unittest.TestCase):
             self.assertEqual(4, code)
             self.assertEqual(original_en, readme_en.read_bytes())
             self.assertEqual(original_ru, readme_ru.read_bytes())
+
+
+    def test_render_write_rolls_back_first_projection_if_second_write_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = "<!-- BEGIN THESEUS_RESEARCH_LINES -->\nold\n<!-- END THESEUS_RESEARCH_LINES -->\n"
+            readme_en = root / "README.md"
+            readme_ru = root / "README.ru.md"
+            readme_en.write_text("EN before\n" + marker + "EN after\n", encoding="utf-8")
+            readme_ru.write_text("RU before\n" + marker + "RU after\n", encoding="utf-8")
+            original_en = readme_en.read_text(encoding="utf-8")
+            original_ru = readme_ru.read_text(encoding="utf-8")
+            saved_en, saved_ru = check_registry.README_EN, check_registry.README_RU
+            check_registry.README_EN, check_registry.README_RU = readme_en, readme_ru
+            real_write_text = Path.write_text
+            failed = {"done": False}
+
+            def fail_second_projection(path, data, *args, **kwargs):
+                if path == readme_ru and not failed["done"]:
+                    failed["done"] = True
+                    raise OSError("simulated second projection write failure")
+                return real_write_text(path, data, *args, **kwargs)
+
+            try:
+                with mock.patch.object(Path, "write_text", new=fail_second_projection):
+                    code = check_registry.cmd_render(argparse.Namespace(check=False, write=True))
+            finally:
+                check_registry.README_EN, check_registry.README_RU = saved_en, saved_ru
+            self.assertEqual(4, code)
+            self.assertEqual(original_en, readme_en.read_text(encoding="utf-8"))
+            self.assertEqual(original_ru, readme_ru.read_text(encoding="utf-8"))
 
     def test_doctor_creates_json_output_parent_before_invalid_early_return(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from http.client import HTTPException
 from typing import Mapping
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote_plus
@@ -53,7 +54,7 @@ class UrllibGitHubTransport(GitHubTransport):
             if exc.code == 404:
                 raise GitHubNotFound(f"GitHub object not found: {path}") from exc
             raise GitHubUnavailable(f"GitHub HTTP {exc.code}: {method} {path}") from exc
-        except (URLError, TimeoutError, OSError) as exc:
+        except (HTTPException, URLError, TimeoutError, OSError) as exc:
             raise GitHubUnavailable(f"GitHub request failed: {method} {path}: {exc}") from exc
 
         if not raw:

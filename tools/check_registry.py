@@ -63,17 +63,27 @@ def cmd_render(args: argparse.Namespace) -> int:
 
     rendered = ((README_EN, "en"), (README_RU, "ru"))
     written = []
+    originals = {}
     try:
         outputs = []
         for path, language in rendered:
             source = path.read_text(encoding="utf-8")
+            originals[path] = source
             output = replace_projection(source, render_table(document, language))
             outputs.append((path, output))
         for path, output in outputs:
             path.write_text(output, encoding="utf-8")
             written.append(path.name)
     except (OSError, ValueError) as exc:
-        sys.stdout.write(_dump({"status": "INVALID", "errors": [str(exc)]}))
+        rollback_errors = []
+        for path, source in originals.items():
+            try:
+                if path.exists() and path.read_text(encoding="utf-8") != source:
+                    path.write_text(source, encoding="utf-8")
+            except OSError as rollback_exc:
+                rollback_errors.append(f"rollback failed for {path.name}: {rollback_exc}")
+        errors = [str(exc), *rollback_errors]
+        sys.stdout.write(_dump({"status": "INVALID", "errors": errors}))
         return 4
     sys.stdout.write(_dump({"status": "PASS", "written_files": written}))
     return 0

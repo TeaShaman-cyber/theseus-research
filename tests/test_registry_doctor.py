@@ -1,6 +1,8 @@
 import copy
 import json
+from http.client import IncompleteRead
 import unittest
+from unittest import mock
 from pathlib import Path
 from urllib.parse import quote_plus
 
@@ -8,6 +10,7 @@ from tools.registry_contract import MANAGED_LABELS, load_registry, public_lines
 from tools.registry_doctor import (
     GitHubNotFound,
     GitHubUnavailable,
+    UrllibGitHubTransport,
     discover_candidates,
     run_doctor,
 )
@@ -124,6 +127,23 @@ class RegistryDoctorTests(unittest.TestCase):
         self.assertEqual(before, json.dumps(self.document, sort_keys=True))
         line = next(x for x in report["declared"] if x["id"] == "theseus-session-search-lab")
         self.assertIn("repository missing", line["drift"])
+
+
+    def test_incomplete_http_response_is_unreachable(self):
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def read(self):
+                raise IncompleteRead(b"{", 10)
+
+        transport = UrllibGitHubTransport(token="test", timeout=1)
+        with mock.patch("tools.registry_doctor.urlopen", return_value=Response()):
+            with self.assertRaisesRegex(GitHubUnavailable, "GitHub request failed"):
+                transport.request("GET", "/repos/TeaShaman-cyber/theseus-research")
 
     def test_api_failure_is_unreachable_not_absence_or_pass(self):
         responses = healthy_responses(self.document)
