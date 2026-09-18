@@ -40,12 +40,28 @@ class ContractAtomicityTests(unittest.TestCase):
         assert_atomic_contract_versions(self.en, self.ru, self.changelog)
 
     def test_mismatched_bilingual_header_fails_for_intended_reason(self):
-        broken_ru = self.ru.replace("**Версия:** `1.1`", "**Версия:** `9.9`", 1)
+        current = current_contract_versions(self.en, self.ru, self.changelog)["ru_header"]
+        replacement = "0.0-test" if current != "0.0-test" else "9.9-test"
+        broken_ru = self.ru.replace(
+            f"**Версия:** `{current}`",
+            f"**Версия:** `{replacement}`",
+            1,
+        )
+        self.assertNotEqual(self.ru, broken_ru)
         with self.assertRaisesRegex(ValueError, "contract version surfaces disagree"):
             assert_atomic_contract_versions(self.en, broken_ru, self.changelog)
 
     def test_mismatched_changelog_head_fails_for_intended_reason(self):
-        broken_changelog = self.changelog.replace("## 1.1 —", "## 9.9 —", 1)
+        current = current_contract_versions(self.en, self.ru, self.changelog)["changelog"]
+        replacement = "0.0-test" if current != "0.0-test" else "9.9-test"
+        broken_changelog = re.sub(
+            rf"^## {re.escape(current)}\b",
+            f"## {replacement}",
+            self.changelog,
+            count=1,
+            flags=re.MULTILINE,
+        )
+        self.assertNotEqual(self.changelog, broken_changelog)
         with self.assertRaisesRegex(ValueError, "contract version surfaces disagree"):
             assert_atomic_contract_versions(self.en, self.ru, broken_changelog)
 
