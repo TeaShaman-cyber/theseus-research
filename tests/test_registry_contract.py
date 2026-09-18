@@ -63,6 +63,14 @@ class RegistryContractTests(unittest.TestCase):
             "owner/repo/name",
             "owner/",
             "/repo",
+            "../..",
+            "./repo",
+            "owner/..",
+            "_owner/repo",
+            "owner--name/repo",
+            "owner-/repo",
+            "-owner/repo",
+            "owner/" + "r" * 101,
         ):
             with self.subTest(repository=repository):
                 doc = load_registry(REGISTRY)
@@ -98,6 +106,19 @@ class RegistryContractTests(unittest.TestCase):
             "private-incubation line sonar must omit repository",
             validate_registry(doc),
         )
+
+    def test_enum_fields_type_check_before_vocabulary_membership(self):
+        cases = (
+            ("visibility", [], "visibility for theseus-research must be string"),
+            ("visibility", {}, "visibility for theseus-research must be string"),
+            ("release_policy", [], "release policy for theseus-research must be string"),
+            ("release_policy", {}, "release policy for theseus-research must be string"),
+        )
+        for field, value, expected in cases:
+            with self.subTest(field=field, value=value):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0][field] = value
+                self.assertIn(expected, validate_registry(doc))
 
     def test_visibility_and_status_must_form_a_supported_pair(self):
         cases = (

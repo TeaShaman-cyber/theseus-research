@@ -18,6 +18,22 @@ MANAGED_LABELS = (
 )
 SCHEMA_VERSION = "theseus-research-lines-v1"
 
+_GITHUB_OWNER_RE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
+_GITHUB_REPOSITORY_RE = re.compile(r"[A-Za-z0-9_.-]{1,100}")
+
+
+def _is_github_repository_identity(value: object) -> bool:
+    if not isinstance(value, str) or value.count("/") != 1:
+        return False
+    owner, repository = value.split("/", 1)
+    if _GITHUB_OWNER_RE.fullmatch(owner) is None or "--" in owner:
+        return False
+    if _GITHUB_REPOSITORY_RE.fullmatch(repository) is None:
+        return False
+    if repository in {".", ".."}:
+        return False
+    return True
+
 
 def load_registry(path: Path) -> dict[str, object]:
     with path.open("r", encoding="utf-8") as handle:
@@ -59,15 +75,14 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         seen_ids.add(line_id)
 
         visibility = raw_line.get("visibility")
-        if visibility not in VALID_VISIBILITIES:
+        if not isinstance(visibility, str):
+            errors.append(f"visibility for {line_id} must be string")
+        elif visibility not in VALID_VISIBILITIES:
             errors.append(f"invalid visibility for {line_id}: {visibility}")
 
         repository = raw_line.get("repository")
         if visibility == "public":
-            if (
-                not isinstance(repository, str)
-                or re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository) is None
-            ):
+            if not _is_github_repository_identity(repository):
                 errors.append(f"public line {line_id} requires repository")
         elif visibility == "private-incubation" and repository is not None:
             errors.append(f"private-incubation line {line_id} must omit repository")
@@ -88,7 +103,7 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
             errors.append(f"status for {line_id} must be non-empty string")
         elif status not in VALID_STATUSES:
             errors.append(f"invalid status for {line_id}: {status}")
-        elif visibility in VALID_VISIBILITIES:
+        elif isinstance(visibility, str) and visibility in VALID_VISIBILITIES:
             allowed_statuses = (
                 {"active-root", "active"}
                 if visibility == "public"
@@ -106,7 +121,9 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
             errors.append(f"topics for {line_id} must be string list")
 
         release_policy = raw_line.get("release_policy")
-        if release_policy not in VALID_RELEASE_POLICIES:
+        if not isinstance(release_policy, str):
+            errors.append(f"release policy for {line_id} must be string")
+        elif release_policy not in VALID_RELEASE_POLICIES:
             errors.append(f"invalid release policy for {line_id}: {release_policy}")
 
     return errors
