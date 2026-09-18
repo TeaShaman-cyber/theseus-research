@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 import json
 from pathlib import Path
 from typing import Mapping
@@ -49,8 +51,8 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         if not isinstance(line_id, str) or not line_id:
             errors.append("line id must be non-empty string")
             continue
-        if not line_id.replace("-", "").isalnum() or line_id.lower() != line_id:
-            errors.append(f"line id must be lowercase slug: {line_id!r}")
+        if re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", line_id) is None:
+            errors.append(f"line id must be lowercase ASCII slug: {line_id!r}")
             continue
         if line_id in seen_ids:
             errors.append(f"duplicate line id: {line_id}")
@@ -62,12 +64,11 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
 
         repository = raw_line.get("repository")
         if visibility == "public":
-            if not isinstance(repository, str):
+            if (
+                not isinstance(repository, str)
+                or re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository) is None
+            ):
                 errors.append(f"public line {line_id} requires repository")
-            else:
-                parts = repository.split("/")
-                if len(parts) != 2 or any(not part.strip() for part in parts):
-                    errors.append(f"public line {line_id} requires repository")
         elif visibility == "private-incubation" and repository is not None:
             errors.append(f"private-incubation line {line_id} must omit repository")
 

@@ -33,12 +33,12 @@ class RegistryContractTests(unittest.TestCase):
         )
 
     def test_ids_must_be_single_line_lowercase_slugs(self):
-        for bad in ("bad\nid", "Bad-ID", "bad id", "bad_id"):
+        for bad in ("bad\nid", "Bad-ID", "bad id", "bad_id", "é", "研究", "-foo", "foo--bar", "foo-"):
             with self.subTest(line_id=bad):
                 doc = load_registry(REGISTRY)
                 doc["lines"][0]["id"] = bad
                 self.assertIn(
-                    f"line id must be lowercase slug: {bad!r}",
+                    f"line id must be lowercase ASCII slug: {bad!r}",
                     validate_registry(doc),
                 )
 
@@ -55,6 +55,23 @@ class RegistryContractTests(unittest.TestCase):
             "public line theseus-needle-lab requires repository",
             validate_registry(doc),
         )
+
+    def test_public_repository_must_be_single_line_github_identity(self):
+        for repository in (
+            "TeaShaman-cyber/repo\n| injected",
+            "Tea Shaman/repo",
+            "owner/repo/name",
+            "owner/",
+            "/repo",
+        ):
+            with self.subTest(repository=repository):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+                line["repository"] = repository
+                self.assertIn(
+                    "public line theseus-needle-lab requires repository",
+                    validate_registry(doc),
+                )
 
     def test_public_repository_requires_nonempty_owner_and_repo(self):
         for repository in ("TeaShaman-cyber/", "/theseus-research"):
