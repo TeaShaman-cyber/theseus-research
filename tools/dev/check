@@ -18,4 +18,18 @@ git diff --check "$base_ref"..HEAD
 git diff --cached --check
 git diff --check
 
+echo '== untracked whitespace =='
+bad=0
+while IFS= read -r -d '' path; do
+  set +e
+  output=$(git diff --no-index --check /dev/null "$path" 2>&1)
+  rc=$?
+  set -e
+  if [ "$rc" -gt 1 ]; then
+    printf '%s\n' "$output"
+    bad=1
+  fi
+done < <(git ls-files --others --exclude-standard -z)
+test "$bad" -eq 0
+
 echo DEV_CHECK_PASS
