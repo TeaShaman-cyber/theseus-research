@@ -32,6 +32,16 @@ class RegistryContractTests(unittest.TestCase):
             [line["id"] for line in public_lines(doc)],
         )
 
+    def test_ids_must_be_single_line_lowercase_slugs(self):
+        for bad in ("bad\nid", "Bad-ID", "bad id", "bad_id"):
+            with self.subTest(line_id=bad):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0]["id"] = bad
+                self.assertIn(
+                    f"line id must be lowercase slug: {bad!r}",
+                    validate_registry(doc),
+                )
+
     def test_ids_must_be_unique(self):
         doc = load_registry(REGISTRY)
         doc["lines"].append(copy.deepcopy(doc["lines"][0]))

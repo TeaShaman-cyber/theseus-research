@@ -49,6 +49,9 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         if not isinstance(line_id, str) or not line_id:
             errors.append("line id must be non-empty string")
             continue
+        if not line_id.replace("-", "").isalnum() or line_id.lower() != line_id:
+            errors.append(f"line id must be lowercase slug: {line_id!r}")
+            continue
         if line_id in seen_ids:
             errors.append(f"duplicate line id: {line_id}")
         seen_ids.add(line_id)
