@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+export PYTHONDONTWRITEBYTECODE=1
+
+echo '== registry contract =='
+python3 tools/check_registry.py validate
+
+echo '== registry projections =='
+python3 tools/check_registry.py render --check
+
+echo '== unit tests =='
+python3 -m unittest discover -s tests -v
+
+echo '== whitespace =='
+base_ref="${QA_BASE_REF:-HEAD^}"
+git diff --check "$base_ref"..HEAD
+git diff --cached --check
+git diff --check
+
+echo DEV_CHECK_PASS
