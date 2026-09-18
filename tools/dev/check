@@ -22,7 +22,7 @@ echo '== untracked whitespace =='
 bad=0
 while IFS= read -r -d '' path; do
   set +e
-  output=$(git diff --no-index --check /dev/null "$path" 2>&1)
+  output=$(git diff --no-index --check /dev/null "./$path" 2>&1)
   rc=$?
   set -e
   if [ "$rc" -gt 1 ]; then
