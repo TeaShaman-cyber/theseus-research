@@ -83,6 +83,15 @@ class RegistryDoctorTests(unittest.TestCase):
         needle = next(x for x in report["declared"] if x["id"] == "theseus-needle-lab")
         self.assertIn("python", needle["observed"]["unmanaged_topics"])
 
+    def test_role_topic_from_another_declared_line_is_managed_drift(self):
+        responses = healthy_responses(self.document)
+        path = "/repos/TeaShaman-cyber/theseus-needle-lab/topics"
+        responses[("GET", path)]["names"].append("memory")
+        report, _ = self._run(responses)
+        self.assertEqual("DECLARED_DRIFT", report["status"])
+        needle = next(x for x in report["declared"] if x["id"] == "theseus-needle-lab")
+        self.assertIn("unexpected managed topic: memory", needle["drift"])
+
     def test_missing_managed_label_reports_declared_drift(self):
         responses = healthy_responses(self.document)
         path = "/repos/TeaShaman-cyber/theseus-research/labels?per_page=100"
