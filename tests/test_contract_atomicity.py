@@ -11,7 +11,6 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
         "ru_header": (ru, r"^\*\*Версия:\*\* `([^`]+)`$"),
         "en_revision": (en, r"^### Revision record: `([^`]+)`"),
         "ru_revision": (ru, r"^### Запись о ревизии: `([^`]+)`"),
-        "changelog": (changelog, r"^## ([0-9]+(?:\.[0-9]+)+(?:-[A-Za-z0-9.-]+)?)\s+—"),
     }
     out: dict[str, str] = {}
     for name, (text, pattern) in patterns.items():
@@ -19,6 +18,17 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
         if match is None:
             raise ValueError(f"missing current contract version surface: {name}")
         out[name] = match.group(1)
+
+    heading = next((line for line in changelog.splitlines() if line.startswith("## ")), None)
+    if heading is None:
+        raise ValueError("missing current contract version surface: changelog")
+    match = re.fullmatch(
+        r"## ([0-9]+(?:\.[0-9]+)+(?:-[A-Za-z0-9.-]+)?)\s+—\s+.+",
+        heading,
+    )
+    if match is None:
+        raise ValueError("malformed current contract version surface: changelog")
+    out["changelog"] = match.group(1)
     return out
 
 
@@ -47,6 +57,19 @@ class ContractAtomicityTests(unittest.TestCase):
         )
         self.assertEqual("1.1.1", versions["changelog"])
         self.assertEqual({"1.1.1"}, set(versions.values()))
+
+    def test_malformed_new_changelog_head_does_not_fall_through_to_history(self):
+        broken = (
+            "## 1.2 - 2026-10-01\n"
+            "broken new entry\n\n"
+            "## 1.1 — 2026-09-18\n"
+            "historical valid entry\n"
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "malformed current contract version surface: changelog",
+        ):
+            current_contract_versions(self.en, self.ru, broken)
 
     def test_mismatched_bilingual_header_fails_for_intended_reason(self):
         current = current_contract_versions(self.en, self.ru, self.changelog)["ru_header"]
