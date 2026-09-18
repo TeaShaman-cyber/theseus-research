@@ -79,6 +79,38 @@ class RegistryCliTests(unittest.TestCase):
             self.assertTrue(output.exists())
             self.assertEqual("INVALID", json.loads(output.read_text(encoding="utf-8"))["status"])
 
+    def test_doctor_preserves_report_when_optional_issue_publication_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "doctor.json"
+            saved_run = check_registry.run_doctor
+            saved_ensure = check_registry.ensure_drift_issue
+            saved_transport = check_registry.UrllibGitHubTransport
+            check_registry.run_doctor = lambda document, owner, transport: {
+                "status": "DECLARED_DRIFT",
+                "repositories": [],
+            }
+            check_registry.ensure_drift_issue = lambda repository, report, transport: (_ for _ in ()).throw(
+                check_registry.GitHubUnavailable("publication timeout")
+            )
+            check_registry.UrllibGitHubTransport = lambda: object()
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="write",
+                    )
+                )
+            finally:
+                check_registry.run_doctor = saved_run
+                check_registry.ensure_drift_issue = saved_ensure
+                check_registry.UrllibGitHubTransport = saved_transport
+            self.assertEqual(2, code)
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual("DECLARED_DRIFT", payload["status"])
+            self.assertEqual("UNREACHABLE", payload["drift_issue"]["status"])
+            self.assertIn("publication timeout", payload["drift_issue"]["error"])
+
     def test_unknown_subcommand_fails_with_argparse_error(self):
         result = run_cli("unknown-command")
         self.assertNotEqual(0, result.returncode)

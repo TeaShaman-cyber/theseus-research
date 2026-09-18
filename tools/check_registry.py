@@ -11,7 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from tools.registry_contract import load_registry, validate_registry
-from tools.registry_doctor import UrllibGitHubTransport, ensure_drift_issue, run_doctor
+from tools.registry_doctor import GitHubUnavailable, UrllibGitHubTransport, ensure_drift_issue, run_doctor
 from tools.registry_projection import projection_matches, render_table, replace_projection
 
 REGISTRY = ROOT / "registry" / "research-lines.json"
@@ -97,13 +97,17 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     transport = UrllibGitHubTransport()
     report = run_doctor(document, args.owner, transport)
+    output.write_text(_dump(report), encoding="utf-8")
+
     if args.drift_issue == "write" and report["status"] in {
         "DECLARED_DRIFT",
         "CANDIDATE_UNDECLARED",
     }:
-        report["drift_issue"] = ensure_drift_issue(DRIFT_REPOSITORY, report, transport)
-
-    output.write_text(_dump(report), encoding="utf-8")
+        try:
+            report["drift_issue"] = ensure_drift_issue(DRIFT_REPOSITORY, report, transport)
+        except GitHubUnavailable as exc:
+            report["drift_issue"] = {"status": "UNREACHABLE", "error": str(exc)}
+        output.write_text(_dump(report), encoding="utf-8")
 
     return {
         "PASS": 0,
