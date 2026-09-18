@@ -6,7 +6,7 @@ Its tools and experiments may change; the principles below are the stable part t
 
 ## Public Research Program Contract
 
-**Version:** `1.0`
+**Version:** `1.1`
 
 **Status:** `ACTIVE RESEARCH`
 
@@ -49,6 +49,14 @@ This contract is versioned, not timeless. Changes follow a reviewable path:
 - **MINOR** adds compatible principles, areas, or clarifications. A MINOR change must preserve every existing invariant: it cannot remove, weaken, or silently narrow consent, least-privilege, provenance, reversibility, sponsor independence, or public-status commitments;
 - **MAJOR** changes the mission, an invariant, a security, privacy, or authorization boundary, the autonomy boundary, sponsor independence, or public status. When compatibility is uncertain, use the higher version.
 Every accepted change records its version, date, summary, reason, and review status.
+
+### Revision record: `1.1` — 2026-09-18
+
+- **Lifecycle:** accepts the versioned research-line registry as program infrastructure while preserving the existing authority boundaries.
+- **Registry authority:** `registry/research-lines.json` is the Git-visible authority for declared Theseus research-line membership; GitHub Projects, repository metadata, and README tables remain projections/coordination surfaces.
+- **Scope:** adds the current Repository Search and Mathematics Research labs, deterministic registry validation/projection checks, and read-only drift observation.
+- **Compatibility:** MINOR; no mission, consent, provenance, reversibility, sponsor-independence, public-interest, or human-responsibility invariant is weakened.
+- **Acceptance record:** this revision becomes authoritative only through explicit maintainer merge together with the changelog, registry/tooling, and bilingual projections.
 
 ### Revision record: `1.0` — 2026-09-06
 

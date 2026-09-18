@@ -174,18 +174,22 @@ def observe_declared_line(line: Mapping[str, object], transport: GitHubTransport
 def discover_candidates(
     owner: str, declared: set[str], transport: GitHubTransport
 ) -> list[dict[str, object]]:
-    query = quote_plus(f"user:{owner} theseus in:name,description")
+    query = quote_plus(f"user:{owner} theseus in:name,description is:public")
     payload = transport.request(
         "GET", f"/search/repositories?q={query}&per_page=100"
     )
     if not isinstance(payload, Mapping) or not isinstance(payload.get("items"), list):
         raise GitHubUnavailable("unexpected repository search payload")
+    if payload.get("incomplete_results") is True:
+        raise GitHubUnavailable("incomplete repository search results")
 
     candidates: list[dict[str, object]] = []
     for item in payload["items"]:
         if not isinstance(item, Mapping):
             continue
         full_name = item.get("full_name")
+        if item.get("private") is True:
+            continue
         if not isinstance(full_name, str) or full_name in declared:
             continue
         candidates.append(

@@ -33,7 +33,7 @@ class FakeTransport:
 
 
 def search_path(owner="TeaShaman-cyber"):
-    query = f"user:{owner} theseus in:name,description"
+    query = f"user:{owner} theseus in:name,description is:public"
     return f"/search/repositories?q={quote_plus(query)}&per_page=100"
 
 
@@ -142,6 +142,26 @@ class RegistryDoctorTests(unittest.TestCase):
         responses = {("GET", search_path()): {"items": [{"full_name": "TeaShaman-cyber/theseus-needle-lab"}]}}
         transport = FakeTransport(responses)
         self.assertEqual([], discover_candidates("TeaShaman-cyber", declared, transport))
+
+
+    def test_private_candidate_is_filtered_even_if_search_returns_it(self):
+        declared = {line["repository"] for line in public_lines(self.document)}
+        candidate = {
+            "full_name": "TeaShaman-cyber/theseus-private-lab",
+            "name": "theseus-private-lab",
+            "description": "Private experiment",
+            "private": True,
+        }
+        responses = {("GET", search_path()): {"items": [candidate], "incomplete_results": False}}
+        transport = FakeTransport(responses)
+        self.assertEqual([], discover_candidates("TeaShaman-cyber", declared, transport))
+
+    def test_incomplete_candidate_search_is_unreachable(self):
+        responses = healthy_responses(self.document)
+        responses[("GET", search_path())] = {"items": [], "incomplete_results": True}
+        report, _ = self._run(responses)
+        self.assertEqual("UNREACHABLE", report["status"])
+        self.assertTrue(any(x["id"] == "candidate-search" for x in report["unreachable"]))
 
     def test_checkpoint_policy_allows_zero_releases(self):
         report, _ = self._run()

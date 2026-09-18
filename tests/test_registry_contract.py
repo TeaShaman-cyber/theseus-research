@@ -88,6 +88,16 @@ class RegistryContractTests(unittest.TestCase):
                     validate_registry(doc),
                 )
 
+
+    def test_role_text_must_be_single_line(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["role"]["en"] = "First line\nInjected row"
+        self.assertIn(
+            "role for theseus-needle-lab en must be single-line",
+            validate_registry(doc),
+        )
+
     def test_invalid_status_is_rejected(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")

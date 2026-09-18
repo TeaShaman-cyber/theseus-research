@@ -76,6 +76,8 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
                 value = role.get(language)
                 if not isinstance(value, str) or not value.strip():
                     errors.append(f"role for {line_id} missing {language}")
+                elif "\n" in value or "\r" in value:
+                    errors.append(f"role for {line_id} {language} must be single-line")
 
         status = raw_line.get("status")
         if not isinstance(status, str) or not status:
