@@ -35,6 +35,24 @@ class RegistryProjectionTests(unittest.TestCase):
             sonar_row = next(row for row in rendered.splitlines() if "Sonar" in row)
             self.assertNotIn("github.com", sonar_row)
 
+    def test_role_backslash_before_pipe_stays_in_one_table_cell(self):
+        self.document["lines"][0]["role"]["en"] = r"left\|right"
+        rendered = render_table(self.document, "en")
+        row = rendered.splitlines()[2]
+        self.assertIn(r"left\\\|right", row)
+        unescaped = 0
+        for index, char in enumerate(row):
+            if char != "|":
+                continue
+            slashes = 0
+            cursor = index - 1
+            while cursor >= 0 and row[cursor] == "\\":
+                slashes += 1
+                cursor -= 1
+            if slashes % 2 == 0:
+                unescaped += 1
+        self.assertEqual(4, unescaped)
+
     def test_replacement_is_idempotent(self):
         source = (
             "before\n"

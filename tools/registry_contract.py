@@ -20,6 +20,7 @@ SCHEMA_VERSION = "theseus-research-lines-v1"
 
 _GITHUB_OWNER_RE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 _GITHUB_REPOSITORY_RE = re.compile(r"[A-Za-z0-9_.-]{1,100}")
+_GITHUB_TOPIC_RE = re.compile(r"[a-z0-9-]{1,50}")
 
 
 def _is_github_repository_identity(value: object) -> bool:
@@ -116,9 +117,14 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
 
         topics = raw_line.get("topics")
         if not isinstance(topics, list) or any(
-            not isinstance(topic, str) or not topic for topic in topics
+            not isinstance(topic, str)
+            or _GITHUB_TOPIC_RE.fullmatch(topic) is None
+            for topic in topics
         ):
-            errors.append(f"topics for {line_id} must be string list")
+            errors.append(
+                f"topics for {line_id} must match GitHub topic grammar "
+                "(lowercase ASCII letters, digits, hyphens; 1-50 chars)"
+            )
 
         release_policy = raw_line.get("release_policy")
         if not isinstance(release_policy, str):

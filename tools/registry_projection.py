@@ -34,6 +34,10 @@ def _projection_bounds(markdown: str) -> tuple[int, int]:
     return begin, end
 
 
+def _escape_table_cell(value: str) -> str:
+    return value.replace("\\", "\\\\").replace("|", "\\|")
+
+
 def render_table(document: Mapping[str, object], language: Literal["en", "ru"]) -> str:
     if language not in _HEADERS:
         raise ValueError(f"unsupported language: {language}")
@@ -62,7 +66,7 @@ def render_table(document: Mapping[str, object], language: Literal["en", "ru"]) 
             display = f"[`{line_id}`](https://github.com/{repository})"
         else:
             display = "Sonar" if line_id == "sonar" else f"`{line_id}`"
-        role_text = str(role[language]).replace("|", "\\|")
+        role_text = _escape_table_cell(str(role[language]))
         rows.append(f"| {display} | {status_text} | {role_text} |")
     return "\n".join(rows) + "\n"
 

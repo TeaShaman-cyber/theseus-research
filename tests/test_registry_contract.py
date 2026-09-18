@@ -146,6 +146,17 @@ class RegistryContractTests(unittest.TestCase):
             validate_registry(doc),
         )
 
+    def test_topics_must_match_github_grammar(self):
+        for bad in ("Needle", "bad topic", "bad_topic", "x" * 51):
+            with self.subTest(topic=bad):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0]["topics"] = [bad]
+                self.assertIn(
+                    "topics for theseus-research must match GitHub topic grammar "
+                    "(lowercase ASCII letters, digits, hyphens; 1-50 chars)",
+                    validate_registry(doc),
+                )
+
     def test_invalid_status_is_rejected(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
