@@ -4,6 +4,23 @@ This changelog records revisions to the public Theseus program contract.
 Ordinary research merges, fixtures, plans, and implementation changes do not
 create a contract version by themselves.
 
+## 1.1 — 2026-09-18
+
+**Lifecycle:** accept the versioned research-line registry as program infrastructure without changing scientific or execution authority.
+
+**Summary:**
+
+- adds `registry/research-lines.json` as the Git-visible authority for explicitly declared Theseus research-line membership;
+- keeps GitHub Projects, repository metadata, and bilingual README tables as derived coordination/projection surfaces;
+- adds read-only registry validation/doctor tooling and deterministic bilingual projection checks;
+- records `theseus-repo-search-lab` and `theseus-math-research-lab` as active public research lines;
+- leaves undeclared repository candidates advisory rather than inferring membership from naming or ownership;
+- does not promote research conclusions, grant cross-repository mutation authority, or make metadata drift equivalent to research failure.
+
+**Version rationale:** MINOR. This adds compatible program infrastructure and an explicit membership authority while preserving the existing mission, consent, provenance, reversibility, sponsor-independence, public-interest, and human-responsibility invariants.
+
+**Acceptance rule:** this changelog entry, the registry/tooling, and the EN/RU registry projections become accepted together only through explicit maintainer merge and exact remote readback. Green QA or an open PR is not acceptance.
+
 ## 1.0 — 2026-09-06
 
 **Lifecycle:** transition from public proposal to active research program.

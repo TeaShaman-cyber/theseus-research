@@ -89,7 +89,24 @@ Theseus сейчас развивается добровольно и подде
 
 Устойчивый исследовательский архив индексируется в [Theseus Research Archive](docs/research/README.md). Текущее изменяемое состояние исследований, блокеры и кандидатные решения живут в [GitHub Issues](https://github.com/TeaShaman-cyber/theseus-research/issues) и [Pull Requests](https://github.com/TeaShaman-cyber/theseus-research/pulls).
 
-Машиночитаемый реестр исследовательских линий остаётся отдельным ожидающим инфраструктурным треком. Его отсутствие в принятом baseline `1.0` не блокирует правдивый статус активной программы, а этот контракт не трактует кандидатное содержимое реестра как принятую власть.
+Машиночитаемый реестр исследовательских линий версионируется в `registry/research-lines.json`. После принятия этой ревизии этот файл является Git-видимым источником членства исследовательских линий Theseus; GitHub Projects, метаданные репозиториев и таблица ниже являются координационными/проекционными поверхностями, а не конкурирующими источниками членства.
+
+### Исследовательские линии Theseus
+
+<!-- BEGIN THESEUS_RESEARCH_LINES -->
+| Направление | Публичность / статус | Роль |
+| --- | --- | --- |
+| [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | публичное · активно / корень | Контракт программы, методология и карта исследований |
+| [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | публичное · активно | Наблюдение за публичными данными и воспроизводимые эксперименты по верификации |
+| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | публичное · активно | Наблюдаемые и воспроизводимые эксперименты по обучению Needle |
+| [`theseus-memory-provider-lab`](https://github.com/TeaShaman-cyber/theseus-memory-provider-lab) | публичное · активно | Автоматический жизненный цикл провайдера памяти, семантика recall/retain и проверяемые контракты провайдеров |
+| [`theseus-model-usage-lab`](https://github.com/TeaShaman-cyber/theseus-model-usage-lab) | публичное · активно | Наблюдаемое использование моделей, окна провайдерских подписок и маршрутизация агентов с учётом бюджета |
+| [`theseus-session-search-lab`](https://github.com/TeaShaman-cyber/theseus-session-search-lab) | публичное · активно | Проверяемый захват сессий, переносимые артефакты исторического поиска и независимый от браузера поиск по сессиям |
+| [`theseus-tech-review-graph`](https://github.com/TeaShaman-cyber/theseus-tech-review-graph) | публичное · активно | Theseus KnowledgeOps и информационный CI/CD для заменяемых исследовательских модулей и модулей памяти |
+| Sonar | приватная инкубация | Экспериментальное направление по непрерывности и извлечению контекста; реализация остаётся приватной |
+| [`theseus-repo-search-lab`](https://github.com/TeaShaman-cyber/theseus-repo-search-lab) | публичное · активно | Воспроизводимое индексирование репозиториев, графы зависимостей и ограниченное извлечение доказательств для исследовательских корпусов |
+| [`theseus-math-research-lab`](https://github.com/TeaShaman-cyber/theseus-math-research-lab) | публичное · активно | Исследование математических мостов с опорой на доказательства, эксперименты по поиску доказательств и ограниченная декомпозиция задач |
+<!-- END THESEUS_RESEARCH_LINES -->
 
 ## Методологическая основа
 
