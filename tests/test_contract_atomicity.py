@@ -11,7 +11,7 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
         "ru_header": (ru, r"^\*\*Версия:\*\* `([^`]+)`$"),
         "en_revision": (en, r"^### Revision record: `([^`]+)`"),
         "ru_revision": (ru, r"^### Запись о ревизии: `([^`]+)`"),
-        "changelog": (changelog, r"^## ([0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?)\b"),
+        "changelog": (changelog, r"^## ([0-9]+(?:\.[0-9]+)+(?:-[A-Za-z0-9.-]+)?)\s+—"),
     }
     out: dict[str, str] = {}
     for name, (text, pattern) in patterns.items():
@@ -38,6 +38,15 @@ class ContractAtomicityTests(unittest.TestCase):
 
     def test_committed_contract_version_surfaces_move_atomically(self):
         assert_atomic_contract_versions(self.en, self.ru, self.changelog)
+
+    def test_changelog_parser_preserves_patch_version(self):
+        versions = current_contract_versions(
+            "**Version:** `1.1.1`\n### Revision record: `1.1.1` — 2026-09-18\n",
+            "**Версия:** `1.1.1`\n### Запись о ревизии: `1.1.1` — 2026-09-18\n",
+            "## 1.1.1 — 2026-09-18\n",
+        )
+        self.assertEqual("1.1.1", versions["changelog"])
+        self.assertEqual({"1.1.1"}, set(versions.values()))
 
     def test_mismatched_bilingual_header_fails_for_intended_reason(self):
         current = current_contract_versions(self.en, self.ru, self.changelog)["ru_header"]
