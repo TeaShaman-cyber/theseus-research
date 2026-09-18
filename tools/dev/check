@@ -13,8 +13,14 @@ echo '== unit tests =='
 python3 -m unittest discover -s tests -v
 
 echo '== whitespace =='
-base_ref="${QA_BASE_REF:-HEAD^}"
-git diff --check "$base_ref"..HEAD
+base_ref="${QA_BASE_REF:-origin/main}"
+if ! git rev-parse --verify --quiet "$base_ref^{commit}" >/dev/null; then
+  echo "QA base ref unavailable: $base_ref" >&2
+  echo "Set QA_BASE_REF to the branch base commit/ref." >&2
+  exit 2
+fi
+base_commit=$(git merge-base "$base_ref" HEAD)
+git diff --check "$base_commit"..HEAD
 git diff --cached --check
 git diff --check
 
