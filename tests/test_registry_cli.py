@@ -1,0 +1,228 @@
+import argparse
+import io
+import json
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest import mock
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CLI = ROOT / "tools" / "check_registry.py"
+
+import tools.check_registry as check_registry
+
+
+def run_cli(*args):
+    return subprocess.run(
+        [sys.executable, str(CLI), *args],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
+class RegistryCliTests(unittest.TestCase):
+    def test_validate_prints_machine_readable_pass(self):
+        result = run_cli("validate")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual({"errors": [], "status": "PASS"}, json.loads(result.stdout))
+
+    def test_render_check_passes_for_committed_readmes(self):
+        result = run_cli("render", "--check")
+        self.assertEqual(0, result.returncode, result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual("PASS", payload["status"])
+        self.assertEqual([], payload["mismatched_files"])
+
+    def test_render_check_reports_projection_read_failure_without_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            missing = Path(tmp) / "README.md"
+            saved_en = check_registry.README_EN
+            check_registry.README_EN = missing
+            try:
+                with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                    code = check_registry.cmd_render(
+                        argparse.Namespace(check=True, write=False)
+                    )
+            finally:
+                check_registry.README_EN = saved_en
+            self.assertEqual(4, code)
+            payload = json.loads(stdout.getvalue())
+            self.assertEqual("PROJECTION_MISMATCH", payload["status"])
+            self.assertIn("README.md", payload["mismatched_files"])
+
+    def test_render_write_validates_both_projections_before_writing_either(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            readme_en = root / "README.md"
+            readme_ru = root / "README.ru.md"
+            readme_en.write_text(
+                "before\n<!-- BEGIN THESEUS_RESEARCH_LINES -->\nold\n<!-- END THESEUS_RESEARCH_LINES -->\nafter\n",
+                encoding="utf-8",
+            )
+            readme_ru.write_text("broken projection without markers\n", encoding="utf-8")
+            original_en = readme_en.read_bytes()
+            original_ru = readme_ru.read_bytes()
+            saved_en, saved_ru = check_registry.README_EN, check_registry.README_RU
+            check_registry.README_EN, check_registry.README_RU = readme_en, readme_ru
+            try:
+                code = check_registry.cmd_render(argparse.Namespace(check=False, write=True))
+            finally:
+                check_registry.README_EN, check_registry.README_RU = saved_en, saved_ru
+            self.assertEqual(4, code)
+            self.assertEqual(original_en, readme_en.read_bytes())
+            self.assertEqual(original_ru, readme_ru.read_bytes())
+
+
+    def test_render_write_rolls_back_first_projection_if_second_write_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = "<!-- BEGIN THESEUS_RESEARCH_LINES -->\nold\n<!-- END THESEUS_RESEARCH_LINES -->\n"
+            readme_en = root / "README.md"
+            readme_ru = root / "README.ru.md"
+            readme_en.write_text("EN before\n" + marker + "EN after\n", encoding="utf-8")
+            readme_ru.write_text("RU before\n" + marker + "RU after\n", encoding="utf-8")
+            original_en = readme_en.read_text(encoding="utf-8")
+            original_ru = readme_ru.read_text(encoding="utf-8")
+            saved_en, saved_ru = check_registry.README_EN, check_registry.README_RU
+            check_registry.README_EN, check_registry.README_RU = readme_en, readme_ru
+            real_write_text = Path.write_text
+            failed = {"done": False}
+
+            def fail_second_projection(path, data, *args, **kwargs):
+                if path == readme_ru and not failed["done"]:
+                    failed["done"] = True
+                    raise OSError("simulated second projection write failure")
+                return real_write_text(path, data, *args, **kwargs)
+
+            try:
+                with mock.patch.object(Path, "write_text", new=fail_second_projection):
+                    code = check_registry.cmd_render(argparse.Namespace(check=False, write=True))
+            finally:
+                check_registry.README_EN, check_registry.README_RU = saved_en, saved_ru
+            self.assertEqual(4, code)
+            self.assertEqual(original_en, readme_en.read_text(encoding="utf-8"))
+            self.assertEqual(original_ru, readme_ru.read_text(encoding="utf-8"))
+
+    def test_render_write_rolls_back_partial_invalid_utf8_without_decoding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = "<!-- BEGIN THESEUS_RESEARCH_LINES -->\nold\n<!-- END THESEUS_RESEARCH_LINES -->\n"
+            readme_en = root / "README.md"
+            readme_ru = root / "README.ru.md"
+            readme_en.write_text("EN before\n" + marker + "EN after\n", encoding="utf-8")
+            readme_ru.write_text("RU before\n" + marker + "RU after\n", encoding="utf-8")
+            original_en = readme_en.read_bytes()
+            original_ru = readme_ru.read_bytes()
+            saved_en, saved_ru = check_registry.README_EN, check_registry.README_RU
+            check_registry.README_EN, check_registry.README_RU = readme_en, readme_ru
+            real_write_text = Path.write_text
+            failed = {"done": False}
+
+            def fail_with_partial_utf8(path, data, *args, **kwargs):
+                if path == readme_ru and not failed["done"]:
+                    failed["done"] = True
+                    path.write_bytes(b"\xe2\x82")
+                    raise OSError("simulated partial UTF-8 write failure")
+                return real_write_text(path, data, *args, **kwargs)
+
+            try:
+                with mock.patch.object(Path, "write_text", new=fail_with_partial_utf8):
+                    with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                        code = check_registry.cmd_render(
+                            argparse.Namespace(check=False, write=True)
+                        )
+            finally:
+                check_registry.README_EN, check_registry.README_RU = saved_en, saved_ru
+            self.assertEqual(4, code)
+            self.assertEqual("INVALID", json.loads(stdout.getvalue())["status"])
+            self.assertEqual(original_en, readme_en.read_bytes())
+            self.assertEqual(original_ru, readme_ru.read_bytes())
+
+    def test_doctor_reports_projection_read_failure_without_transport(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            missing = root / "README.md"
+            output = root / "doctor.json"
+            saved_en = check_registry.README_EN
+            check_registry.README_EN = missing
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="off",
+                    )
+                )
+            finally:
+                check_registry.README_EN = saved_en
+            self.assertEqual(4, code)
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual("PROJECTION_MISMATCH", payload["status"])
+            self.assertIn("README.md", payload["mismatched_files"])
+
+    def test_doctor_creates_json_output_parent_before_invalid_early_return(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            invalid_registry = root / "invalid.json"
+            invalid_registry.write_text("{}", encoding="utf-8")
+            output = root / "nested" / "doctor" / "report.json"
+            saved_registry = check_registry.REGISTRY
+            check_registry.REGISTRY = invalid_registry
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="off",
+                    )
+                )
+            finally:
+                check_registry.REGISTRY = saved_registry
+            self.assertEqual(4, code)
+            self.assertTrue(output.exists())
+            self.assertEqual("INVALID", json.loads(output.read_text(encoding="utf-8"))["status"])
+
+    def test_doctor_preserves_report_when_optional_issue_publication_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "doctor.json"
+            saved_run = check_registry.run_doctor
+            saved_ensure = check_registry.ensure_drift_issue
+            saved_transport = check_registry.UrllibGitHubTransport
+            check_registry.run_doctor = lambda document, owner, transport: {
+                "status": "DECLARED_DRIFT",
+                "repositories": [],
+            }
+            check_registry.ensure_drift_issue = lambda repository, report, transport: (_ for _ in ()).throw(
+                check_registry.GitHubUnavailable("publication timeout")
+            )
+            check_registry.UrllibGitHubTransport = lambda: object()
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="write",
+                    )
+                )
+            finally:
+                check_registry.run_doctor = saved_run
+                check_registry.ensure_drift_issue = saved_ensure
+                check_registry.UrllibGitHubTransport = saved_transport
+            self.assertEqual(2, code)
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual("DECLARED_DRIFT", payload["status"])
+            self.assertEqual("UNREACHABLE", payload["drift_issue"]["status"])
+            self.assertIn("publication timeout", payload["drift_issue"]["error"])
+
+    def test_unknown_subcommand_fails_with_argparse_error(self):
+        result = run_cli("unknown-command")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("invalid choice", result.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main()

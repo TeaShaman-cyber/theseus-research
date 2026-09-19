@@ -6,7 +6,7 @@ Its tools and experiments may change; the principles below are the stable part t
 
 ## Public Research Program Contract
 
-**Version:** `1.0`
+**Version:** `1.1`
 
 **Status:** `ACTIVE RESEARCH`
 
@@ -50,6 +50,14 @@ This contract is versioned, not timeless. Changes follow a reviewable path:
 - **MAJOR** changes the mission, an invariant, a security, privacy, or authorization boundary, the autonomy boundary, sponsor independence, or public status. When compatibility is uncertain, use the higher version.
 Every accepted change records its version, date, summary, reason, and review status.
 
+### Revision record: `1.1` — 2026-09-18
+
+- **Lifecycle:** accepts the versioned research-line registry as program infrastructure while preserving the existing authority boundaries.
+- **Registry authority:** `registry/research-lines.json` is the Git-visible authority for declared Theseus research-line membership; GitHub Projects, repository metadata, and README tables remain projections/coordination surfaces.
+- **Scope:** adds the current Repository Search and Mathematics Research labs, deterministic registry validation/projection checks, and read-only drift observation.
+- **Compatibility:** MINOR; no mission, consent, provenance, reversibility, sponsor-independence, public-interest, or human-responsibility invariant is weakened.
+- **Acceptance record:** this revision becomes authoritative only through explicit maintainer merge together with the changelog, registry/tooling, and bilingual projections.
+
 ### Revision record: `1.0` — 2026-09-06
 
 - **Lifecycle:** Theseus moves from a public proposal awaiting review to an active research program.
@@ -86,7 +94,24 @@ Specific tools, laboratories, and implementations—including experimental tools
 
 The durable research archive is indexed at [docs/research/README.md](docs/research/README.md). Current mutable research state, blockers, and candidate decisions live in [GitHub Issues](https://github.com/TeaShaman-cyber/theseus-research/issues) and [Pull Requests](https://github.com/TeaShaman-cyber/theseus-research/pulls).
 
-The machine-readable research-line registry remains a separate pending infrastructure track. Its absence from the accepted `1.0` baseline does not block truthful active-program status, and this contract does not treat candidate registry content as accepted authority.
+The machine-readable research-line registry is versioned in `registry/research-lines.json`. Once this revision is accepted, that file is the Git-visible authority for declared Theseus research-line membership; GitHub Projects, repository metadata, and the table below are coordination/projection surfaces rather than competing membership authorities.
+
+### Theseus research lines
+
+<!-- BEGIN THESEUS_RESEARCH_LINES -->
+| Research line | Visibility / status | Role |
+| --- | --- | --- |
+| [`theseus-research`](https://github.com/TeaShaman-cyber/theseus-research) | public · active / root | Program contract, methodology, and research map |
+| [`theseus-public-observatory`](https://github.com/TeaShaman-cyber/theseus-public-observatory) | public · active | Public-data observation and reproducible verification experiments |
+| [`theseus-needle-lab`](https://github.com/TeaShaman-cyber/theseus-needle-lab) | public · active | Observable and reproducible Needle learning experiments |
+| [`theseus-memory-provider-lab`](https://github.com/TeaShaman-cyber/theseus-memory-provider-lab) | public · active | Automatic memory-provider lifecycle, recall/retain semantics, and verifiable provider contracts |
+| [`theseus-model-usage-lab`](https://github.com/TeaShaman-cyber/theseus-model-usage-lab) | public · active | Observable model usage, provider subscription windows, and budget-aware agent routing |
+| [`theseus-session-search-lab`](https://github.com/TeaShaman-cyber/theseus-session-search-lab) | public · active | Verifiable session capture, portable historical search artifacts, and browser-independent session search |
+| [`theseus-tech-review-graph`](https://github.com/TeaShaman-cyber/theseus-tech-review-graph) | public · active | Theseus KnowledgeOps and informational CI/CD for replaceable research and memory modules |
+| Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
+| [`theseus-repo-search-lab`](https://github.com/TeaShaman-cyber/theseus-repo-search-lab) | public · active | Reproducible repository indexing, dependency graphs, and bounded evidence retrieval for research corpora |
+| [`theseus-math-research-lab`](https://github.com/TeaShaman-cyber/theseus-math-research-lab) | public · active | Evidence-grounded mathematical bridge research, proof-search experiments, and bounded problem decomposition |
+<!-- END THESEUS_RESEARCH_LINES -->
 
 ## Methodological foundation
 

@@ -1,0 +1,309 @@
+import copy
+import unittest
+from pathlib import Path
+
+from tools.registry_contract import (
+    MANAGED_LABELS,
+    load_registry,
+    public_lines,
+    validate_registry,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+REGISTRY = ROOT / "registry" / "research-lines.json"
+
+
+class RegistryContractTests(unittest.TestCase):
+    def test_committed_registry_is_valid(self):
+        doc = load_registry(REGISTRY)
+        self.assertEqual([], validate_registry(doc))
+        self.assertEqual(
+            [
+                "theseus-research",
+                "theseus-public-observatory",
+                "theseus-needle-lab",
+                "theseus-memory-provider-lab",
+                "theseus-model-usage-lab",
+                "theseus-session-search-lab",
+                "theseus-tech-review-graph",
+                "theseus-repo-search-lab",
+                "theseus-math-research-lab",
+            ],
+            [line["id"] for line in public_lines(doc)],
+        )
+
+    def test_ids_must_be_single_line_lowercase_slugs(self):
+        for bad in ("bad\nid", "Bad-ID", "bad id", "bad_id", "é", "研究", "-foo", "foo--bar", "foo-"):
+            with self.subTest(line_id=bad):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0]["id"] = bad
+                self.assertIn(
+                    f"line id must be lowercase ASCII slug: {bad!r}",
+                    validate_registry(doc),
+                )
+
+    def test_ids_must_be_unique(self):
+        doc = load_registry(REGISTRY)
+        doc["lines"].append(copy.deepcopy(doc["lines"][0]))
+        self.assertIn("duplicate line id: theseus-research", validate_registry(doc))
+
+    def test_public_line_requires_repository(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line.pop("repository")
+        self.assertIn(
+            "public line theseus-needle-lab requires repository",
+            validate_registry(doc),
+        )
+
+    def test_public_repository_must_be_single_line_github_identity(self):
+        for repository in (
+            "TeaShaman-cyber/repo\n| injected",
+            "Tea Shaman/repo",
+            "owner/repo/name",
+            "owner/",
+            "/repo",
+            "../..",
+            "./repo",
+            "owner/..",
+            "_owner/repo",
+            "owner--name/repo",
+            "owner-/repo",
+            "-owner/repo",
+            "owner/" + "r" * 101,
+        ):
+            with self.subTest(repository=repository):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+                line["repository"] = repository
+                self.assertIn(
+                    "public line theseus-needle-lab requires repository",
+                    validate_registry(doc),
+                )
+
+    def test_public_repository_requires_nonempty_owner_and_repo(self):
+        for repository in ("TeaShaman-cyber/", "/theseus-research"):
+            with self.subTest(repository=repository):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+                line["repository"] = repository
+                self.assertIn(
+                    "public line theseus-needle-lab requires repository",
+                    validate_registry(doc),
+                )
+
+    def test_private_line_may_omit_repository(self):
+        doc = load_registry(REGISTRY)
+        sonar = next(x for x in doc["lines"] if x["id"] == "sonar")
+        self.assertNotIn("repository", sonar)
+        self.assertEqual([], validate_registry(doc))
+
+    def test_private_incubation_line_must_not_publish_repository_identity(self):
+        doc = load_registry(REGISTRY)
+        sonar = next(x for x in doc["lines"] if x["id"] == "sonar")
+        sonar["repository"] = "TeaShaman-cyber/private-sonar"
+        self.assertIn(
+            "private-incubation line sonar must omit repository",
+            validate_registry(doc),
+        )
+
+    def test_enum_fields_type_check_before_vocabulary_membership(self):
+        cases = (
+            ("visibility", [], "visibility for theseus-research must be string"),
+            ("visibility", {}, "visibility for theseus-research must be string"),
+            ("release_policy", [], "release policy for theseus-research must be string"),
+            ("release_policy", {}, "release policy for theseus-research must be string"),
+        )
+        for field, value, expected in cases:
+            with self.subTest(field=field, value=value):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0][field] = value
+                self.assertIn(expected, validate_registry(doc))
+
+    def test_visibility_and_status_must_form_a_supported_pair(self):
+        cases = (
+            ("theseus-needle-lab", "public", "private-incubation"),
+            ("sonar", "private-incubation", "active"),
+        )
+        for line_id, visibility, status in cases:
+            with self.subTest(line_id=line_id):
+                doc = load_registry(REGISTRY)
+                line = next(x for x in doc["lines"] if x["id"] == line_id)
+                line["visibility"] = visibility
+                line["status"] = status
+                self.assertIn(
+                    f"visibility/status mismatch for {line_id}: {visibility}/{status}",
+                    validate_registry(doc),
+                )
+
+
+    def test_role_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["role"][field] = "unexpected"
+                self.assertIn(
+                    f"role for theseus-needle-lab contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
+    def test_role_text_must_be_single_line(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["role"]["en"] = "First line\nInjected row"
+        self.assertIn(
+            "role for theseus-needle-lab en must be single-line",
+            validate_registry(doc),
+        )
+
+    def test_role_text_must_not_contain_projection_markers(self):
+        for marker in (
+            "<!-- BEGIN THESEUS_RESEARCH_LINES -->",
+            "<!-- END THESEUS_RESEARCH_LINES -->",
+        ):
+            with self.subTest(marker=marker):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["role"]["en"] = f"Role {marker} injected"
+                self.assertIn(
+                    "role for theseus-needle-lab en must not contain "
+                    "reserved projection markers",
+                    validate_registry(doc),
+                )
+
+    def test_root_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "runtime_bindings", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                doc[field] = "unexpected"
+                self.assertIn(
+                    f"registry root contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
+    def test_line_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "runtime_binding", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0][field] = "unexpected"
+                self.assertIn(
+                    f"line contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
+    def test_topics_are_limited_to_github_repository_maximum(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["topics"] = ["theseus", "theseus-research-line"] + [
+            f"topic-{index}" for index in range(19)
+        ]
+        self.assertEqual(21, len(line["topics"]))
+        self.assertIn(
+            "topics for theseus-needle-lab must contain at most 20 entries",
+            validate_registry(doc),
+        )
+
+    def test_topics_must_match_github_grammar(self):
+        for bad in ("Needle", "bad topic", "bad_topic", "x" * 51):
+            with self.subTest(topic=bad):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0]["topics"] = [bad]
+                self.assertIn(
+                    "topics for theseus-research must match GitHub topic grammar "
+                    "(lowercase ASCII letters, digits, hyphens; 1-50 chars)",
+                    validate_registry(doc),
+                )
+
+    def test_public_lines_require_baseline_topics(self):
+        for topics, missing in (
+            ([], "theseus, theseus-research-line"),
+            (["theseus"], "theseus-research-line"),
+            (["theseus-research-line"], "theseus"),
+        ):
+            with self.subTest(topics=topics):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["topics"] = topics
+                self.assertIn(
+                    f"public line theseus-needle-lab missing baseline topics: {missing}",
+                    validate_registry(doc),
+                )
+
+    def test_private_incubation_does_not_require_public_baseline_topics(self):
+        doc = load_registry(REGISTRY)
+        sonar = next(x for x in doc["lines"] if x["id"] == "sonar")
+        sonar["topics"] = []
+        self.assertFalse(
+            any(
+                error.startswith("public line sonar missing baseline topics:")
+                for error in validate_registry(doc)
+            )
+        )
+
+    def test_exactly_one_public_active_root_is_required(self):
+        cases = (
+            (
+                lambda doc: next(
+                    x for x in doc["lines"] if x["id"] == "theseus-research"
+                ).__setitem__("status", "active"),
+                "public active-root must be exactly theseus-research; observed: none",
+            ),
+            (
+                lambda doc: (
+                    next(x for x in doc["lines"] if x["id"] == "theseus-research").__setitem__("status", "active"),
+                    next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab").__setitem__("status", "active-root"),
+                ),
+                "public active-root must be exactly theseus-research; observed: theseus-needle-lab",
+            ),
+            (
+                lambda doc: next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                ).__setitem__("status", "active-root"),
+                "public active-root must be exactly theseus-research; observed: theseus-research, theseus-needle-lab",
+            ),
+        )
+        for mutate, expected in cases:
+            with self.subTest(expected=expected):
+                doc = load_registry(REGISTRY)
+                mutate(doc)
+                self.assertIn(expected, validate_registry(doc))
+
+    def test_invalid_status_is_rejected(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["status"] = "activ"
+        self.assertIn("invalid status for theseus-needle-lab: activ", validate_registry(doc))
+
+    def test_invalid_release_policy_is_rejected(self):
+        doc = load_registry(REGISTRY)
+        doc["lines"][0]["release_policy"] = "continuous"
+        self.assertIn(
+            "invalid release policy for theseus-research: continuous",
+            validate_registry(doc),
+        )
+
+    def test_managed_labels_are_closed_vocabulary(self):
+        doc = load_registry(REGISTRY)
+        doc["managed_labels"].append("status:accepted")
+        self.assertIn("managed_labels must exactly match contract", validate_registry(doc))
+        self.assertEqual(
+            (
+                "kind:research",
+                "kind:engineering",
+                "kind:operations",
+                "scope:cross-project",
+                "evidence:required",
+            ),
+            MANAGED_LABELS,
+        )
+
+
+if __name__ == "__main__":
+    unittest.main()
