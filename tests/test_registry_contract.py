@@ -146,6 +146,23 @@ class RegistryContractTests(unittest.TestCase):
             validate_registry(doc),
         )
 
+    def test_role_text_must_not_contain_projection_markers(self):
+        for marker in (
+            "<!-- BEGIN THESEUS_RESEARCH_LINES -->",
+            "<!-- END THESEUS_RESEARCH_LINES -->",
+        ):
+            with self.subTest(marker=marker):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["role"]["en"] = f"Role {marker} injected"
+                self.assertIn(
+                    "role for theseus-needle-lab en must not contain "
+                    "reserved projection markers",
+                    validate_registry(doc),
+                )
+
     def test_topics_must_match_github_grammar(self):
         for bad in ("Needle", "bad topic", "bad_topic", "x" * 51):
             with self.subTest(topic=bad):

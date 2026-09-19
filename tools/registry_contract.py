@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Mapping
 
+from tools.registry_projection import BEGIN_MARKER, END_MARKER
+
 VALID_VISIBILITIES = frozenset({"public", "private-incubation"})
 VALID_RELEASE_POLICIES = frozenset({"none", "checkpoint", "product"})
 VALID_STATUSES = frozenset({"active-root", "active", "private-incubation"})
@@ -98,6 +100,11 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
                     errors.append(f"role for {line_id} missing {language}")
                 elif "\n" in value or "\r" in value:
                     errors.append(f"role for {line_id} {language} must be single-line")
+                elif BEGIN_MARKER in value or END_MARKER in value:
+                    errors.append(
+                        f"role for {line_id} {language} must not contain "
+                        "reserved projection markers"
+                    )
 
         status = raw_line.get("status")
         if not isinstance(status, str) or not status:
