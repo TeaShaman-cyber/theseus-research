@@ -63,9 +63,7 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
     if title_index is None:
         raise ValueError("missing current contract version surface: changelog")
 
-    candidate_pattern = re.compile(
-        rf"{VERSION_TOKEN}\s+(?:—|-)\s+.+"
-    )
+    candidate_pattern = re.compile(r"(?:^\s*##|\b[0-9]+\.[A-Za-z0-9.-]+\b)")
     heading = next(
         (
             line
@@ -120,6 +118,8 @@ class ContractAtomicityTests(unittest.TestCase):
             "### 1.2 — 2026-10-01",
             "1.2 — 2026-10-01",
             "draft 1.2 — 2026-10-01",
+            "## 1.x — 2026-10-01",
+            "## 1.2: 2026-10-01",
         ):
             with self.subTest(heading=malformed_heading):
                 broken = (
