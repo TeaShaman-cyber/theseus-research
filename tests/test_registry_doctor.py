@@ -104,6 +104,26 @@ class RegistryDoctorTests(unittest.TestCase):
         root = next(x for x in report["declared"] if x["id"] == "theseus-research")
         self.assertIn("missing managed label: evidence:required", root["drift"])
 
+    def test_stale_label_in_managed_namespace_reports_declared_drift(self):
+        responses = healthy_responses(self.document)
+        path = "/repos/TeaShaman-cyber/theseus-research/labels?per_page=100"
+        responses[("GET", path)].extend(
+            [{"name": "kind:legacy"}, {"name": "scope:old"}, {"name": "evidence:optional"}]
+        )
+        report, _ = self._run(responses)
+        self.assertEqual("DECLARED_DRIFT", report["status"])
+        root = next(x for x in report["declared"] if x["id"] == "theseus-research")
+        self.assertIn("unexpected managed label: kind:legacy", root["drift"])
+        self.assertIn("unexpected managed label: scope:old", root["drift"])
+        self.assertIn("unexpected managed label: evidence:optional", root["drift"])
+
+    def test_unrelated_local_label_remains_informational(self):
+        responses = healthy_responses(self.document)
+        path = "/repos/TeaShaman-cyber/theseus-research/labels?per_page=100"
+        responses[("GET", path)].append({"name": "local-note"})
+        report, _ = self._run(responses)
+        self.assertEqual("PASS", report["status"])
+
     def test_managed_labels_are_collected_across_all_pages_before_drift(self):
         responses = healthy_responses(self.document)
         base = "/repos/TeaShaman-cyber/theseus-research"

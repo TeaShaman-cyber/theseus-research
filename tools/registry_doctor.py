@@ -156,6 +156,12 @@ def observe_declared_line(
         if isinstance(item, Mapping) and isinstance(item.get("name"), str)
     }
     missing_labels = [name for name in MANAGED_LABELS if name not in observed_labels]
+    managed_label_prefixes = {name.split(":", 1)[0] + ":" for name in MANAGED_LABELS if ":" in name}
+    unexpected_managed_labels = sorted(
+        label
+        for label in observed_labels - set(MANAGED_LABELS)
+        if any(label.startswith(prefix) for prefix in managed_label_prefixes)
+    )
 
     drift: list[str] = []
     if metadata.get("full_name") != repository:
@@ -163,6 +169,9 @@ def observe_declared_line(
     drift.extend(f"missing topic: {topic}" for topic in missing_topics)
     drift.extend(f"unexpected managed topic: {topic}" for topic in unexpected_managed_topics)
     drift.extend(f"missing managed label: {label}" for label in missing_labels)
+    drift.extend(
+        f"unexpected managed label: {label}" for label in unexpected_managed_labels
+    )
 
     release_policy = line.get("release_policy")
     release_count = len(releases_payload)
