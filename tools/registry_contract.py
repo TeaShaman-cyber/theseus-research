@@ -20,6 +20,10 @@ MANAGED_LABELS = (
 )
 SCHEMA_VERSION = "theseus-research-lines-v1"
 BASELINE_PUBLIC_TOPICS = frozenset({"theseus", "theseus-research-line"})
+LINE_FIELDS = frozenset(
+    {"id", "repository", "visibility", "role", "topics", "release_policy", "status"}
+)
+MAX_REPOSITORY_TOPICS = 20
 
 _GITHUB_OWNER_RE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
 _GITHUB_REPOSITORY_RE = re.compile(r"[A-Za-z0-9_.-]{1,100}")
@@ -66,6 +70,12 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         if not isinstance(raw_line, Mapping):
             errors.append("line must be an object")
             continue
+
+        unexpected_fields = sorted(set(raw_line) - LINE_FIELDS)
+        if unexpected_fields:
+            errors.append(
+                "line contains unsupported fields: " + ", ".join(unexpected_fields)
+            )
 
         line_id = raw_line.get("id")
         if not isinstance(line_id, str) or not line_id:
@@ -129,6 +139,10 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
             or _GITHUB_TOPIC_RE.fullmatch(topic) is None
             for topic in topics
         )
+        if isinstance(topics, list) and len(topics) > MAX_REPOSITORY_TOPICS:
+            errors.append(
+                f"topics for {line_id} must contain at most {MAX_REPOSITORY_TOPICS} entries"
+            )
         if not topics_are_valid:
             errors.append(
                 f"topics for {line_id} must match GitHub topic grammar "

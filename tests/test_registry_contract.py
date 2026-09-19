@@ -163,6 +163,28 @@ class RegistryContractTests(unittest.TestCase):
                     validate_registry(doc),
                 )
 
+    def test_line_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "runtime_binding", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                doc["lines"][0][field] = "unexpected"
+                self.assertIn(
+                    f"line contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
+    def test_topics_are_limited_to_github_repository_maximum(self):
+        doc = load_registry(REGISTRY)
+        line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")
+        line["topics"] = ["theseus", "theseus-research-line"] + [
+            f"topic-{index}" for index in range(19)
+        ]
+        self.assertEqual(21, len(line["topics"]))
+        self.assertIn(
+            "topics for theseus-needle-lab must contain at most 20 entries",
+            validate_registry(doc),
+        )
+
     def test_topics_must_match_github_grammar(self):
         for bad in ("Needle", "bad topic", "bad_topic", "x" * 51):
             with self.subTest(topic=bad):
