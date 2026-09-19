@@ -5,12 +5,31 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+VERSION_TOKEN = r"[0-9]+(?:\.[0-9]+)+(?:-[A-Za-z0-9.-]+)?"
+
+
+def _first_revision_version(
+    text: str,
+    name: str,
+    marker: str,
+    valid_pattern: str,
+) -> str:
+    candidate = next(
+        (line for line in text.splitlines() if marker.casefold() in line.casefold()),
+        None,
+    )
+    if candidate is None:
+        raise ValueError(f"missing current contract version surface: {name}")
+    match = re.fullmatch(valid_pattern, candidate)
+    if match is None:
+        raise ValueError(f"malformed current contract version surface: {name}")
+    return match.group(1)
+
+
 def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str]:
     patterns = {
         "en_header": (en, r"^\*\*Version:\*\* `([^`]+)`$"),
         "ru_header": (ru, r"^\*\*Версия:\*\* `([^`]+)`$"),
-        "en_revision": (en, r"^### Revision record: `([^`]+)`"),
-        "ru_revision": (ru, r"^### Запись о ревизии: `([^`]+)`"),
     }
     out: dict[str, str] = {}
     for name, (text, pattern) in patterns.items():
@@ -18,6 +37,19 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
         if match is None:
             raise ValueError(f"missing current contract version surface: {name}")
         out[name] = match.group(1)
+
+    out["en_revision"] = _first_revision_version(
+        en,
+        "en_revision",
+        "revision record",
+        rf"### Revision record: `({VERSION_TOKEN})` \u2014 .+",
+    )
+    out["ru_revision"] = _first_revision_version(
+        ru,
+        "ru_revision",
+        "запись о ревизии",
+        rf"### Запись о ревизии: `({VERSION_TOKEN})` \u2014 .+",
+    )
 
     lines = changelog.splitlines()
     title_index = next(
@@ -31,14 +63,21 @@ def current_contract_versions(en: str, ru: str, changelog: str) -> dict[str, str
     if title_index is None:
         raise ValueError("missing current contract version surface: changelog")
 
+    candidate_pattern = re.compile(
+        rf"{VERSION_TOKEN}\s+(?:—|-)\s+.+"
+    )
     heading = next(
-        (line for line in lines[title_index + 1 :] if line.lstrip().startswith("#")),
+        (
+            line
+            for line in lines[title_index + 1 :]
+            if candidate_pattern.search(line)
+        ),
         None,
     )
     if heading is None:
         raise ValueError("missing current contract version surface: changelog")
     match = re.fullmatch(
-        r"## ([0-9]+(?:\.[0-9]+)+(?:-[A-Za-z0-9.-]+)?)\s+—\s+.+",
+        rf"## ({VERSION_TOKEN})\s+—\s+.+",
         heading,
     )
     if match is None:
@@ -79,6 +118,8 @@ class ContractAtomicityTests(unittest.TestCase):
             "##1.2 — 2026-10-01",
             " ## 1.2 — 2026-10-01",
             "### 1.2 — 2026-10-01",
+            "1.2 — 2026-10-01",
+            "draft 1.2 — 2026-10-01",
         ):
             with self.subTest(heading=malformed_heading):
                 broken = (
@@ -94,6 +135,39 @@ class ContractAtomicityTests(unittest.TestCase):
                     "malformed current contract version surface: changelog",
                 ):
                     current_contract_versions(self.en, self.ru, broken)
+
+    def test_malformed_new_revision_record_does_not_fall_through_to_history(self):
+        valid_en = (
+            "**Version:** `1.1`\n"
+            "### Revision record: `1.1` — 2026-09-18\n"
+        )
+        valid_ru = (
+            "**Версия:** `1.1`\n"
+            "### Запись о ревизии: `1.1` — 2026-09-18\n"
+        )
+        changelog = "# Theseus Contract Changelog\n\n## 1.1 — 2026-09-18\n"
+
+        malformed_en = (
+            "**Version:** `1.1`\n"
+            "### Revision Record: `1.2`\n"
+            "### Revision record: `1.1` — 2026-09-18\n"
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "malformed current contract version surface: en_revision",
+        ):
+            current_contract_versions(malformed_en, valid_ru, changelog)
+
+        malformed_ru = (
+            "**Версия:** `1.1`\n"
+            "### Запись о ревизии `1.2`\n"
+            "### Запись о ревизии: `1.1` — 2026-09-18\n"
+        )
+        with self.assertRaisesRegex(
+            ValueError,
+            "malformed current contract version surface: ru_revision",
+        ):
+            current_contract_versions(valid_en, malformed_ru, changelog)
 
     def test_mismatched_bilingual_header_fails_for_intended_reason(self):
         current = current_contract_versions(self.en, self.ru, self.changelog)["ru_header"]
