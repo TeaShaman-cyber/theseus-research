@@ -1,6 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd "$(dirname "$0")/../.."
+
+check_untracked_file() {
+  local path="$1"
+  local output rc
+  set +e
+  output=$(git diff --no-index --check /dev/null "$path" 2>&1)
+  rc=$?
+  set -e
+  if [ "$rc" -gt 1 ]; then
+    printf '%s\n' "$output"
+    return 1
+  fi
+  return 0
+}
+
+check_untracked_whitespace() {
+  local bad=0
+  local path nested
+
+  while IFS= read -r -d '' path; do
+    if [ -d "./$path" ]; then
+      while IFS= read -r -d '' nested; do
+        if ! check_untracked_file "$nested"; then
+          bad=1
+        fi
+      done < <(
+        find "./$path" -path '*/.git' -prune -o -type f -print0
+      )
+    elif [ -f "./$path" ]; then
+      if ! check_untracked_file "./$path"; then
+        bad=1
+      fi
+    fi
+  done < <(git ls-files --others --exclude-standard -z)
+
+  test "$bad" -eq 0
+}
+
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+  return 0
+fi
+
+cd "$(dirname "${BASH_SOURCE[0]}")/../.."
 export PYTHONDONTWRITEBYTECODE=1
 
 echo '== registry contract =='
@@ -25,17 +67,6 @@ git diff --cached --check
 git diff --check
 
 echo '== untracked whitespace =='
-bad=0
-while IFS= read -r -d '' path; do
-  set +e
-  output=$(git diff --no-index --check /dev/null "./$path" 2>&1)
-  rc=$?
-  set -e
-  if [ "$rc" -gt 1 ]; then
-    printf '%s\n' "$output"
-    bad=1
-  fi
-done < <(git ls-files --others --exclude-standard -z)
-test "$bad" -eq 0
+check_untracked_whitespace
 
 echo DEV_CHECK_PASS
