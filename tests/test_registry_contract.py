@@ -202,6 +202,34 @@ class RegistryContractTests(unittest.TestCase):
             )
         )
 
+    def test_exactly_one_public_active_root_is_required(self):
+        cases = (
+            (
+                lambda doc: next(
+                    x for x in doc["lines"] if x["id"] == "theseus-research"
+                ).__setitem__("status", "active"),
+                "public active-root must be exactly theseus-research; observed: none",
+            ),
+            (
+                lambda doc: (
+                    next(x for x in doc["lines"] if x["id"] == "theseus-research").__setitem__("status", "active"),
+                    next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab").__setitem__("status", "active-root"),
+                ),
+                "public active-root must be exactly theseus-research; observed: theseus-needle-lab",
+            ),
+            (
+                lambda doc: next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                ).__setitem__("status", "active-root"),
+                "public active-root must be exactly theseus-research; observed: theseus-research, theseus-needle-lab",
+            ),
+        )
+        for mutate, expected in cases:
+            with self.subTest(expected=expected):
+                doc = load_registry(REGISTRY)
+                mutate(doc)
+                self.assertIn(expected, validate_registry(doc))
+
     def test_invalid_status_is_rejected(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")

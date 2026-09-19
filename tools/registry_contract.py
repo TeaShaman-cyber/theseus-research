@@ -148,6 +148,19 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         elif release_policy not in VALID_RELEASE_POLICIES:
             errors.append(f"invalid release policy for {line_id}: {release_policy}")
 
+    active_roots = [
+        line.get("id")
+        for line in lines
+        if isinstance(line, Mapping)
+        and line.get("visibility") == "public"
+        and line.get("status") == "active-root"
+    ]
+    if active_roots != ["theseus-research"]:
+        errors.append(
+            "public active-root must be exactly theseus-research; observed: "
+            + (", ".join(str(item) for item in active_roots) if active_roots else "none")
+        )
+
     return errors
 
 
