@@ -46,6 +46,34 @@ class DevCheckTests(unittest.TestCase):
             self.assertNotEqual(0, probe.returncode)
             self.assertIn("trailing whitespace", probe.stdout + probe.stderr)
 
+    def test_recursive_find_failure_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.assertEqual(0, run("git", "init", "-q", cwd=root).returncode)
+
+            vendor = root / "vendor"
+            vendor.mkdir()
+            self.assertEqual(0, run("git", "init", "-q", cwd=vendor).returncode)
+            (vendor / "file.txt").write_text("clean\n", encoding="utf-8")
+
+            fakebin = root / "fakebin"
+            fakebin.mkdir()
+            fake_find = fakebin / "find"
+            fake_find.write_text("#!/bin/sh\nexit 7\n", encoding="utf-8")
+            fake_find.chmod(0o755)
+
+            probe = run(
+                "bash",
+                "-c",
+                'PATH="$3:$PATH"; source "$1"; cd "$2"; check_untracked_whitespace',
+                "bash",
+                str(DEV_CHECK),
+                str(root),
+                str(fakebin),
+            )
+            self.assertNotEqual(0, probe.returncode)
+            self.assertIn("untracked traversal failed", probe.stdout + probe.stderr)
+
     def test_clean_untracked_embedded_git_directory_passes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
