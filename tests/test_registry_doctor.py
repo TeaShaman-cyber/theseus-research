@@ -301,6 +301,26 @@ class RegistryDoctorTests(unittest.TestCase):
         needle = next(x for x in report["declared"] if x["id"] == "theseus-needle-lab")
         self.assertIn("release policy none but 1 release(s) observed", needle["drift"])
 
+    def test_release_count_is_collected_across_all_pages(self):
+        document = copy.deepcopy(self.document)
+        line = next(x for x in document["lines"] if x["id"] == "theseus-needle-lab")
+        line["release_policy"] = "none"
+        responses = healthy_responses(document)
+        base = "/repos/TeaShaman-cyber/theseus-needle-lab"
+        first = f"{base}/releases?per_page=100"
+        second = f"{base}/releases?per_page=100&page=2"
+        responses[("GET", first)] = [
+            {"id": index, "tag_name": f"v{index}"} for index in range(100)
+        ]
+        responses[("GET", second)] = [{"id": 100, "tag_name": "v100"}]
+        transport = FakeTransport(responses)
+        report = run_doctor(document, "TeaShaman-cyber", transport)
+        self.assertEqual("DECLARED_DRIFT", report["status"])
+        needle = next(x for x in report["declared"] if x["id"] == "theseus-needle-lab")
+        self.assertEqual(101, needle["observed"]["release_count"])
+        self.assertIn("release policy none but 101 release(s) observed", needle["drift"])
+        self.assertIn(("GET", second, None), transport.calls)
+
     def test_read_only_doctor_uses_only_get_requests(self):
         report, transport = self._run()
         self.assertEqual("PASS", report["status"])

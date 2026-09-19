@@ -124,7 +124,7 @@ def observe_declared_line(
 
     topics_payload = transport.request("GET", f"{base}/topics")
     labels_payload = _paginated_list(transport, f"{base}/labels?per_page=100")
-    releases_payload = transport.request("GET", f"{base}/releases?per_page=100")
+    releases_payload = _paginated_list(transport, f"{base}/releases?per_page=100")
 
     if not isinstance(topics_payload, Mapping) or not isinstance(topics_payload.get("names"), list):
         raise GitHubUnavailable(f"unexpected topics payload: {repository}")

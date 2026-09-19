@@ -107,6 +107,41 @@ class RegistryCliTests(unittest.TestCase):
             self.assertEqual(original_en, readme_en.read_text(encoding="utf-8"))
             self.assertEqual(original_ru, readme_ru.read_text(encoding="utf-8"))
 
+    def test_render_write_rolls_back_partial_invalid_utf8_without_decoding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = "<!-- BEGIN THESEUS_RESEARCH_LINES -->\nold\n<!-- END THESEUS_RESEARCH_LINES -->\n"
+            readme_en = root / "README.md"
+            readme_ru = root / "README.ru.md"
+            readme_en.write_text("EN before\n" + marker + "EN after\n", encoding="utf-8")
+            readme_ru.write_text("RU before\n" + marker + "RU after\n", encoding="utf-8")
+            original_en = readme_en.read_bytes()
+            original_ru = readme_ru.read_bytes()
+            saved_en, saved_ru = check_registry.README_EN, check_registry.README_RU
+            check_registry.README_EN, check_registry.README_RU = readme_en, readme_ru
+            real_write_text = Path.write_text
+            failed = {"done": False}
+
+            def fail_with_partial_utf8(path, data, *args, **kwargs):
+                if path == readme_ru and not failed["done"]:
+                    failed["done"] = True
+                    path.write_bytes(b"\xe2\x82")
+                    raise OSError("simulated partial UTF-8 write failure")
+                return real_write_text(path, data, *args, **kwargs)
+
+            try:
+                with mock.patch.object(Path, "write_text", new=fail_with_partial_utf8):
+                    with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                        code = check_registry.cmd_render(
+                            argparse.Namespace(check=False, write=True)
+                        )
+            finally:
+                check_registry.README_EN, check_registry.README_RU = saved_en, saved_ru
+            self.assertEqual(4, code)
+            self.assertEqual("INVALID", json.loads(stdout.getvalue())["status"])
+            self.assertEqual(original_en, readme_en.read_bytes())
+            self.assertEqual(original_ru, readme_ru.read_bytes())
+
     def test_doctor_reports_projection_read_failure_without_transport(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
