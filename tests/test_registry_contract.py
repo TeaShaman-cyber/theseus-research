@@ -174,6 +174,34 @@ class RegistryContractTests(unittest.TestCase):
                     validate_registry(doc),
                 )
 
+    def test_public_lines_require_baseline_topics(self):
+        for topics, missing in (
+            ([], "theseus, theseus-research-line"),
+            (["theseus"], "theseus-research-line"),
+            (["theseus-research-line"], "theseus"),
+        ):
+            with self.subTest(topics=topics):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["topics"] = topics
+                self.assertIn(
+                    f"public line theseus-needle-lab missing baseline topics: {missing}",
+                    validate_registry(doc),
+                )
+
+    def test_private_incubation_does_not_require_public_baseline_topics(self):
+        doc = load_registry(REGISTRY)
+        sonar = next(x for x in doc["lines"] if x["id"] == "sonar")
+        sonar["topics"] = []
+        self.assertFalse(
+            any(
+                error.startswith("public line sonar missing baseline topics:")
+                for error in validate_registry(doc)
+            )
+        )
+
     def test_invalid_status_is_rejected(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")

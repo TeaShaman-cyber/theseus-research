@@ -205,6 +205,77 @@ class RegistryDoctorTests(unittest.TestCase):
         transport = FakeTransport(responses)
         self.assertEqual([], discover_candidates("TeaShaman-cyber", declared, transport))
 
+    def test_candidate_search_paginates_before_declaring_completion(self):
+        declared = {line["repository"] for line in public_lines(self.document)}
+        first_page = [
+            {
+                "full_name": repository,
+                "name": repository.split("/", 1)[1],
+                "description": "declared",
+                "private": False,
+            }
+            for repository in sorted(declared)
+        ]
+        first_page.extend(
+            {
+                "full_name": f"TeaShaman-cyber/unrelated-{index}",
+                "name": f"unrelated-{index}",
+                "description": "not declared",
+                "private": False,
+            }
+            for index in range(100 - len(first_page))
+        )
+        candidate = {
+            "full_name": "TeaShaman-cyber/theseus-page-two-lab",
+            "name": "theseus-page-two-lab",
+            "description": "second page candidate",
+            "private": False,
+        }
+        responses = {
+            ("GET", search_path()): {
+                "items": first_page,
+                "incomplete_results": False,
+                "total_count": 101,
+            },
+            ("GET", f"{search_path()}&page=2"): {
+                "items": [candidate],
+                "incomplete_results": False,
+                "total_count": 101,
+            },
+        }
+        transport = FakeTransport(responses)
+        candidates = discover_candidates("TeaShaman-cyber", declared, transport)
+        self.assertIn(
+            "TeaShaman-cyber/theseus-page-two-lab",
+            [item["full_name"] for item in candidates],
+        )
+        self.assertIn(("GET", f"{search_path()}&page=2", None), transport.calls)
+
+    def test_candidate_search_over_github_cap_is_unreachable(self):
+        declared = {line["repository"] for line in public_lines(self.document)}
+        responses = {}
+        for page in range(1, 11):
+            path = search_path() if page == 1 else f"{search_path()}&page={page}"
+            responses[("GET", path)] = {
+                "items": [
+                    {
+                        "full_name": f"TeaShaman-cyber/theseus-candidate-{page}-{index}",
+                        "name": f"theseus-candidate-{page}-{index}",
+                        "description": "candidate",
+                        "private": False,
+                    }
+                    for index in range(100)
+                ],
+                "incomplete_results": False,
+                "total_count": 1001,
+            }
+        transport = FakeTransport(responses)
+        with self.assertRaisesRegex(
+            GitHubUnavailable,
+            "repository search exceeds GitHub 1000-result cap",
+        ):
+            discover_candidates("TeaShaman-cyber", declared, transport)
+
     def test_incomplete_candidate_search_is_unreachable(self):
         responses = healthy_responses(self.document)
         responses[("GET", search_path())] = {"items": [], "incomplete_results": True}

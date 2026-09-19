@@ -190,31 +190,45 @@ def discover_candidates(
     owner: str, declared: set[str], transport: GitHubTransport
 ) -> list[dict[str, object]]:
     query = quote_plus(f"user:{owner} theseus in:name,description is:public")
-    payload = transport.request(
-        "GET", f"/search/repositories?q={query}&per_page=100"
-    )
-    if not isinstance(payload, Mapping) or not isinstance(payload.get("items"), list):
-        raise GitHubUnavailable("unexpected repository search payload")
-    if payload.get("incomplete_results") is True:
-        raise GitHubUnavailable("incomplete repository search results")
-
     candidates: list[dict[str, object]] = []
-    for item in payload["items"]:
-        if not isinstance(item, Mapping):
-            continue
-        full_name = item.get("full_name")
-        if item.get("private") is True:
-            continue
-        if not isinstance(full_name, str) or full_name in declared:
-            continue
-        candidates.append(
-            {
-                "full_name": full_name,
-                "name": item.get("name"),
-                "description": item.get("description"),
-                "private": bool(item.get("private")),
-            }
-        )
+    page = 1
+
+    while True:
+        base_path = f"/search/repositories?q={query}&per_page=100"
+        path = base_path if page == 1 else f"{base_path}&page={page}"
+        payload = transport.request("GET", path)
+        if not isinstance(payload, Mapping) or not isinstance(payload.get("items"), list):
+            raise GitHubUnavailable("unexpected repository search payload")
+        if payload.get("incomplete_results") is True:
+            raise GitHubUnavailable("incomplete repository search results")
+
+        items = payload["items"]
+        for item in items:
+            if not isinstance(item, Mapping):
+                continue
+            full_name = item.get("full_name")
+            if item.get("private") is True:
+                continue
+            if not isinstance(full_name, str) or full_name in declared:
+                continue
+            candidates.append(
+                {
+                    "full_name": full_name,
+                    "name": item.get("name"),
+                    "description": item.get("description"),
+                    "private": bool(item.get("private")),
+                }
+            )
+
+        total_count = payload.get("total_count")
+        if isinstance(total_count, int) and page * 100 >= total_count:
+            break
+        if len(items) < 100:
+            break
+        if page >= 10:
+            raise GitHubUnavailable("repository search exceeds GitHub 1000-result cap")
+        page += 1
+
     return sorted(candidates, key=lambda item: str(item["full_name"]))
 
 
