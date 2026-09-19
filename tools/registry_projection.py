@@ -80,10 +80,10 @@ def replace_projection(markdown: str, rendered: str) -> str:
 
 
 def projection_matches(path: Path, rendered: str) -> bool:
-    markdown = path.read_text(encoding="utf-8")
     try:
+        markdown = path.read_text(encoding="utf-8")
         begin, end = _projection_bounds(markdown)
-    except ValueError:
+    except (OSError, UnicodeError, ValueError):
         return False
     body_start = begin + len(BEGIN_MARKER)
     observed = markdown[body_start:end]

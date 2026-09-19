@@ -113,6 +113,15 @@ def observe_declared_line(
 
     if not isinstance(metadata, Mapping):
         raise GitHubUnavailable(f"unexpected repository metadata shape: {repository}")
+    if bool(metadata.get("private")):
+        return {
+            "id": line_id,
+            "repository": repository,
+            "status": "DECLARED_DRIFT",
+            "drift": ["repository unexpectedly private"],
+            "observed": {"private": True},
+        }
+
     topics_payload = transport.request("GET", f"{base}/topics")
     labels_payload = _paginated_list(transport, f"{base}/labels?per_page=100")
     releases_payload = transport.request("GET", f"{base}/releases?per_page=100")
@@ -151,8 +160,6 @@ def observe_declared_line(
     drift: list[str] = []
     if metadata.get("full_name") != repository:
         drift.append(f"repository identity mismatch: {metadata.get('full_name')}")
-    if bool(metadata.get("private")):
-        drift.append("repository unexpectedly private")
     drift.extend(f"missing topic: {topic}" for topic in missing_topics)
     drift.extend(f"unexpected managed topic: {topic}" for topic in unexpected_managed_topics)
     drift.extend(f"missing managed label: {label}" for label in missing_labels)

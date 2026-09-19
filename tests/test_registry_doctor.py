@@ -117,6 +117,26 @@ class RegistryDoctorTests(unittest.TestCase):
         self.assertFalse(any(item.startswith("missing managed label:") for item in root["drift"]))
         self.assertIn(("GET", second, None), transport.calls)
 
+    def test_private_declared_repository_stops_before_private_metadata_queries(self):
+        responses = healthy_responses(self.document)
+        base = "/repos/TeaShaman-cyber/theseus-needle-lab"
+        responses[("GET", base)] = {
+            "full_name": "TeaShaman-cyber/theseus-needle-lab",
+            "private": True,
+            "description": "private metadata must not enter the report",
+        }
+        report, transport = self._run(responses)
+        self.assertEqual("DECLARED_DRIFT", report["status"])
+        needle = next(
+            x for x in report["declared"] if x["id"] == "theseus-needle-lab"
+        )
+        self.assertEqual(["repository unexpectedly private"], needle["drift"])
+        self.assertEqual({"private": True}, needle["observed"])
+        queried_paths = {path for method, path, _ in transport.calls if method == "GET"}
+        self.assertNotIn(f"{base}/topics", queried_paths)
+        self.assertNotIn(f"{base}/labels?per_page=100", queried_paths)
+        self.assertNotIn(f"{base}/releases?per_page=100", queried_paths)
+
     def test_missing_repository_is_drift_not_deletion(self):
         responses = healthy_responses(self.document)
         path = "/repos/TeaShaman-cyber/theseus-session-search-lab"

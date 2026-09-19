@@ -1,4 +1,5 @@
 import argparse
+import io
 import json
 import subprocess
 import sys
@@ -35,6 +36,23 @@ class RegistryCliTests(unittest.TestCase):
         payload = json.loads(result.stdout)
         self.assertEqual("PASS", payload["status"])
         self.assertEqual([], payload["mismatched_files"])
+
+    def test_render_check_reports_projection_read_failure_without_traceback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            missing = Path(tmp) / "README.md"
+            saved_en = check_registry.README_EN
+            check_registry.README_EN = missing
+            try:
+                with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                    code = check_registry.cmd_render(
+                        argparse.Namespace(check=True, write=False)
+                    )
+            finally:
+                check_registry.README_EN = saved_en
+            self.assertEqual(4, code)
+            payload = json.loads(stdout.getvalue())
+            self.assertEqual("PROJECTION_MISMATCH", payload["status"])
+            self.assertIn("README.md", payload["mismatched_files"])
 
     def test_render_write_validates_both_projections_before_writing_either(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -88,6 +106,28 @@ class RegistryCliTests(unittest.TestCase):
             self.assertEqual(4, code)
             self.assertEqual(original_en, readme_en.read_text(encoding="utf-8"))
             self.assertEqual(original_ru, readme_ru.read_text(encoding="utf-8"))
+
+    def test_doctor_reports_projection_read_failure_without_transport(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            missing = root / "README.md"
+            output = root / "doctor.json"
+            saved_en = check_registry.README_EN
+            check_registry.README_EN = missing
+            try:
+                code = check_registry.cmd_doctor(
+                    argparse.Namespace(
+                        owner="TeaShaman-cyber",
+                        json_output=str(output),
+                        drift_issue="off",
+                    )
+                )
+            finally:
+                check_registry.README_EN = saved_en
+            self.assertEqual(4, code)
+            payload = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual("PROJECTION_MISMATCH", payload["status"])
+            self.assertIn("README.md", payload["mismatched_files"])
 
     def test_doctor_creates_json_output_parent_before_invalid_early_return(self):
         with tempfile.TemporaryDirectory() as tmp:

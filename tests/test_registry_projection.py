@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -75,6 +76,16 @@ class RegistryProjectionTests(unittest.TestCase):
         source = f"{END_MARKER}\nold\n{BEGIN_MARKER}\n"
         with self.assertRaisesRegex(ValueError, "projection markers out of order"):
             replace_projection(source, "table\n")
+
+    def test_projection_read_failures_are_mismatches(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            missing = root / "missing.md"
+            invalid_utf8 = root / "invalid.md"
+            invalid_utf8.write_bytes(b"\xff")
+            rendered = render_table(self.document, "en")
+            self.assertFalse(projection_matches(missing, rendered))
+            self.assertFalse(projection_matches(invalid_utf8, rendered))
 
     def test_committed_readmes_match_generated_tables(self):
         self.assertTrue(projection_matches(ROOT / "README.md", render_table(self.document, "en")))
