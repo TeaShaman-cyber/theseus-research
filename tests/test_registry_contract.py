@@ -137,6 +137,19 @@ class RegistryContractTests(unittest.TestCase):
                 )
 
 
+    def test_role_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                line = next(
+                    x for x in doc["lines"] if x["id"] == "theseus-needle-lab"
+                )
+                line["role"][field] = "unexpected"
+                self.assertIn(
+                    f"role for theseus-needle-lab contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
     def test_role_text_must_be_single_line(self):
         doc = load_registry(REGISTRY)
         line = next(x for x in doc["lines"] if x["id"] == "theseus-needle-lab")

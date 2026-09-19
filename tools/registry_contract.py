@@ -24,6 +24,7 @@ BASELINE_PUBLIC_TOPICS = frozenset({"theseus", "theseus-research-line"})
 LINE_FIELDS = frozenset(
     {"id", "repository", "visibility", "role", "topics", "release_policy", "status"}
 )
+ROLE_FIELDS = frozenset({"en", "ru"})
 MAX_REPOSITORY_TOPICS = 20
 
 _GITHUB_OWNER_RE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
@@ -113,6 +114,12 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
         if not isinstance(role, Mapping):
             errors.append(f"role for {line_id} must be localized object")
         else:
+            unexpected_role_fields = sorted(set(role) - ROLE_FIELDS)
+            if unexpected_role_fields:
+                errors.append(
+                    f"role for {line_id} contains unsupported fields: "
+                    + ", ".join(unexpected_role_fields)
+                )
             for language in ("en", "ru"):
                 value = role.get(language)
                 if not isinstance(value, str) or not value.strip():
