@@ -163,6 +163,16 @@ class RegistryContractTests(unittest.TestCase):
                     validate_registry(doc),
                 )
 
+    def test_root_schema_rejects_unknown_fields(self):
+        for field in ("credentials", "budget", "runtime_bindings", "deployment_topology"):
+            with self.subTest(field=field):
+                doc = load_registry(REGISTRY)
+                doc[field] = "unexpected"
+                self.assertIn(
+                    f"registry root contains unsupported fields: {field}",
+                    validate_registry(doc),
+                )
+
     def test_line_schema_rejects_unknown_fields(self):
         for field in ("credentials", "budget", "runtime_binding", "deployment_topology"):
             with self.subTest(field=field):

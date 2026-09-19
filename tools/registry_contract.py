@@ -19,6 +19,7 @@ MANAGED_LABELS = (
     "evidence:required",
 )
 SCHEMA_VERSION = "theseus-research-lines-v1"
+ROOT_FIELDS = frozenset({"schema_version", "managed_labels", "lines"})
 BASELINE_PUBLIC_TOPICS = frozenset({"theseus", "theseus-research-line"})
 LINE_FIELDS = frozenset(
     {"id", "repository", "visibility", "role", "topics", "release_policy", "status"}
@@ -53,6 +54,13 @@ def load_registry(path: Path) -> dict[str, object]:
 
 def validate_registry(document: Mapping[str, object]) -> list[str]:
     errors: list[str] = []
+
+    unexpected_root_fields = sorted(set(document) - ROOT_FIELDS)
+    if unexpected_root_fields:
+        errors.append(
+            "registry root contains unsupported fields: "
+            + ", ".join(unexpected_root_fields)
+        )
 
     if document.get("schema_version") != SCHEMA_VERSION:
         errors.append(f"schema_version must be {SCHEMA_VERSION}")
