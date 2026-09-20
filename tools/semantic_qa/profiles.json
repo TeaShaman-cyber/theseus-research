@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "input_budget": {
+    "max_files": 20,
+    "max_total_bytes": 262144,
+    "max_file_bytes": 65536
+  },
+  "semdup": {
+    "source_sha": "829f90ad94f453b73a24e46413202e9ece0b49e8",
+    "model_key": "nomic-ai/CodeRankEmbed@cpu-nbits-int4-asym",
+    "model_release_tag": "model-coderankembed-1",
+    "model_release_tag_sha": "b395e94fe94acdf5f3f7c21562a527c4306f66f8",
+    "min_lines": 8,
+    "unit_kind": "function",
+    "assets_blake3": {
+      "model.onnx": "34447cdd9e5b5f6c5606c611ef4d5872e4391ff9324e1cdee3197db9938a33a3",
+      "model.onnx.data": "f2b81387aee7a0db997f4a18948560f635396cb7796e1d4e34be018774da146c",
+      "tokenizer.json": "9323872b7f8abfe19f9bf09eb789d33378be39c951627bdde0aad0e9baeb839d"
+    }
+  },
+  "semble": {
+    "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+    "uv_lock_blob_sha": "04ba3abab08d32da390f7d3d30a0195b56035664",
+    "uv_version": "0.8.17",
+    "model_repo": "minishlab/potion-code-16M-v2",
+    "model_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
+    "top_k": 3
+  },
+  "needle3": {
+    "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
+    "version": "3.0.1",
+    "model_repo": "Cactus-Compute/needle3",
+    "model_revision": "b274efcb211a9eef48c9a88da4b43bd569696a39",
+    "weights_sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+    "engine_wheel_sha256": "05770ef9a85686583968ea15f62f9ad44217e078efdaa99559d3208bb8a369b0",
+    "engine_library_sha256": "978fce130aac08af506b5fe8bb2950da58e9479d0de69d972d9bd69db953568d",
+    "ranker": "sklearn.neighbors.NearestNeighbors",
+    "ranker_version": "1.9.1",
+    "metric": "cosine",
+    "algorithm": "brute",
+    "top_k": 3
+  }
+}
