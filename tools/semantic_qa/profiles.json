@@ -16,6 +16,27 @@
       "model.onnx": "34447cdd9e5b5f6c5606c611ef4d5872e4391ff9324e1cdee3197db9938a33a3",
       "model.onnx.data": "f2b81387aee7a0db997f4a18948560f635396cb7796e1d4e34be018774da146c",
       "tokenizer.json": "9323872b7f8abfe19f9bf09eb789d33378be39c951627bdde0aad0e9baeb839d"
+    },
+    "package": {
+      "run_id": 35538151476,
+      "artifact_id": 10614095162,
+      "artifact_name": "semdup-toolchain-829f90ad94f453b73a24e46413202e9ece0b49e8-linux-x86_64",
+      "artifact_digest": "sha256:3e659b6a41a79077b38b45ad48a9d094af81324916708a3e7ff1e5925fbc435e",
+      "tar_file": "semdup-toolchain.tar.gz",
+      "tar_sha256": "58894995a4a087be743a3b802a31df05677902c3b6829775382538b1a65bbbdb",
+      "built_at": "2026-09-20T21:18:17Z",
+      "expires_at": "2026-12-19T21:15:47Z",
+      "builder_head_sha": "b0b2b2610f3cf1d8d8a8dee687d818d484686e8a",
+      "runner": "ubuntu-24.04",
+      "platform_scope": "linux-x86_64-glibc2.39",
+      "artifact_size_bytes": 156733393,
+      "integrity_at_build": "upstream_model_blake3_verified"
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/niklebedenko/semdup.git",
+      "git_ref": "refs/heads/main"
     }
   },
   "semble": {
@@ -38,6 +59,27 @@
       "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
       "workflow_run_id": 35314743423,
       "observed_at": "2026-09-18T06:24:36Z"
+    },
+    "package": {
+      "run_id": 35537532500,
+      "artifact_id": 10613578514,
+      "artifact_name": "semble-toolchain-8e40653de0d62526b62301dcc4d087ac19f86663-py312-linux-x86_64",
+      "artifact_digest": "sha256:2894d0e4f0d4a44b52af082fd3742fbbb19b1b9b868594de026071899b0f64d1",
+      "tar_file": "semble-toolchain.tar.gz",
+      "tar_sha256": "ea8bc975d1d8b143918b0b07b7c03b0ce75abacae106162c6faf4dca5714b426",
+      "built_at": "2026-09-20T21:04:54Z",
+      "expires_at": "2026-12-19T21:04:12Z",
+      "builder_head_sha": "544c28a8cf78cec0e83352df3bed894190a7400c",
+      "runner": "ubuntu-22.04",
+      "platform_scope": "linux-x86_64-py312",
+      "artifact_size_bytes": 67241067
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/MinishLab/semble.git",
+      "git_ref": "refs/heads/main",
+      "hf_repo": "minishlab/potion-code-16M-v2"
     }
   },
   "needle3": {
@@ -52,6 +94,27 @@
     "ranker_version": "1.9.1",
     "metric": "cosine",
     "algorithm": "brute",
-    "top_k": 3
+    "top_k": 3,
+    "package": {
+      "run_id": 35537765889,
+      "artifact_id": 10612888067,
+      "artifact_name": "needle-toolchain-fc5bae0f9b6138828fe7589f6b531fb9a26968de-py312-linux-x86_64",
+      "artifact_digest": "sha256:eee6652821310b897a67058eb1b3385c9391aa53dd00959082c9977e845fe0c3",
+      "tar_file": "needle-toolchain.tar.gz",
+      "tar_sha256": "302905b0c76360d9a08effd7660bce7ee10f752276e55d1ee76987d46233b2de",
+      "built_at": "2026-09-20T21:09:33Z",
+      "expires_at": "2026-12-19T21:08:33Z",
+      "builder_head_sha": "2559bb63e662ceb4d79563999f9ca8088d311642",
+      "runner": "ubuntu-22.04",
+      "platform_scope": "linux-x86_64-py312",
+      "artifact_size_bytes": 102536115
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/cactus-compute/needle.git",
+      "git_ref": "refs/heads/main",
+      "hf_repo": "Cactus-Compute/needle3"
+    }
   }
 }

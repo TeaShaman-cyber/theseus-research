@@ -15,10 +15,11 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   trace:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
       - name: Checkout candidate
@@ -28,6 +29,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Set up Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
       - name: Prepare bounded trace input
         shell: bash
         run: |
@@ -36,87 +42,36 @@ jobs:
           profile=tools/semantic_qa/profiles.json
           python3 tools/semantic_qa/trace_input.py             --base "${{ inputs.base_sha }}"             --head "${{ inputs.head_sha }}"             --output "$out"             --repository "${{ github.repository }}"             --task-id "${{ inputs.task_id }}"             --max-files "$(jq -r '.input_budget.max_files' "$profile")"             --max-total-bytes "$(jq -r '.input_budget.max_total_bytes' "$profile")"             --max-file-bytes "$(jq -r '.input_budget.max_file_bytes' "$profile")"
 
-      - name: Restore uv package cache
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
-        continue-on-error: true
-        with:
-          path: ~/.cache/uv
-          key: semble-uv-v2-${{ runner.os }}-uv0.12.16-04ba3abab08d32da390f7d3d30a0195b56035664
-
-      - name: Run advisory trace
+      - name: Run packaged advisory trace
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set +e
-          started=$(date +%s%3N)
           out="$RUNNER_TEMP/semantic-semble"
           input="$RUNNER_TEMP/semantic-input"
-          profile=tools/semantic_qa/profiles.json
           mkdir -p "$out"
-          err="$out/setup-error.log"
-
-          input_status=$(jq -r '.status' "$input/input-manifest.json")
-          if [ "$input_status" != "NO_SIGNAL" ]; then
-            src="$RUNNER_TEMP/semble-src"
-            uvvenv="$RUNNER_TEMP/uv-bootstrap"
-            envdir="$RUNNER_TEMP/semble-env"
-            source_sha=$(jq -r '.semble.source_sha' "$profile")
-            uv_version=$(jq -r '.semble.uv_version' "$profile")
-            git init "$src" >"$err" 2>&1
-            git -C "$src" remote add origin https://github.com/MinishLab/semble.git >>"$err" 2>&1
-            git -C "$src" fetch --depth=1 origin "$source_sha" >>"$err" 2>&1
-            git -C "$src" checkout --detach FETCH_HEAD >>"$err" 2>&1
-            test "$(git -C "$src" rev-parse HEAD)" = "$source_sha" >>"$err" 2>&1
-            expected_lock=$(jq -r '.semble.uv_lock_blob_sha' "$profile")
-            test "$(git -C "$src" hash-object uv.lock)" = "$expected_lock" >>"$err" 2>&1
-            python3 -m venv "$uvvenv" >>"$err" 2>&1
-            "$uvvenv/bin/pip" install --disable-pip-version-check --quiet "uv==$uv_version" >>"$err" 2>&1
-            export UV_PROJECT_ENVIRONMENT="$envdir"
-            "$uvvenv/bin/uv" sync --frozen --no-dev --project "$src" >>"$err" 2>&1
-            setup_rc=$?
-
-            if [ "$setup_rc" -eq 0 ]; then
-              model="$RUNNER_TEMP/semble-model"
-              repo_id=$(jq -r '.semble.model_repo' "$profile")
-              revision=$(jq -r '.semble.model_revision' "$profile")
-              "$envdir/bin/python" tools/semantic_qa/hf_snapshot.py \
-                --repo "$repo_id" \
-                --revision "$revision" \
-                --output "$model" \
-                --profile "$profile" \
-                --hash-section semble.model_files_sha256 >>"$err" 2>&1
-              setup_rc=$?
-            fi
-
-          else
-            setup_rc=0
-            envdir=""
-            model=""
-          fi
-
-          if [ "$setup_rc" -eq 0 ]; then
-            if [ -n "$envdir" ]; then
-              export PATH="$envdir/bin:$PATH"
-              export SEMBLE_MODEL_NAME="$model"
-              export SEMBLE_CACHE_LOCATION="$RUNNER_TEMP/semble-cache"
-              export HF_HUB_OFFLINE=1
-            fi
-            python3 tools/semantic_qa/semble_trace.py               --input-manifest "$input/input-manifest.json"               --input-root "$input"               --failure-classes docs/qa/failure-classes.md               --profile "$profile"               --output "$out/receipt.json"               --top-k "$(jq -r '.semble.top_k' "$profile")" >>"$out/runner.log" 2>&1
-            run_rc=$?
-          else
-            run_rc=$setup_rc
-          fi
-
-          if [ "$run_rc" -ne 0 ] || [ ! -f "$out/receipt.json" ]; then
-            python3 tools/semantic_qa/status_receipt.py               --output "$out/receipt.json"               --tool semble               --status UNAVAILABLE               --repository "${{ github.repository }}"               --task-id "${{ inputs.task_id }}"               --base-sha "${{ inputs.base_sha }}"               --candidate-sha "${{ inputs.head_sha }}"               --profile "$profile"               --error-file "$err"               --reason "setup_or_execution_failed"               --started-ms "$started"
+          python3 tools/semantic_qa/run_advisory.py             --tool semble             --repo .             --base-sha "${{ inputs.base_sha }}"             --candidate-sha "${{ inputs.head_sha }}"             --repository "${{ github.repository }}"             --task-id "${{ inputs.task_id }}"             --profile tools/semantic_qa/profiles.json             --input-manifest "$input/input-manifest.json"             --input-root "$input"             --failure-classes docs/qa/failure-classes.md             --output-dir "$out"             --download-dir "$RUNNER_TEMP/semble-package-download"             --runtime-dir "$RUNNER_TEMP/semble-runtime"             --env-dir "$RUNNER_TEMP/semble-env"
+          rc=$?
+          if [ "$rc" -ne 0 ] || [ ! -f "$out/receipt.json" ]; then
+            python3 tools/semantic_qa/status_receipt.py               --output "$out/receipt.json"               --tool semble               --status UNAVAILABLE               --repository "${{ github.repository }}"               --task-id "${{ inputs.task_id }}"               --base-sha "${{ inputs.base_sha }}"               --candidate-sha "${{ inputs.head_sha }}"               --profile tools/semantic_qa/profiles.json               --reason orchestration_failed
           fi
 
           status=$(jq -r '.status' "$out/receipt.json")
+          freshness=$(jq -r '.toolchain.freshness.status // "UNKNOWN"' "$out/receipt.json")
+          setup_ms=$(jq -r '.toolchain.setup_ms // 0' "$out/receipt.json")
+          reasons=$(jq -c '.toolchain.freshness.reasons // []' "$out/receipt.json")
+          if [ "$freshness" != "CURRENT" ] && [ "$freshness" != "UNKNOWN" ]; then
+            echo "::warning title=Semble package freshness::$freshness $reasons"
+          fi
           {
             echo "### Semble advisory"
             echo
-            echo "- status: `$status`"
-            echo "- candidate: `${{ inputs.head_sha }}`"
-            echo "- task: `${{ inputs.task_id }}`"
+            echo "- status: \`$status\`"
+            echo "- package freshness: \`$freshness\`"
+            echo "- package setup ms: \`$setup_ms\`"
+            echo "- candidate: \`${{ inputs.head_sha }}\`"
+            echo "- task: \`${{ inputs.task_id }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
           exit 0
 

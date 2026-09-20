@@ -9,7 +9,6 @@ import tempfile
 import time
 from pathlib import Path
 
-import blake3
 
 
 def _run(cmd: list[str], *, cwd: Path, log: Path) -> float:
@@ -28,21 +27,6 @@ def _dir_bytes(path: Path) -> int:
         else 0
     )
 
-
-def _verify_model_cache(cache: Path, profile: dict) -> dict[str, str]:
-    model_dir = cache / "models" / "coderankembed-nbits-int4-asym"
-    observed = {}
-    for name, expected in profile["assets_blake3"].items():
-        path = model_dir / name
-        if not path.is_file():
-            raise RuntimeError(f"missing semdup model asset: {path}")
-        got = blake3.blake3(path.read_bytes()).hexdigest()
-        if got != expected:
-            raise RuntimeError(
-                f"semdup model asset blake3 mismatch for {name}: {got} != {expected}"
-            )
-        observed[name] = got
-    return observed
 
 
 def main() -> int:
@@ -152,7 +136,6 @@ def main() -> int:
                 cwd=repo,
                 log=out / "embed.log",
             )
-            verified_assets = _verify_model_cache(cache, profile)
             cache_after_cold = _dir_bytes(cache)
 
             cold_json = out / "raw-cold.json"
@@ -221,7 +204,6 @@ def main() -> int:
         "status": "OK" if cold else "NO_SIGNAL",
         "evidence_only": True,
         "threshold": None,
-        "model_cache_verified_blake3": verified_assets,
         "timing_ms": {
             "base_extract": extract_ms,
             "base_embed": embed_ms,
