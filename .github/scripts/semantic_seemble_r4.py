@@ -12,6 +12,8 @@ root = Path(os.environ["GITHUB_WORKSPACE"])
 fixture = root / os.environ["FIXTURE_ROOT"]
 corpus = Path(sys.argv[1])
 out = Path(sys.argv[2])
+label = sys.argv[3]
+mapping_path = Path(sys.argv[4]) if len(sys.argv) > 4 else None
 manifest = json.loads((fixture / "manifest.json").read_text())
 
 class_ranges = {
@@ -24,6 +26,7 @@ class_ranges = {
     "boundary-transport-contract": [(18, 18)],
     "derived-state-heuristic-coverage": [(19, 19)],
 }
+path_mapping = json.loads(mapping_path.read_text()) if mapping_path else {}
 
 cases = [
     c
@@ -32,7 +35,10 @@ cases = [
 ]
 
 
-def hit_classes(start: int, end: int) -> list[str]:
+def hit_classes(file_path: str, start: int, end: int) -> list[str]:
+    if path_mapping:
+        mapped = path_mapping.get(file_path)
+        return [mapped] if mapped else []
     hits: list[str] = []
     for class_id, ranges in class_ranges.items():
         if any(start <= b and end >= a for a, b in ranges):
@@ -93,7 +99,7 @@ def run_pass(name: str, broken_proxy: bool) -> dict:
                         "start_line": start,
                         "end_line": end,
                         "score": result["score"],
-                        "class_hits": hit_classes(start, end),
+                        "class_hits": hit_classes(result["file_path"], start, end),
                         "content_sha256": hashlib.sha256(
                             result.get("content", "").encode()
                         ).hexdigest(),
@@ -163,6 +169,19 @@ def aggregates(pass_result: dict) -> dict:
     }
 
 
+def normalized_results(pass_result: dict) -> list[dict]:
+    return [
+        {
+            "id": case["id"],
+            "exit_code": case["exit_code"],
+            "results": case.get("results", []),
+            "inclusive_expected_rank": case.get("inclusive_expected_rank"),
+            "strict_expected_rank": case.get("strict_expected_rank"),
+        }
+        for case in pass_result["cases"]
+    ]
+
+
 cold = run_pass("cold-index", False)
 warm = run_pass("warm-index-broken-proxy", True)
 
@@ -172,12 +191,16 @@ receipt = {
     "semble_source_sha": os.environ["SEMBLE_SOURCE_SHA"],
     "model_repo": os.environ["MODEL_REPO"],
     "model_revision": os.environ["MODEL_REVISION"],
-    "corpus_mode": "raw canonical docs/qa/failure-classes.md",
-    "class_ranges": class_ranges,
+    "corpus_mode": label,
+    "class_ranges": class_ranges if not path_mapping else None,
+    "path_mapping": path_mapping or None,
     "cold": cold,
     "warm": warm,
     "cold_metrics": aggregates(cold),
     "warm_metrics": aggregates(warm),
+    "cold_warm_results_identical": normalized_results(cold) == normalized_results(warm),
 }
-(out / "retrieval.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+(out / f"retrieval-{label}.json").write_text(
+    json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+)
 print(json.dumps(receipt, indent=2, sort_keys=True))
