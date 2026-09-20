@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "roadmap_node": "needle3-bounded-pilot",
+  "status": "COMPLETE",
+  "disposition": "STOP_EARLY_LINEAGE_ONLY",
+  "stop_rule_triggered": true,
+  "acceptance_authority": false,
+  "source": {
+    "repository": "TeaShaman-cyber/theseus-research",
+    "tracking_issue": 57,
+    "fixture_id": "theseus-semantic-qa-v1",
+    "fixture_digest": "df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b",
+    "pilot_branch_head_sha": "a074b4aba6f6dacb8ab11b67edb26f8a3abeb23d",
+    "github_pull_request_merge_checkout_sha": "d56a213a1d9d2603d7a4df5697fedea36a3e2186",
+    "hosted_run_id": 35534419601,
+    "hosted_run_conclusion": "success",
+    "artifact": {
+      "id": 10612218771,
+      "name": "needle3-r5-d56a213a1d9d2603d7a4df5697fedea36a3e2186",
+      "size_bytes": 553785,
+      "digest": "sha256:c421728ed63a099f002809989e35d3384015ef40c4e3a465e5c68ede7ca34d5f",
+      "expires_at": "2026-10-04T20:06:01Z"
+    }
+  },
+  "execution_route": {
+    "preferred": "MarcoPolo",
+    "actual_write_route": "native GitHub fallback",
+    "witness_route": "GitHub-hosted Actions",
+    "reason": "MarcoPolo write calls returned HTTP 403 before file creation",
+    "authority_changed": false
+  },
+  "needle": {
+    "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
+    "version": "3.0.1",
+    "model_repo": "Cactus-Compute/needle3",
+    "model_revision": "b274efcb211a9eef48c9a88da4b43bd569696a39",
+    "model_delivery": "exact Hugging Face snapshot followed by local engine extraction and exact weights cache preseed",
+    "python_dependency_pin_status": "DEGRADED",
+    "python_dependency_note": "The pinned source declares huggingface_hub without an exact version. The pilot observed huggingface_hub 1.32.0 but did not freeze the transitive Python environment."
+  },
+  "exact_artifacts": {
+    "weights": {
+      "file": "needle3.cact",
+      "bytes": 35335380,
+      "sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38"
+    },
+    "linux_x86_64_engine_wheel": {
+      "file": "python/cactus_needle-3.0.1-py3-none-manylinux2014_x86_64.whl",
+      "bytes": 536871,
+      "sha256": "05770ef9a85686583968ea15f62f9ad44217e078efdaa99559d3208bb8a369b0",
+      "extracted_member": "needle/libneedle3.so"
+    },
+    "linux_x86_64_engine_library": {
+      "bytes": 1294696,
+      "sha256": "978fce130aac08af506b5fe8bb2950da58e9479d0de69d972d9bd69db953568d"
+    }
+  },
+  "archive_manifest": {
+    "num_tensors": 581,
+    "num_layers": 20,
+    "qkv_conv_taps": 3,
+    "num_engram_sites": 5,
+    "through_final_norm_tensor_count": 573,
+    "raw_attachment_count": 1,
+    "optional_head_tensor_count": 7,
+    "head_codes": [
+      2
+    ],
+    "has_embedding_head": false,
+    "has_confidence_head": true,
+    "has_router_head": false,
+    "interpretation": "Code 1 is the optional embedding/contrastive head, code 2 confidence, code 3 router. This frozen archive carries only code 2."
+  },
+  "python_surface": {
+    "Needle_has_embed": true,
+    "Needle_has_search": false,
+    "Needle_has_retrieve_tools": false,
+    "module_has_search": false,
+    "module_has_retrieve_tools": false
+  },
+  "offline_embedding_probe": {
+    "hf_hub_offline": true,
+    "needle_telemetry_disabled": true,
+    "engine_override_used": true,
+    "broken_http_proxy_used": true,
+    "dimension": 3072,
+    "first_norm": 0.9999998675127271,
+    "other_norm": 0.9999999258695388,
+    "repeat_max_abs_delta": 0,
+    "repeat_byte_identical_f32": true,
+    "first_sha256_f32": "80d37d970ff4eb1e58da95c768612d38c8042e6bd2ef68c24bfe417f05f1a1a3",
+    "repeat_sha256_f32": "80d37d970ff4eb1e58da95c768612d38c8042e6bd2ef68c24bfe417f05f1a1a3",
+    "other_sha256_f32": "641abd545a210d6e25f31a60bf384b762c0e9c7349b63ea4b5e8255bb4c96aee",
+    "three_embed_calls_wall_ms": 100.32318599999712,
+    "peak_rss_kib": 117372
+  },
+  "tool_index_probe": {
+    "declared_tool_count": 8,
+    "tool_index_path_supplied": true,
+    "tool_index_exists_after_init": false,
+    "tool_index_bytes": 0,
+    "interpretation": "The documented tool_index_path did not materialize an index under this frozen archive, consistent with the missing embedding head."
+  },
+  "upstream_documentation_resolution": {
+    "observed_conflict": true,
+    "source_docs": [
+      "Pinned repository llms.txt and current Python docs describe built-in top-5 tool retrieval for catalogues above five tools.",
+      "Cactus Porting Needle 3 note dated 2026-09-18 states the current release ships without a contrastive embedding head and therefore has no retrieve_tools path."
+    ],
+    "experimental_resolution": "The exact frozen archive manifest contains only head code 2 and the exact Python surface exposes embed() but no search/retrieve_tools; tool_index_path did not create an index."
+  },
+  "needle2_lineage": {
+    "prior_lab_repo": "TeaShaman-cyber/theseus-needle-lab",
+    "prior_lab_main_observed_sha": "b5a7f02da0b2aa18f861bf243891c53cb7b9a270",
+    "now_native_in_needle3": [
+      "local CPU inference engine and local model archive",
+      "one-time local engine/weights cache",
+      "air-gapped/offline runtime path",
+      "direct text embedding primitive",
+      "explicit engine override through NEEDLE3_LIB_PATH",
+      "portable prebuilt engine artifacts"
+    ],
+    "still_project_owned": [
+      "immutable source/model identity binding",
+      "artifact hashing and provenance receipts",
+      "canonical deterministic repository QA",
+      "scientific acceptance and disposition",
+      "separation of model evidence from permission/authority",
+      "ranked failure-class retrieval with stable provenance"
+    ],
+    "exposed_but_inactive_on_frozen_release": [
+      "tool_index_path persistence for large catalogues"
+    ]
+  },
+  "comparison_boundary": {
+    "semble_r4_native_surface": "chunking + local embeddings + BM25/RRF + ranked search + path/line/score + cache",
+    "needle3_r5_native_surface": "local embed() + tool-calling model; no public ranked search API on the frozen release",
+    "fixture_retrieval_benchmark_run": false,
+    "reason_not_run": "A ranked failure-class benchmark would require project-owned similarity ranking/search code after the archive proved no native retrieval head/API. R5 stop rule forbids adding that infrastructure without measured benefit over the already-working Semble pilot."
+  },
+  "runtime": {
+    "hosted_job_duration_s": 26,
+    "install_step_duration_s": 11,
+    "exact_snapshot_step_duration_s": 9,
+    "offline_probe_step_duration_s": 1
+  },
+  "conclusions": {
+    "exact_pin_gap_closed_for_probe": true,
+    "account_bound_inference_required": false,
+    "local_embedding_available": true,
+    "native_ranked_failure_class_retrieval_available": false,
+    "custom_embedding_or_search_justified": false,
+    "promoted_threshold": null,
+    "next_role": "lineage/embedding primitive only; do not promote as the known-failure retriever in this roadmap"
+  },
+  "limits": [
+    "The pilot intentionally stopped before cosine or nearest-neighbor ranking because that would create a project-owned retrieval layer.",
+    "The frozen archive may differ from later Needle 3 releases that add a contrastive embedding head.",
+    "The exact source and model/engine artifacts were pinned, but the transitive Python dependency environment was observed rather than frozen.",
+    "The three-call embedding timing is a tiny same-process capability probe, not a repository-scale retrieval benchmark.",
+    "Successful offline execution with exact local files proves this path did not require working network access; it does not establish that every Needle command is network-free."
+  ]
+}

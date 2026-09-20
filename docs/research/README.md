@@ -36,6 +36,19 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Needle 3 R5 capability boundary pilot — 2026-09-20
+
+- [Pilot result](2026-09-20-needle3-r5-pilot.md)
+- [Machine-readable receipt](2026-09-20-needle3-r5-pilot-receipt.json)
+
+Type: exact-archive local capability probe / Needle-2 lineage comparison.
+
+The pilot closes the mutable Hugging Face fetch gap with an exact snapshot,
+runs the exact Needle 3 engine and weights offline, and verifies the shipped
+archive's optional-head manifest and public Python surface. The frozen release
+provides deterministic local embeddings but no native ranked retrieval surface,
+so the pilot stops before adding project-owned cosine/search infrastructure.
+
 ### Semble R4 failure-class retrieval pilot — 2026-09-20
 
 - [Pilot result](2026-09-20-semble-r4-pilot.md)
