@@ -51,7 +51,7 @@ jobs:
           "$envdir/bin/pip" install --disable-pip-version-check             -r tools/semantic_qa/needle-requirements.txt
           "$envdir/bin/pip" install --disable-pip-version-check --no-deps "$src"
           "$envdir/bin/pip" freeze >"$pkg/requirements.freeze.txt"
-          grep -v -E '^needle(@|==| @ )' "$pkg/requirements.freeze.txt" >"$pkg/deps.freeze.txt" || true
+          grep -v -E '^(needle|cactus-needle)(@|==| @ )' "$pkg/requirements.freeze.txt" >"$pkg/deps.freeze.txt" || true
           "$envdir/bin/pip" download --disable-pip-version-check             -r "$pkg/deps.freeze.txt" -d "$pkg/wheels"
           "$envdir/bin/pip" wheel --disable-pip-version-check             --no-deps "$src" -w "$pkg/wheels"
 
@@ -59,7 +59,7 @@ jobs:
 
           testenv="$RUNNER_TEMP/needle-offline-test"
           python3 -m venv "$testenv"
-          "$testenv/bin/pip" install --disable-pip-version-check             --no-index --find-links "$pkg/wheels" needle scikit-learn==1.9.1
+          "$testenv/bin/pip" install --disable-pip-version-check             --no-index --find-links "$pkg/wheels" cactus-needle scikit-learn==1.9.1
           "$testenv/bin/python" - <<'PY'
           import needle, sklearn
           print("needle", needle.__version__)
