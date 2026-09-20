@@ -36,6 +36,16 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R1 tool freeze — 2026-09-20
+
+- [Upstream identity and capability freeze](2026-09-20-semantic-qa-r1-tool-freeze.md)
+
+Type: roadmap evidence / exact upstream capability snapshot.
+
+The note freezes semdup, Semble and Needle 3 software/model identities and
+records reproducibility gaps before fixture execution. No tool is selected or
+promoted by this artifact.
+
 ### Local semantic QA witness — 2026-09-20
 
 - [Pilot design](2026-09-20-local-semantic-qa-witness-design.md)
