@@ -49,6 +49,7 @@ jobs:
           printf '%s\n' "$((end-start))" > "$out/install-wall-ms.txt"
           python3 --version > "$out/python-version.txt"
           python3 -m pip --version > "$out/pip-version.txt"
+          python3 -m pip freeze > "$out/dependencies.txt"
           semble --version > "$out/semble-version.txt"
 
       - name: Prefetch exact model revision
@@ -72,29 +73,118 @@ jobs:
           find "$model_dir" -type f -not -path '*/.cache/*' -print0 | sort -z | xargs -0 sha256sum > "$out/model-files.sha256"
           printf '%s\n' "$model_dir" > "$RUNNER_TEMP/model-dir.txt"
 
-      - name: Run raw canonical-corpus Semble fixture
+      - name: Build canonical and projected corpora
+        shell: bash
+        run: |
+          set -euo pipefail
+          raw="$RUNNER_TEMP/failure-corpus-raw"
+          records="$RUNNER_TEMP/failure-corpus-records"
+          out="$RUNNER_TEMP/semble-r4-out"
+          mkdir -p "$raw" "$records"
+          cp docs/qa/failure-classes.md "$raw/failure-classes.md"
+          test "$(sha256sum docs/qa/failure-classes.md | awk '{print $1}')" = "$(sha256sum "$raw/failure-classes.md" | awk '{print $1}')"
+
+          python3 - docs/qa/failure-classes.md "$records" "$out/record-map.json" "$out/record-provenance.json" <<'PY'
+          import hashlib
+          import json
+          import sys
+          from pathlib import Path
+
+          source = Path(sys.argv[1])
+          dest = Path(sys.argv[2])
+          mapping_path = Path(sys.argv[3])
+          provenance_path = Path(sys.argv[4])
+          ids = [
+              "verification-target-mismatch",
+              "authority-provenance-closure",
+              "identity-preservation",
+              "identity-grammar-mismatch",
+              "claim-status-semantics",
+              "phase-dag-closure",
+              "boundary-transport-contract",
+              "derived-state-heuristic-coverage",
+          ]
+          lines = source.read_text().splitlines()
+          mapping = {}
+          provenance = []
+          for i, (class_id, line_no) in enumerate(zip(ids, range(12, 20)), start=1):
+              name = f"record-{i:02d}.md"
+              content = lines[line_no - 1] + "\n"
+              (dest / name).write_text(content)
+              mapping[name] = class_id
+              provenance.append(
+                  {
+                      "record": name,
+                      "class_id": class_id,
+                      "source_path": str(source),
+                      "source_line": line_no,
+                      "content_sha256": hashlib.sha256(content.encode()).hexdigest(),
+                  }
+              )
+          mapping_path.write_text(json.dumps(mapping, indent=2, sort_keys=True) + "\n")
+          provenance_path.write_text(json.dumps(provenance, indent=2, sort_keys=True) + "\n")
+          PY
+
+      - name: Run raw and projected Semble fixture
         shell: bash
         run: |
           set -euo pipefail
           out="$RUNNER_TEMP/semble-r4-out"
-          corpus="$RUNNER_TEMP/failure-corpus"
           cache="$RUNNER_TEMP/semble-cache"
           model_dir=$(cat "$RUNNER_TEMP/model-dir.txt")
-          rm -rf "$corpus" "$cache"
-          mkdir -p "$corpus" "$cache"
-          cp docs/qa/failure-classes.md "$corpus/failure-classes.md"
-          test "$(sha256sum docs/qa/failure-classes.md | awk '{print $1}')" = "$(sha256sum "$corpus/failure-classes.md" | awk '{print $1}')"
+          rm -rf "$cache"
+          mkdir -p "$cache"
 
           export SEMBLE_MODEL_NAME="$model_dir"
           export SEMBLE_CACHE_LOCATION="$cache"
           export HF_HOME="$RUNNER_TEMP/hf-home"
           export HF_HUB_OFFLINE=1
 
-          python3 .github/scripts/semantic_seemble_r4.py "$corpus" "$out"
+          python3 .github/scripts/semantic_seemble_r4.py             "$RUNNER_TEMP/failure-corpus-raw" "$out" raw
+
+          python3 .github/scripts/semantic_seemble_r4.py             "$RUNNER_TEMP/failure-corpus-records" "$out" records "$out/record-map.json"
 
           du -sb "$cache" | awk '{print $1}' > "$out/semble-cache-bytes.txt"
           find "$cache" -type f -print0 | sort -z | xargs -0 sha256sum > "$out/semble-cache-files.sha256"
-          sha256sum "$out/retrieval.json" > "$out/retrieval.sha256"
+          sha256sum "$out/retrieval-raw.json" "$out/retrieval-records.json" > "$out/retrieval.sha256"
+
+          python3 - "$out" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          out = Path(sys.argv[1])
+          raw = json.loads((out / "retrieval-raw.json").read_text())
+          records = json.loads((out / "retrieval-records.json").read_text())
+          summary = {
+              "raw": {
+                  "cold_metrics": raw["cold_metrics"],
+                  "warm_metrics": raw["warm_metrics"],
+                  "cold_wall_ms": raw["cold"]["wall_ms"],
+                  "warm_wall_ms": raw["warm"]["wall_ms"],
+                  "repeat_identical": raw["cold_warm_results_identical"],
+              },
+              "records": {
+                  "cold_metrics": records["cold_metrics"],
+                  "warm_metrics": records["warm_metrics"],
+                  "cold_wall_ms": records["cold"]["wall_ms"],
+                  "warm_wall_ms": records["warm"]["wall_ms"],
+                  "repeat_identical": records["cold_warm_results_identical"],
+              },
+          }
+          print(json.dumps(summary, indent=2, sort_keys=True))
+          PY
+
+          printf '%s\n' '--- versions ---'
+          cat "$out/semble-version.txt"
+          cat "$out/python-version.txt"
+          printf '%s\n' '--- install/model/cache bytes ---'
+          cat "$out/install-wall-ms.txt"
+          cat "$out/model-prefetch-wall-ms.txt"
+          cat "$out/model-bytes.txt"
+          cat "$out/semble-cache-bytes.txt"
+          printf '%s\n' '--- model file hashes ---'
+          cat "$out/model-files.sha256"
 
       - name: Upload raw R4 evidence
         if: always()
