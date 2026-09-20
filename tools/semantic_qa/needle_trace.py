@@ -11,9 +11,6 @@ import time
 import zipfile
 from pathlib import Path
 
-import numpy as np
-from sklearn.neighbors import NearestNeighbors
-
 CLASS_IDS = [
     "verification-target-mismatch",
     "authority-provenance-closure",
@@ -80,6 +77,8 @@ def _run_pass(
     top_k: int,
 ) -> tuple[list[dict], float]:
     import needle
+    import numpy as np
+    from sklearn.neighbors import NearestNeighbors
 
     started = time.perf_counter()
     agent = needle.Needle(tools=[], auto_date=False)
