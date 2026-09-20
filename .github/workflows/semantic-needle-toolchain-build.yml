@@ -55,7 +55,30 @@ jobs:
           "$envdir/bin/pip" download --disable-pip-version-check             -r "$pkg/deps.freeze.txt" -d "$pkg/wheels"
           "$envdir/bin/pip" wheel --disable-pip-version-check             --no-deps "$src" -w "$pkg/wheels"
 
-          "$envdir/bin/python" tools/semantic_qa/hf_snapshot.py             --repo "$repo_id"             --revision "$revision"             --output "$pkg/model"
+          "$envdir/bin/python" - "$repo_id" "$revision" "$pkg/model" <<'PY'
+          import shutil
+          import sys
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+
+          repo, revision, root = sys.argv[1:]
+          root = Path(root)
+          files = [
+              "needle3.cact",
+              "python/cactus_needle-3.0.1-py3-none-manylinux2014_x86_64.whl",
+          ]
+          for rel in files:
+              cached = Path(
+                  hf_hub_download(
+                      repo_id=repo,
+                      filename=rel,
+                      revision=revision,
+                  )
+              )
+              target = root / rel
+              target.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(cached, target)
+          PY
 
           testenv="$RUNNER_TEMP/needle-offline-test"
           python3 -m venv "$testenv"
