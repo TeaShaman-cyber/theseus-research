@@ -143,14 +143,26 @@ Stop if it adds infrastructure without measurable benefit for the fixture.
 ### R6 - Compare pilot receipts
 
 No winner by brand or benchmark. Compare all pilots on the same frozen
-fixture/profile rules. Multiple tools may survive if they cover distinct
-failure domains.
+fixture/profile rules.
+
+Default retention policy: keep all pilots that provide distinct observable
+signal while their runner cost, cache footprint and failure rate remain small
+enough not to interfere with primary repository work. Comparison assigns roles
+and measures cost; it does not require eliminating a tool.
+
+Needle 3 run receipts and raw advisory outputs are also a future analytics
+trace for `theseus-needle-lab`. Preserve exact source/model/profile identities
+and task provenance so later lab work can study behavior on real repository
+tasks rather than reconstructing synthetic history. These traces remain
+research evidence, not acceptance authority.
 
 ### R7 - Select advisory roles
 
-Produce the smallest composition that adds independent signal.
+Assign non-exclusive advisory roles. Prefer the smallest composition that adds
+independent signal, but do not retire a low-cost tool merely because another
+tool scores better on one frozen fixture.
 
-Expected shape if current hypotheses survive:
+Expected shape after R3-R5b:
 
     deterministic lint/static/AST
             |
@@ -158,11 +170,16 @@ Expected shape if current hypotheses survive:
             |
             +--> Semble known-failure retrieval witness
             |
-            +--> optional Needle 3 role only if independently justified
+            +--> Needle 3 measured embedding/retrieval trace
             v
     property / mutation / fault witnesses
             v
     periodic independent human/model/forum review
+
+A tool remains active while its observed runner cost and operational noise stay
+below the point where it meaningfully delays or destabilizes primary QA.
+Retirement remains an explicit later decision based on accumulated field
+evidence, not a one-shot benchmark.
 
 ### R8 - CI advisory integration
 
@@ -223,5 +240,6 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R1 only**: freeze exact upstream identities and capability surfaces
-for `semdup`, `Semble` and Needle 3. Do not implement pilots until R1 is recorded.
+Execute **R6**: compare the durable R3 semdup, R4 Semble and corrected R5/R5b
+Needle receipts under the retention-by-cost policy. Record role, runner cost,
+operational noise and trace value without forcing a single winner.
