@@ -36,6 +36,16 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Codex review vs heavy CI — 2026-09-20
+
+- [Observational comparison](2026-09-20-codex-review-vs-heavy-ci.md)
+
+Type: comparative methodology note / observed process traces.
+
+The note compares earlier exact-head Codex review loops with a later no-completed-Codex
+heavy-CI mutation/property trace. It records observed differences and confounders; it
+does not rank reviewers or promote a new methodology contract by itself.
+
 ### Effective Agent Architecture Lineage — 2026-09-05
 
 - [Research synthesis](2026-09-05-effective-agent-architecture-lineage.md)
