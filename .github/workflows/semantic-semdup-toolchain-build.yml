@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 20
     steps:
       - name: Checkout QA profile
@@ -66,8 +66,6 @@ jobs:
           from pathlib import Path
 
           root = Path(sys.argv[1])
-          source_sha = sys.argv[2]
-          model_key = sys.argv[3]
 
           def sha256(path: Path) -> str:
               h = hashlib.sha256()
@@ -87,14 +85,15 @@ jobs:
           receipt = {
               "schema_version": 1,
               "status": "BUILT",
-              "source_sha": source_sha,
-              "model_key": model_key,
+              "source_sha": sys.argv[2],
+              "model_key": sys.argv[3],
               "build_features": ["onnx"],
               "default_features": False,
               "platform": platform.platform(),
               "machine": platform.machine(),
               "runner_image_os": os.environ.get("ImageOS"),
               "runner_image_version": os.environ.get("ImageVersion"),
+              "built_at": os.environ.get("GITHUB_RUN_ID"),
               "files": files,
           }
           (root / "build-receipt.json").write_text(
@@ -105,16 +104,6 @@ jobs:
           tarball="$RUNNER_TEMP/semdup-toolchain.tar.gz"
           tar -C "$pkg" -czf "$tarball" .
           sha256sum "$tarball" | sed 's#  .*/#  #' >"$RUNNER_TEMP/semdup-toolchain.tar.gz.sha256"
-
-          {
-            echo "### semdup QA toolchain"
-            echo
-            echo "- source: `$source_sha`"
-            echo "- model: `$model_key`"
-            echo "- build: `--no-default-features --features onnx`"
-            echo "- package bytes: `$(stat -c %s "$tarball")`"
-            echo "- package sha256: `$(cut -d' ' -f1 "$RUNNER_TEMP/semdup-toolchain.tar.gz.sha256")`"
-          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload immutable QA toolchain
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
