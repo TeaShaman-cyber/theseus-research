@@ -1,0 +1,135 @@
+name: build semdup QA toolchain
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/semantic-qa-r8-ci-57
+    paths:
+      - .github/workflows/semantic-semdup-toolchain-build.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout QA profile
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Build and warm exact semdup toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          profile=tools/semantic_qa/profiles.json
+          source_sha=$(jq -r '.semdup.source_sha' "$profile")
+          model_key=$(jq -r '.semdup.model_key' "$profile")
+          src="$RUNNER_TEMP/semdup-src"
+          pkg="$RUNNER_TEMP/semdup-toolchain"
+          fixture="$RUNNER_TEMP/semdup-fixture"
+          db="$RUNNER_TEMP/semdup-bootstrap.sqlite"
+
+          git init "$src"
+          git -C "$src" remote add origin https://github.com/niklebedenko/semdup.git
+          git -C "$src" fetch --depth=1 origin "$source_sha"
+          git -C "$src" checkout --detach FETCH_HEAD
+          test "$(git -C "$src" rev-parse HEAD)" = "$source_sha"
+
+          cargo build             --manifest-path "$src/Cargo.toml"             --release             --locked             --no-default-features             --features onnx
+
+          mkdir -p "$pkg/bin" "$pkg/cache" "$fixture"
+          cp "$src/target/release/semdup" "$pkg/bin/semdup"
+          chmod 0755 "$pkg/bin/semdup"
+          "$pkg/bin/semdup" --version
+          ldd "$pkg/bin/semdup" | tee "$pkg/ldd.txt"
+
+          cat >"$fixture/probe.py" <<'PY'
+          def semantic_toolchain_probe(value):
+              return value + 1
+          PY
+
+          export SEMDUP_CACHE="$pkg/cache"
+          "$pkg/bin/semdup" --db "$db" extract             --root "$fixture"             --corpus bootstrap             --granularity function
+          "$pkg/bin/semdup" --db "$db" embed             --model "$model_key"             --provider cpu
+
+          python3 -m pip install --disable-pip-version-check --quiet "blake3==1.0.8"
+          python3 - "$profile" "$pkg/cache" <<'PYVERIFY'
+          import json
+          import sys
+          from pathlib import Path
+          import blake3
+
+          profile = json.loads(Path(sys.argv[1]).read_text())["semdup"]
+          model = Path(sys.argv[2]) / "models" / "coderankembed-nbits-int4-asym"
+          for rel, expected in profile["assets_blake3"].items():
+              path = model / rel
+              if not path.is_file():
+                  raise SystemExit(f"missing semdup model asset: {rel}")
+              got = blake3.blake3(path.read_bytes()).hexdigest()
+              if got != expected:
+                  raise SystemExit(f"semdup BLAKE3 mismatch {rel}: {got} != {expected}")
+          PYVERIFY
+
+          python3 - "$pkg" "$source_sha" "$model_key" <<'PY'
+          import hashlib
+          import json
+          import os
+          import platform
+          import sys
+          from pathlib import Path
+
+          root = Path(sys.argv[1])
+
+          def sha256(path: Path) -> str:
+              h = hashlib.sha256()
+              with path.open("rb") as f:
+                  for chunk in iter(lambda: f.read(1024 * 1024), b""):
+                      h.update(chunk)
+              return h.hexdigest()
+
+          files = {}
+          for path in sorted(root.rglob("*")):
+              if path.is_file():
+                  files[path.relative_to(root).as_posix()] = {
+                      "bytes": path.stat().st_size,
+                      "sha256": sha256(path),
+                  }
+
+          receipt = {
+              "schema_version": 1,
+              "status": "BUILT",
+              "source_sha": sys.argv[2],
+              "model_key": sys.argv[3],
+              "build_features": ["onnx"],
+              "default_features": False,
+              "platform": platform.platform(),
+              "machine": platform.machine(),
+              "runner_image_os": os.environ.get("ImageOS"),
+              "runner_image_version": os.environ.get("ImageVersion"),
+              "built_at": os.environ.get("GITHUB_RUN_ID"),
+              "files": files,
+          }
+          (root / "build-receipt.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True) + "\n"
+          )
+          PY
+
+          tarball="$RUNNER_TEMP/semdup-toolchain.tar.gz"
+          tar -C "$pkg" -czf "$tarball" .
+          sha256sum "$tarball" | sed 's#  .*/#  #' >"$RUNNER_TEMP/semdup-toolchain.tar.gz.sha256"
+
+      - name: Upload immutable QA toolchain
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: semdup-toolchain-829f90ad94f453b73a24e46413202e9ece0b49e8-linux-x86_64
+          path: |
+            ${{ runner.temp }}/semdup-toolchain.tar.gz
+            ${{ runner.temp }}/semdup-toolchain.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

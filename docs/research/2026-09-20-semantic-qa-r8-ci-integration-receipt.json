@@ -1,0 +1,121 @@
+{
+  "acceptance_authority": false,
+  "architecture": {
+    "artifact_retention_days": 90,
+    "build_phase": "rare explicit toolchain build workflows",
+    "freshness_blocking": false,
+    "freshness_states": [
+      "CURRENT",
+      "STALE_AVAILABLE",
+      "CURRENTNESS_UNKNOWN"
+    ],
+    "input_budget": {
+      "max_file_bytes": 65536,
+      "max_files": 20,
+      "max_total_bytes": 262144
+    },
+    "package_failure_state": "UNAVAILABLE",
+    "routine_phase": "download + verify + freshness probe + advisory trace",
+    "semantic_merge_gate": false
+  },
+  "disposition": "PACKAGE_BASED_NONBLOCKING_FIELD_TRACES",
+  "field_witness": {
+    "candidate_sha": "90b3500ca4d0815cf9aadf06fdd2f22eb56578f4",
+    "conclusion": "success",
+    "input": {
+      "changed_path_count": 22,
+      "selected_bytes": 92995,
+      "selected_count": 20,
+      "skipped_count": 2,
+      "skipped_reason": "file_count_budget",
+      "status": "DEGRADED"
+    },
+    "needle3": {
+      "cold_wall_ms": 15281.965637999974,
+      "cold_warm_results_identical": true,
+      "freshness": "CURRENT",
+      "job_conclusion": "success",
+      "orchestration_ms": 52749.26611199998,
+      "package_setup_ms": 19613.56471600004,
+      "package_status": "READY",
+      "receipt_status": "DEGRADED",
+      "warm_wall_ms": 15324.219774000085
+    },
+    "pull_request": 68,
+    "run_id": 35538583349,
+    "semble": {
+      "cold_wall_ms": 13135.013353000006,
+      "cold_warm_results_identical": false,
+      "freshness": "CURRENT",
+      "job_conclusion": "success",
+      "orchestration_ms": 35899.782177,
+      "package_setup_ms": 10708.246354000003,
+      "package_status": "READY",
+      "receipt_status": "DEGRADED",
+      "warm_wall_ms": 11725.355769999993
+    },
+    "semdup": {
+      "freshness": "CURRENT",
+      "job_conclusion": "success",
+      "orchestration_ms": 7037.867376000001,
+      "package_setup_ms": 6650.748901,
+      "package_status": "READY",
+      "reason": "DEGRADED bounded input causes semdup full diff to skip rather than bypass the budget",
+      "receipt_status": "DEGRADED",
+      "semantic_full_diff_executed": false
+    }
+  },
+  "limits": [
+    "The R8 self-hosting PR changed 22 paths, so the 20-file budget intentionally produced DEGRADED receipts.",
+    "The package-based semdup runtime reached READY, but its full semantic diff did not run on the degraded bounded input by design.",
+    "Semble and Needle still analyzed the selected 20 changes and preserved DEGRADED in their receipts.",
+    "Package freshness checks current upstream source/model identities but never override reproducibility or merge authority.",
+    "Pinned GitHub artifacts expire after 90 days; expiry warning begins 14 days before expiration and replacement remains an explicit maintenance action."
+  ],
+  "next_node": "second-repo-reuse",
+  "packages": {
+    "needle3": {
+      "artifact_digest": "sha256:eee6652821310b897a67058eb1b3385c9391aa53dd00959082c9977e845fe0c3",
+      "artifact_id": 10612888067,
+      "artifact_size_bytes": 102536115,
+      "build_run_id": 35537765889,
+      "model_revision": "b274efcb211a9eef48c9a88da4b43bd569696a39",
+      "one_time_build_job_s": 61,
+      "runner_scope": "ubuntu-22.04 / linux-x86_64 / Python 3.12",
+      "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
+      "tar_sha256": "302905b0c76360d9a08effd7660bce7ee10f752276e55d1ee76987d46233b2de"
+    },
+    "semble": {
+      "artifact_digest": "sha256:2894d0e4f0d4a44b52af082fd3742fbbb19b1b9b868594de026071899b0f64d1",
+      "artifact_id": 10613578514,
+      "artifact_size_bytes": 67241067,
+      "build_run_id": 35537532500,
+      "model_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
+      "one_time_build_job_s": 41,
+      "runner_scope": "ubuntu-22.04 / linux-x86_64 / Python 3.12",
+      "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+      "tar_sha256": "ea8bc975d1d8b143918b0b07b7c03b0ce75abacae106162c6faf4dca5714b426"
+    },
+    "semdup": {
+      "artifact_digest": "sha256:3e659b6a41a79077b38b45ad48a9d094af81324916708a3e7ff1e5925fbc435e",
+      "artifact_id": 10614095162,
+      "artifact_size_bytes": 156733393,
+      "build_run_id": 35538151476,
+      "model_assets_verified_against_upstream_blake3": true,
+      "one_time_build_job_s": 149,
+      "runner_scope": "ubuntu-24.04 / linux-x86_64 / glibc2.39",
+      "source_sha": "829f90ad94f453b73a24e46413202e9ece0b49e8a",
+      "tar_sha256": "58894995a4a087be743a3b802a31df05677902c3b6829775382538b1a65bbbdb"
+    }
+  },
+  "roadmap_node": "ci-advisory-integration",
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "verification": {
+    "actionlint": "PASS",
+    "canonical_tests": "93/93 PASS",
+    "dev_check": "DEV_CHECK_PASS",
+    "git_diff_check": "PASS",
+    "semantic_helper_tests": "9/9 PASS"
+  }
+}

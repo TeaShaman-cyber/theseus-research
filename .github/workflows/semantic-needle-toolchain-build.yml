@@ -1,0 +1,132 @@
+name: build Needle QA toolchain
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - research/semantic-qa-r8-ci-57
+    paths:
+      - .github/workflows/semantic-needle-toolchain-build.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout QA profile
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+
+      - name: Build exact Needle wheelhouse and model bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          profile=tools/semantic_qa/profiles.json
+          source_sha=$(jq -r '.needle3.source_sha' "$profile")
+          repo_id=$(jq -r '.needle3.model_repo' "$profile")
+          revision=$(jq -r '.needle3.model_revision' "$profile")
+          src="$RUNNER_TEMP/needle-src"
+          envdir="$RUNNER_TEMP/needle-build-env"
+          pkg="$RUNNER_TEMP/needle-toolchain"
+          mkdir -p "$pkg/wheels" "$pkg/model"
+
+          git init "$src"
+          git -C "$src" remote add origin https://github.com/cactus-compute/needle.git
+          git -C "$src" fetch --depth=1 origin "$source_sha"
+          git -C "$src" checkout --detach FETCH_HEAD
+          test "$(git -C "$src" rev-parse HEAD)" = "$source_sha"
+
+          python3 -m venv "$envdir"
+          "$envdir/bin/pip" install --disable-pip-version-check --quiet --upgrade pip wheel
+          "$envdir/bin/pip" install --disable-pip-version-check             -r tools/semantic_qa/needle-requirements.txt
+          "$envdir/bin/pip" install --disable-pip-version-check --no-deps "$src"
+          "$envdir/bin/pip" freeze >"$pkg/requirements.freeze.txt"
+          grep -v -E '^(needle|cactus-needle)(@|==| @ )' "$pkg/requirements.freeze.txt" >"$pkg/deps.freeze.txt" || true
+          "$envdir/bin/pip" download --disable-pip-version-check             -r "$pkg/deps.freeze.txt" -d "$pkg/wheels"
+          "$envdir/bin/pip" wheel --disable-pip-version-check             --no-deps "$src" -w "$pkg/wheels"
+
+          "$envdir/bin/python" - "$repo_id" "$revision" "$pkg/model" <<'PY'
+          import shutil
+          import sys
+          from pathlib import Path
+          from huggingface_hub import hf_hub_download
+
+          repo, revision, root = sys.argv[1:]
+          root = Path(root)
+          files = [
+              "needle3.cact",
+              "python/cactus_needle-3.0.1-py3-none-manylinux2014_x86_64.whl",
+          ]
+          for rel in files:
+              cached = Path(
+                  hf_hub_download(
+                      repo_id=repo,
+                      filename=rel,
+                      revision=revision,
+                  )
+              )
+              target = root / rel
+              target.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(cached, target)
+          PY
+
+          testenv="$RUNNER_TEMP/needle-offline-test"
+          python3 -m venv "$testenv"
+          "$testenv/bin/pip" install --disable-pip-version-check             --no-index --find-links "$pkg/wheels" cactus-needle scikit-learn==1.9.1
+          "$testenv/bin/python" - <<'PY'
+          import needle, sklearn
+          print("needle", needle.__version__)
+          print("sklearn", sklearn.__version__)
+          PY
+
+          python3 - "$pkg" "$source_sha" "$repo_id" "$revision" <<'PY'
+          import hashlib, json, os, platform, sys
+          from pathlib import Path
+          root=Path(sys.argv[1])
+          def sha256(path):
+              h=hashlib.sha256()
+              with path.open("rb") as f:
+                  for chunk in iter(lambda:f.read(1024*1024),b""): h.update(chunk)
+              return h.hexdigest()
+          files={}
+          for p in sorted(root.rglob("*")):
+              if p.is_file():
+                  files[p.relative_to(root).as_posix()]={"bytes":p.stat().st_size,"sha256":sha256(p)}
+          (root/"build-receipt.json").write_text(json.dumps({
+              "schema_version":1,
+              "status":"BUILT",
+              "source_sha":sys.argv[2],
+              "model_repo":sys.argv[3],
+              "model_revision":sys.argv[4],
+              "python":"3.12",
+              "platform":platform.platform(),
+              "machine":platform.machine(),
+              "runner_image_os":os.environ.get("ImageOS"),
+              "runner_image_version":os.environ.get("ImageVersion"),
+              "files":files,
+          },indent=2,sort_keys=True)+"\n")
+          PY
+
+          tar -C "$pkg" -czf "$RUNNER_TEMP/needle-toolchain.tar.gz" .
+          sha256sum "$RUNNER_TEMP/needle-toolchain.tar.gz"             | sed 's#  .*/#  #' >"$RUNNER_TEMP/needle-toolchain.tar.gz.sha256"
+
+      - name: Upload immutable QA toolchain
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: needle-toolchain-fc5bae0f9b6138828fe7589f6b531fb9a26968de-py312-linux-x86_64
+          path: |
+            ${{ runner.temp }}/needle-toolchain.tar.gz
+            ${{ runner.temp }}/needle-toolchain.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 90
+          compression-level: 0

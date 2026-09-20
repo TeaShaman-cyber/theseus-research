@@ -1,0 +1,38 @@
+name: semantic advisory trace
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: semantic-advisory-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  semdup:
+    if: ${{ !github.event.pull_request.draft }}
+    uses: ./.github/workflows/semantic-semdup-advisory.yml
+    with:
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      task_id: pr-${{ github.event.pull_request.number }}
+
+  semble:
+    if: ${{ !github.event.pull_request.draft }}
+    uses: ./.github/workflows/semantic-semble-advisory.yml
+    with:
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      task_id: pr-${{ github.event.pull_request.number }}
+
+  needle:
+    if: ${{ !github.event.pull_request.draft }}
+    uses: ./.github/workflows/semantic-needle-advisory.yml
+    with:
+      base_sha: ${{ github.event.pull_request.base.sha }}
+      head_sha: ${{ github.event.pull_request.head.sha }}
+      task_id: pr-${{ github.event.pull_request.number }}

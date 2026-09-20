@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "input_budget": {
+    "max_files": 20,
+    "max_total_bytes": 262144,
+    "max_file_bytes": 65536
+  },
+  "semdup": {
+    "source_sha": "829f90ad94f453b73a24e46413202e9ece0b49e8",
+    "model_key": "nomic-ai/CodeRankEmbed@cpu-nbits-int4-asym",
+    "model_release_tag": "model-coderankembed-1",
+    "model_release_tag_sha": "b395e94fe94acdf5f3f7c21562a527c4306f66f8",
+    "min_lines": 8,
+    "unit_kind": "function",
+    "assets_blake3": {
+      "model.onnx": "34447cdd9e5b5f6c5606c611ef4d5872e4391ff9324e1cdee3197db9938a33a3",
+      "model.onnx.data": "f2b81387aee7a0db997f4a18948560f635396cb7796e1d4e34be018774da146c",
+      "tokenizer.json": "9323872b7f8abfe19f9bf09eb789d33378be39c951627bdde0aad0e9baeb839d"
+    },
+    "package": {
+      "run_id": 35538151476,
+      "artifact_id": 10614095162,
+      "artifact_name": "semdup-toolchain-829f90ad94f453b73a24e46413202e9ece0b49e8-linux-x86_64",
+      "artifact_digest": "sha256:3e659b6a41a79077b38b45ad48a9d094af81324916708a3e7ff1e5925fbc435e",
+      "tar_file": "semdup-toolchain.tar.gz",
+      "tar_sha256": "58894995a4a087be743a3b802a31df05677902c3b6829775382538b1a65bbbdb",
+      "built_at": "2026-09-20T21:18:17Z",
+      "expires_at": "2026-12-19T21:15:47Z",
+      "builder_head_sha": "b0b2b2610f3cf1d8d8a8dee687d818d484686e8a",
+      "runner": "ubuntu-24.04",
+      "platform_scope": "linux-x86_64-glibc2.39",
+      "artifact_size_bytes": 156733393,
+      "integrity_at_build": "upstream_model_blake3_verified"
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/niklebedenko/semdup.git",
+      "git_ref": "refs/heads/main"
+    }
+  },
+  "semble": {
+    "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+    "uv_lock_blob_sha": "04ba3abab08d32da390f7d3d30a0195b56035664",
+    "uv_version": "0.12.16",
+    "model_repo": "minishlab/potion-code-16M-v2",
+    "model_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
+    "model_files_sha256": {
+      ".gitattributes": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+      "README.md": "835e4161a3942cd5284d423dbdb4ca69024b671436273142d7512153e770794c",
+      "config.json": "148e5691a6fcc553437156859701fba017a1ba5d340b170f17e0f3668fb861a7",
+      "model.safetensors": "75cf7a6c2171b230ad19b1e7d8e0b1aee86da5a02af8e7cacedd9921d227623c",
+      "modules.json": "a68dcbed0429dcdd5bfdca92b0b03cc30d09122c0a3fcf4758787d4b244e45b2",
+      "tokenizer.json": "107bbdcbad4bff1d299b7a4c3a2fb17c52890688b7dd0e4c9deab79d3c4f3d45"
+    },
+    "top_k": 3,
+    "uv_observed_upstream": {
+      "repository": "MinishLab/semble",
+      "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+      "workflow_run_id": 35314743423,
+      "observed_at": "2026-09-18T06:24:36Z"
+    },
+    "package": {
+      "run_id": 35537532500,
+      "artifact_id": 10613578514,
+      "artifact_name": "semble-toolchain-8e40653de0d62526b62301dcc4d087ac19f86663-py312-linux-x86_64",
+      "artifact_digest": "sha256:2894d0e4f0d4a44b52af082fd3742fbbb19b1b9b868594de026071899b0f64d1",
+      "tar_file": "semble-toolchain.tar.gz",
+      "tar_sha256": "ea8bc975d1d8b143918b0b07b7c03b0ce75abacae106162c6faf4dca5714b426",
+      "built_at": "2026-09-20T21:04:54Z",
+      "expires_at": "2026-12-19T21:04:12Z",
+      "builder_head_sha": "544c28a8cf78cec0e83352df3bed894190a7400c",
+      "runner": "ubuntu-22.04",
+      "platform_scope": "linux-x86_64-py312",
+      "artifact_size_bytes": 67241067
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/MinishLab/semble.git",
+      "git_ref": "refs/heads/main",
+      "hf_repo": "minishlab/potion-code-16M-v2"
+    }
+  },
+  "needle3": {
+    "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
+    "version": "3.0.1",
+    "model_repo": "Cactus-Compute/needle3",
+    "model_revision": "b274efcb211a9eef48c9a88da4b43bd569696a39",
+    "weights_sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+    "engine_wheel_sha256": "05770ef9a85686583968ea15f62f9ad44217e078efdaa99559d3208bb8a369b0",
+    "engine_library_sha256": "978fce130aac08af506b5fe8bb2950da58e9479d0de69d972d9bd69db953568d",
+    "ranker": "sklearn.neighbors.NearestNeighbors",
+    "ranker_version": "1.9.1",
+    "metric": "cosine",
+    "algorithm": "brute",
+    "top_k": 3,
+    "package": {
+      "run_id": 35537765889,
+      "artifact_id": 10612888067,
+      "artifact_name": "needle-toolchain-fc5bae0f9b6138828fe7589f6b531fb9a26968de-py312-linux-x86_64",
+      "artifact_digest": "sha256:eee6652821310b897a67058eb1b3385c9391aa53dd00959082c9977e845fe0c3",
+      "tar_file": "needle-toolchain.tar.gz",
+      "tar_sha256": "302905b0c76360d9a08effd7660bce7ee10f752276e55d1ee76987d46233b2de",
+      "built_at": "2026-09-20T21:09:33Z",
+      "expires_at": "2026-12-19T21:08:33Z",
+      "builder_head_sha": "2559bb63e662ceb4d79563999f9ca8088d311642",
+      "runner": "ubuntu-22.04",
+      "platform_scope": "linux-x86_64-py312",
+      "artifact_size_bytes": 102536115
+    },
+    "freshness": {
+      "max_age_days": 30,
+      "expiry_warning_days": 14,
+      "git_url": "https://github.com/cactus-compute/needle.git",
+      "git_ref": "refs/heads/main",
+      "hf_repo": "Cactus-Compute/needle3"
+    }
+  }
+}
