@@ -36,6 +36,16 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Local semantic QA witness — 2026-09-20
+
+- [Pilot design](2026-09-20-local-semantic-qa-witness-design.md)
+
+Type: research design / advisory semantic-QA pilot.
+
+The design pins a small local FastEmbed/ONNX model and defines a non-blocking
+receipt that maps changed chunks to known failure classes without an LLM API.
+Similarity remains evidence for review routing, not correctness or authority.
+
 ### Codex review vs heavy CI — 2026-09-20
 
 - [Observational comparison](2026-09-20-codex-review-vs-heavy-ci.md)
