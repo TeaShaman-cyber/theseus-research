@@ -1,0 +1,233 @@
+{
+  "acceptance_authority": false,
+  "artifact_hashes": {
+    "diff-070.json": "6d8cc8fca54924fb4ee3052073ab9aac4df5d8ed3bc541d5547764f70f716857",
+    "diff-080.json": "d1d0a194d4ff7e8a54492b9842aaf9e03a60abe47cd01b8874e0bc39046dd46e",
+    "diff-status.json": "f4717405e60a8bbcde322c4237b65b988c1711d0c7419cac8171d1a5cdae6f22",
+    "raw-cold.json": "084d45f7a1d00d86c451677cc234dc08c10bee4237159ed982e0b836afc0064a",
+    "raw-warm.json": "084d45f7a1d00d86c451677cc234dc08c10bee4237159ed982e0b836afc0064a",
+    "runtime.json": "dd3f88ac39131dd0cb59fa0106b734012bc03a5e4c32eb7b469f9f9b239b85a7",
+    "threshold-050.json": "9c78af5815d47685dbbcde2a067da9e8bab2b80fd5f8347bb51f144be8f8641a",
+    "threshold-060.json": "9c78af5815d47685dbbcde2a067da9e8bab2b80fd5f8347bb51f144be8f8641a",
+    "threshold-070.json": "9c78af5815d47685dbbcde2a067da9e8bab2b80fd5f8347bb51f144be8f8641a",
+    "threshold-080.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "threshold-090.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "threshold-095.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+  },
+  "diff_control": {
+    "policy": "new-pairs",
+    "refresh_base": true,
+    "threshold_0_70": {
+      "cosine": 0.7816283,
+      "exit_code": 1,
+      "verdict": "DUP"
+    },
+    "threshold_0_80": {
+      "cosine": 0.7816283,
+      "exit_code": 0,
+      "verdict": "REVIEW"
+    }
+  },
+  "disposition": "KEEP_ADVISORY_CANDIDATE",
+  "hosted_execution": {
+    "artifact_expires_at": "2026-10-04T19:16:07Z",
+    "artifact_id": 10611895521,
+    "artifact_name": "semdup-r3-a866bc4e86de07b7150245e9691742abf5542d07",
+    "artifact_size_bytes": 10071,
+    "diff_control_step_s": 2,
+    "install_exact_source_s": 227,
+    "job_duration_s": 236,
+    "semantic_fixture_step_s": 3
+  },
+  "limits": [
+    "R3 evaluates semantic duplicate detection, not failure-class retrieval.",
+    "The composite semdup GitHub Action was not executed; the exact-source semdup CLI and its ci diff wrapper were executed on a GitHub-hosted runner.",
+    "Warm success with broken proxy proves network was not required for the warm cached path; whether any network attempt occurred remains UNKNOWN.",
+    "The two duplicate controls are synthetic controls frozen before tool execution; they are not sufficient to promote a repository-wide threshold.",
+    "The first hosted attempt failed before semdup because the pilot wrapper compared sha256sum filenames as well as digests; it is excluded from semantic evidence."
+  ],
+  "reproducibility": {
+    "raw_cold_sha256": "084d45f7a1d00d86c451677cc234dc08c10bee4237159ed982e0b836afc0064a",
+    "raw_cold_warm_identical": true,
+    "raw_warm_sha256": "084d45f7a1d00d86c451677cc234dc08c10bee4237159ed982e0b836afc0064a"
+  },
+  "roadmap_node": "semdup-advisory-pilot",
+  "runtime": {
+    "auth_or_secret_required_for_semdup": false,
+    "cache_bytes_after_cold": 156429571,
+    "cache_bytes_after_warm": 156429571,
+    "cache_bytes_delta_warm": 0,
+    "cold_embed_peak_rss_kb": 149924,
+    "cold_wall_ms": 2491,
+    "db_bytes_after_cold": 57344,
+    "db_bytes_after_warm": 57344,
+    "fixture_digest": "df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b",
+    "index": "exact",
+    "min_lines": 1,
+    "network_attempted_warm": "UNKNOWN",
+    "provider": "cpu",
+    "schema_version": 1,
+    "semdup_source_sha": "829f90ad94f453b73a24e46413202e9ece0b49e8",
+    "unit_kind": "function",
+    "warm_embed_peak_rss_kb": 14768,
+    "warm_run_broken_proxy": true,
+    "warm_run_succeeded": true,
+    "warm_wall_ms": 14
+  },
+  "scan": {
+    "acceptable_similarity_cosine": 0.4370852,
+    "all_pair_count": 15,
+    "all_pairs": [
+      {
+        "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+        "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+        "cosine": 0.7816283
+      },
+      {
+        "a": "cases/duplicate-negative-a.py:1-4 missing_topics",
+        "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+        "cosine": 0.44789463
+      },
+      {
+        "a": "cases/duplicate-negative-a.py:1-4 missing_topics",
+        "b": "cases/duplicate-negative-b.py:1-4 added_release_tags",
+        "cosine": 0.4370852
+      },
+      {
+        "a": "cases/duplicate-negative-a.py:1-4 missing_topics",
+        "b": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+        "cosine": 0.4271224
+      },
+      {
+        "a": "cases/duplicate-negative-b.py:1-4 added_release_tags",
+        "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+        "cosine": 0.30633858
+      },
+      {
+        "a": "cases/duplicate-negative-b.py:1-4 added_release_tags",
+        "b": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+        "cosine": 0.29634848
+      },
+      {
+        "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+        "b": "cases/retrieval-negative-benign-json-loader.py:5-11 _load_valid_registry",
+        "cosine": 0.272024
+      },
+      {
+        "a": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+        "b": "cases/retrieval-negative-benign-json-loader.py:5-11 _load_valid_registry",
+        "cosine": 0.25467643
+      },
+      {
+        "a": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+        "b": "cases/retrieval-negative-benign-json-loader.py:1-2 _dump",
+        "cosine": 0.24752018
+      },
+      {
+        "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+        "b": "cases/retrieval-negative-benign-json-loader.py:1-2 _dump",
+        "cosine": 0.21002959
+      },
+      {
+        "a": "cases/duplicate-negative-a.py:1-4 missing_topics",
+        "b": "cases/retrieval-negative-benign-json-loader.py:5-11 _load_valid_registry",
+        "cosine": 0.18441907
+      },
+      {
+        "a": "cases/retrieval-negative-benign-json-loader.py:1-2 _dump",
+        "b": "cases/retrieval-negative-benign-json-loader.py:5-11 _load_valid_registry",
+        "cosine": 0.17243841
+      },
+      {
+        "a": "cases/duplicate-negative-b.py:1-4 added_release_tags",
+        "b": "cases/retrieval-negative-benign-json-loader.py:1-2 _dump",
+        "cosine": 0.15375191
+      },
+      {
+        "a": "cases/duplicate-negative-a.py:1-4 missing_topics",
+        "b": "cases/retrieval-negative-benign-json-loader.py:1-2 _dump",
+        "cosine": 0.15286799
+      },
+      {
+        "a": "cases/duplicate-negative-b.py:1-4 added_release_tags",
+        "b": "cases/retrieval-negative-benign-json-loader.py:5-11 _load_valid_registry",
+        "cosine": 0.14492685
+      }
+    ],
+    "control_margin": 0.34454310000000005,
+    "extracted_function_count": 6,
+    "highest_tested_threshold_reporting_planted_pair": 0.7,
+    "lowest_tested_threshold_not_reporting_planted_pair_in_scan": 0.8,
+    "planted_near_duplicate_cosine": 0.7816283,
+    "promoted_threshold": null,
+    "threshold_sweep": {
+      "0.50": {
+        "pair_count": 1,
+        "pairs": [
+          {
+            "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+            "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+            "cosine": 0.7816283
+          }
+        ]
+      },
+      "0.60": {
+        "pair_count": 1,
+        "pairs": [
+          {
+            "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+            "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+            "cosine": 0.7816283
+          }
+        ]
+      },
+      "0.70": {
+        "pair_count": 1,
+        "pairs": [
+          {
+            "a": "cases/duplicate-positive-a.py:1-9 normalized_topic_names",
+            "b": "cases/duplicate-positive-b.py:1-8 collect_normalized_topics",
+            "cosine": 0.7816283
+          }
+        ]
+      },
+      "0.80": {
+        "pair_count": 0,
+        "pairs": []
+      },
+      "0.90": {
+        "pair_count": 0,
+        "pairs": []
+      },
+      "0.95": {
+        "pair_count": 0,
+        "pairs": []
+      }
+    }
+  },
+  "schema_version": 1,
+  "semdup": {
+    "cargo_version": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "min_lines": 1,
+    "model": "nomic-ai/CodeRankEmbed@fast",
+    "model_release_tag": "model-coderankembed-1",
+    "model_release_tag_sha": "b395e94fe94acdf5f3f7c21562a527c4306f66f8",
+    "provider": "cpu",
+    "rustc_version": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "scan_index": "exact",
+    "source_sha": "829f90ad94f453b73a24e46413202e9ece0b49e8",
+    "unit_kind": "function",
+    "version": "semdup 0.2.0"
+  },
+  "source": {
+    "fixture_digest": "df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b",
+    "fixture_frozen_main_sha": "77d589782474edabf485fe3531665bd54f987d9a",
+    "fixture_id": "theseus-semantic-qa-v1",
+    "hosted_run_conclusion": "success",
+    "hosted_run_id": 35531526801,
+    "pilot_branch_head_sha": "46ea459c239c89dd462b3794f392e7a2d3850065",
+    "repository": "TeaShaman-cyber/theseus-research",
+    "tracking_issue": 57
+  },
+  "status": "COMPLETE"
+}

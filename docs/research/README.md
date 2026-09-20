@@ -36,6 +36,17 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### semdup R3 advisory pilot — 2026-09-20
+
+- [Pilot result](2026-09-20-semdup-r3-pilot.md)
+- [Machine-readable receipt](2026-09-20-semdup-r3-pilot-receipt.json)
+
+Type: frozen-fixture semantic-duplication pilot / hosted CPU witness.
+
+The pilot exercises exact-source semdup against the pre-merged R2 controls,
+records cold/warm/cache and PR-style diff evidence, and keeps the result
+advisory. No production threshold is promoted.
+
 ### Semantic QA R1 tool freeze — 2026-09-20
 
 - [Upstream identity and capability freeze](2026-09-20-semantic-qa-r1-tool-freeze.md)
