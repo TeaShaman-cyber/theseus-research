@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: semantic-advisory-pr-${{ github.event.pull_request.number }}
