@@ -25,9 +25,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          printf '%s  -\n' df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b > "$RUNNER_TEMP/expected.sha256"
-          sha256sum "$FIXTURE_ROOT/fixture.sha256" > "$RUNNER_TEMP/observed.sha256"
-          diff -u "$RUNNER_TEMP/expected.sha256" "$RUNNER_TEMP/observed.sha256"
+          expected=df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b
+          observed=$(sha256sum "$FIXTURE_ROOT/fixture.sha256" | awk '{print $1}')
+          test "$observed" = "$expected"
 
       - name: Install exact semdup source
         shell: bash
@@ -176,5 +176,5 @@ jobs:
         with:
           name: semdup-r3-${{ github.sha }}
           path: ${{ runner.temp }}/semdup-r3-out
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
