@@ -1,0 +1,298 @@
+{
+  "cases": [
+    {
+      "candidate_file": "cases/retrieval-authority-readback.patch",
+      "content_sha256": {
+        "cases/retrieval-authority-readback.patch": "33d510954b93df0b496b85224e896c4da680e444fb5cad041ed365498589f49a"
+      },
+      "id": "retrieval-authority-readback",
+      "kind": "retrieval_positive",
+      "oracle": {
+        "evidence": [
+          "tests/test_registry_issue.py::test_created_issue_requires_verified_remote_readback",
+          "tests/test_registry_issue.py::test_existing_issue_comment_requires_verified_remote_readback"
+        ],
+        "expected_failure_class": "authority-provenance-closure"
+      },
+      "source": {
+        "candidate_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+        "extraction": "git diff --unified=12 parent candidate -- path; fixture-only trailing whitespace normalized",
+        "parent_sha": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+        "path": "tools/registry_doctor.py",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-claim-search-completeness.patch",
+      "content_sha256": {
+        "cases/retrieval-claim-search-completeness.patch": "9336ca1a206871920daf9d4656c7341148ea118572cc90210ae305ed530c096e"
+      },
+      "id": "retrieval-claim-search-completeness",
+      "kind": "retrieval_positive",
+      "oracle": {
+        "evidence": [
+          "tests/test_registry_doctor.py::test_candidate_search_paginates_before_declaring_completion",
+          "tests/test_registry_doctor.py::test_candidate_search_over_github_cap_is_unreachable"
+        ],
+        "expected_failure_class": "claim-status-semantics"
+      },
+      "source": {
+        "candidate_sha": "1fc4416da7754208f7e913f2ef584ddd269eef29",
+        "extraction": "git diff --unified=12 parent candidate -- path; fixture-only trailing whitespace normalized",
+        "parent_sha": "6585b31599e8d56a5818a143740ca54604ce5615",
+        "path": "tools/registry_doctor.py",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-identity-downstream-grammar.patch",
+      "content_sha256": {
+        "cases/retrieval-identity-downstream-grammar.patch": "4f66742f6226e985a31ddac310d2f801fbc5c43a1114126171e0d3ca04369ec3"
+      },
+      "id": "retrieval-identity-downstream-grammar",
+      "kind": "retrieval_positive",
+      "oracle": {
+        "evidence": [
+          "tests/test_registry_contract.py repository identity negative cases",
+          "docs/qa/failure-classes.md identity grammar mismatch"
+        ],
+        "expected_failure_class": "identity-grammar-mismatch"
+      },
+      "source": {
+        "candidate_sha": "08771555645b0fd309e8fb7a93169cc857fea5cf",
+        "extraction": "git diff --unified=12 parent candidate -- path; fixture-only trailing whitespace normalized",
+        "parent_sha": "64a01a45cccfe157c0a3ea3cdb49d0b3c1cf53d9",
+        "path": "tools/registry_contract.py",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-boundary-reserved-markers.patch",
+      "content_sha256": {
+        "cases/retrieval-boundary-reserved-markers.patch": "577bac1361dc1a3b727ad946ef4ffef951c9b68a8fc8d72c27597640be391585"
+      },
+      "id": "retrieval-boundary-reserved-markers",
+      "kind": "retrieval_positive",
+      "oracle": {
+        "evidence": [
+          "tests/test_registry_contract.py::test_role_text_must_not_contain_projection_markers"
+        ],
+        "expected_failure_class": "boundary-transport-contract"
+      },
+      "source": {
+        "candidate_sha": "5cab76b5e2e606a9c9bc3295cee2d19f4af3e0a0",
+        "extraction": "git diff --unified=12 parent candidate -- path; fixture-only trailing whitespace normalized",
+        "parent_sha": "e140edb1205259c2beb9a8d234f9c8cfaba10779",
+        "path": "tools/registry_contract.py",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-negative-automem-resource-table.md",
+      "content_sha256": {
+        "cases/retrieval-negative-automem-resource-table.md": "a3ab07abfd4fba02277e684543b42712b94c53578bab8f86c50bcd2ea6a1d47d"
+      },
+      "id": "retrieval-negative-automem-resource-table",
+      "kind": "retrieval_negative",
+      "oracle": {
+        "expected_failure_class": null,
+        "reason": "resource and latency comparison with no target failure-class disposition"
+      },
+      "source": {
+        "candidate_sha": "54fc67db0f6db6653ab2de5a5d128392c0a9f9ff",
+        "extraction": "exact source line slice",
+        "line_range": [
+          58,
+          77
+        ],
+        "path": "docs/research/automem-resource-and-helper-evaluation-2026-08-22.md",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-negative-benign-json-loader.py",
+      "content_sha256": {
+        "cases/retrieval-negative-benign-json-loader.py": "38f92f030e97d4371824130ec8b22284c1d1e90bf447b3bb7e13a4e00f381b0a"
+      },
+      "id": "retrieval-negative-benign-json-loader",
+      "kind": "retrieval_negative",
+      "oracle": {
+        "expected_failure_class": null,
+        "reason": "benign serialization and loading helper with no known target defect"
+      },
+      "source": {
+        "candidate_sha": "77d589782474edabf485fe3531665bd54f987d9a",
+        "extraction": "exact source line slice",
+        "line_range": [
+          23,
+          33
+        ],
+        "path": "tools/check_registry.py",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_file": "cases/retrieval-negative-program-mission.md",
+      "content_sha256": {
+        "cases/retrieval-negative-program-mission.md": "97aed6fdfd089e9916d9c519d6c3cd907f641c93604c6d8bae2964de38fcc35a"
+      },
+      "id": "retrieval-negative-program-mission",
+      "kind": "retrieval_negative",
+      "oracle": {
+        "expected_failure_class": null,
+        "reason": "broad program mission and non-goals prose without a target failure-class disposition"
+      },
+      "source": {
+        "candidate_sha": "77d589782474edabf485fe3531665bd54f987d9a",
+        "extraction": "exact source line slice",
+        "line_range": [
+          19,
+          41
+        ],
+        "path": "README.md",
+        "repository": "TeaShaman-cyber/theseus-research"
+      }
+    },
+    {
+      "candidate_files": [
+        "cases/duplicate-positive-a.py",
+        "cases/duplicate-positive-b.py"
+      ],
+      "content_sha256": {
+        "cases/duplicate-positive-a.py": "89c48b89d02f2247505f5cef79acf031e89f527e06799d2074c0a1a936cdb2db",
+        "cases/duplicate-positive-b.py": "b7cc0ea88025d56dbb652ec185f5e85f431db7bbbc651cae5a09ccf682ccdec3"
+      },
+      "id": "duplicate-control-planted-rewrite",
+      "kind": "duplicate_control",
+      "oracle": {
+        "reason": "same normalization behavior expressed with different syntax and control flow",
+        "relation": "near_duplicate"
+      },
+      "source": {
+        "derived_from_production_code": false,
+        "origin": "synthetic_control_frozen_before_tool_execution"
+      }
+    },
+    {
+      "candidate_files": [
+        "cases/duplicate-negative-a.py",
+        "cases/duplicate-negative-b.py"
+      ],
+      "content_sha256": {
+        "cases/duplicate-negative-a.py": "1dbf669557e422789db5ed10a1c7b7c1632334a169e198ffc5ab3a975970517f",
+        "cases/duplicate-negative-b.py": "50b69b30dacb632e9d49a11f9e36791a5774a70fdfb6c38377d9b414a55e05e8"
+      },
+      "id": "duplicate-control-similar-but-distinct",
+      "kind": "duplicate_control",
+      "oracle": {
+        "reason": "similar set-difference shape with intentionally different domain meaning and direction",
+        "relation": "acceptable_similarity"
+      },
+      "source": {
+        "derived_from_production_code": false,
+        "origin": "synthetic_control_frozen_before_tool_execution"
+      }
+    }
+  ],
+  "corpus": {
+    "failure_class_ids": [
+      "verification-target-mismatch",
+      "authority-provenance-closure",
+      "identity-preservation",
+      "identity-grammar-mismatch",
+      "claim-status-semantics",
+      "phase-dag-closure",
+      "boundary-transport-contract",
+      "derived-state-heuristic-coverage"
+    ],
+    "path": "docs/qa/failure-classes.md"
+  },
+  "fixture_id": "theseus-semantic-qa-v1",
+  "frozen_at_repository_main": "77d589782474edabf485fe3531665bd54f987d9a",
+  "metrics": {
+    "attention": {
+      "note": "attention metrics are descriptive and not acceptance authority",
+      "report": [
+        "surfaced_items_requiring_disposition",
+        "manual_disposition_count",
+        "triage_seconds_if_measured"
+      ]
+    },
+    "duplicate": {
+      "controls": [
+        "near_duplicate",
+        "acceptable_similarity"
+      ],
+      "report": [
+        "pair_score_or_equivalent_upstream_measure",
+        "first_threshold_reporting_pair",
+        "cluster_or_finding_identity",
+        "manual_oracle_agreement"
+      ],
+      "threshold_policy": "sweep grid is exploratory; no threshold is promoted by R2",
+      "threshold_sweep": [
+        0.5,
+        0.6,
+        0.7,
+        0.8,
+        0.9,
+        0.95
+      ]
+    },
+    "operations": {
+      "report": [
+        "cold_wall_ms",
+        "warm_wall_ms",
+        "peak_rss_kb_if_available",
+        "cache_bytes_after_cold_run",
+        "cache_bytes_delta_warm_run",
+        "network_required_cold",
+        "network_attempted_warm",
+        "auth_or_secret_required",
+        "exit_status"
+      ]
+    },
+    "reproducibility": {
+      "compare": [
+        "rank_order_stability",
+        "result_identity_stability",
+        "score_delta",
+        "receipt_identity_fields"
+      ],
+      "runtime_fields_excluded_from_identity": [
+        "wall_ms",
+        "peak_rss_kb",
+        "cache_state"
+      ],
+      "same_source_profile_repeats": 2
+    },
+    "retrieval": {
+      "aggregate": [
+        "top1_accuracy_over_positives",
+        "top3_recall_over_positives",
+        "mean_reciprocal_rank_over_positives",
+        "misleading_negative_count"
+      ],
+      "negative_case_count": 3,
+      "positive_case_count": 4,
+      "report": [
+        "top1_expected_class",
+        "top3_contains_expected_class",
+        "reciprocal_rank_expected_class",
+        "ordered_topk_ids_and_scores",
+        "negative_topk_ids_and_scores",
+        "manual_misleading_match_disposition"
+      ],
+      "threshold_policy": "no acceptance threshold in R2; record raw scores and ranks first"
+    }
+  },
+  "rules": [
+    "candidate files do not contain oracle labels",
+    "all semantic tools are run only after this fixture is merged",
+    "historical positives are bound to exact accepted fix commits",
+    "synthetic duplicate controls are explicitly non-historical",
+    "no score threshold or tool winner is fixed before observation",
+    "all tools receive the same frozen cases for comparable roles"
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,57 @@
+diff --git a/tools/registry_contract.py b/tools/registry_contract.py
+index e0cf8e7..a88bfed 100644
+--- a/tools/registry_contract.py
++++ b/tools/registry_contract.py
+@@ -1,20 +1,22 @@
+ from __future__ import annotations
+
+ import re
+
+ import json
+ from pathlib import Path
+ from typing import Mapping
+
++from tools.registry_projection import BEGIN_MARKER, END_MARKER
++
+ VALID_VISIBILITIES = frozenset({"public", "private-incubation"})
+ VALID_RELEASE_POLICIES = frozenset({"none", "checkpoint", "product"})
+ VALID_STATUSES = frozenset({"active-root", "active", "private-incubation"})
+ MANAGED_LABELS = (
+     "kind:research",
+     "kind:engineering",
+     "kind:operations",
+     "scope:cross-project",
+     "evidence:required",
+ )
+ SCHEMA_VERSION = "theseus-research-lines-v1"
+
+@@ -89,24 +91,29 @@ def validate_registry(document: Mapping[str, object]) -> list[str]:
+             errors.append(f"private-incubation line {line_id} must omit repository")
+
+         role = raw_line.get("role")
+         if not isinstance(role, Mapping):
+             errors.append(f"role for {line_id} must be localized object")
+         else:
+             for language in ("en", "ru"):
+                 value = role.get(language)
+                 if not isinstance(value, str) or not value.strip():
+                     errors.append(f"role for {line_id} missing {language}")
+                 elif "\n" in value or "\r" in value:
+                     errors.append(f"role for {line_id} {language} must be single-line")
++                elif BEGIN_MARKER in value or END_MARKER in value:
++                    errors.append(
++                        f"role for {line_id} {language} must not contain "
++                        "reserved projection markers"
++                    )
+
+         status = raw_line.get("status")
+         if not isinstance(status, str) or not status:
+             errors.append(f"status for {line_id} must be non-empty string")
+         elif status not in VALID_STATUSES:
+             errors.append(f"invalid status for {line_id}: {status}")
+         elif isinstance(visibility, str) and visibility in VALID_VISIBILITIES:
+             allowed_statuses = (
+                 {"active-root", "active"}
+                 if visibility == "public"
+                 else {"private-incubation"}
+             )
