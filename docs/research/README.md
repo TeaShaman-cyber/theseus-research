@@ -36,6 +36,19 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semble R4 failure-class retrieval pilot — 2026-09-20
+
+- [Pilot result](2026-09-20-semble-r4-pilot.md)
+- [Machine-readable receipt](2026-09-20-semble-r4-pilot-receipt.json)
+
+Type: frozen-fixture local retrieval pilot / hosted CPU witness.
+
+The pilot runs exact-source Semble with an exact local model snapshot against
+the pre-merged R2 retrieval cases. It compares the canonical failure-class
+document with a minimal one-record-per-class projection. The result remains
+advisory: ranked retrieval is evidence for attention routing, not a correctness
+or confidence verdict.
+
 ### semdup R3 advisory pilot — 2026-09-20
 
 - [Pilot result](2026-09-20-semdup-r3-pilot.md)
