@@ -170,6 +170,75 @@ jobs:
           printf '%s\n' "--- status ---"
           cat "$out/status.txt"
 
+
+      - name: Run frozen semdup diff control
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$RUNNER_TEMP/semdup-install/bin:$PATH"
+          out="$RUNNER_TEMP/semdup-r3-out"
+          repo="$RUNNER_TEMP/semdup-diff-control"
+          db="$RUNNER_TEMP/semdup-diff.sqlite"
+          rm -rf "$repo"
+          rm -f "$db" "$db-shm" "$db-wal"
+          mkdir -p "$repo"
+
+          cp "$GITHUB_WORKSPACE/$FIXTURE_ROOT/cases/duplicate-positive-a.py" "$repo/original.py"
+          git -C "$repo" init
+          git -C "$repo" config user.name semdup-r3
+          git -C "$repo" config user.email semdup-r3@example.invalid
+          git -C "$repo" add original.py
+          git -C "$repo" commit -m base
+
+          cp "$GITHUB_WORKSPACE/$FIXTURE_ROOT/cases/duplicate-positive-b.py" "$repo/rewrite.py"
+          git -C "$repo" add rewrite.py
+          git -C "$repo" commit -m candidate
+
+          cd "$repo"
+          set +e
+          semdup --db "$db" ci \
+            --mode diff \
+            --base HEAD^ \
+            --refresh-base \
+            --root . \
+            --threshold 0.70 \
+            --min-lines 1 \
+            --include-tests \
+            --provider cpu \
+            --policy new-pairs \
+            --json "$out/diff-070.json" \
+            > "$out/diff-070.txt" 2>&1
+          status_070=$?
+
+          semdup --db "$db" ci \
+            --mode diff \
+            --base HEAD^ \
+            --refresh-base \
+            --root . \
+            --threshold 0.80 \
+            --min-lines 1 \
+            --include-tests \
+            --provider cpu \
+            --policy new-pairs \
+            --json "$out/diff-080.json" \
+            > "$out/diff-080.txt" 2>&1
+          status_080=$?
+          set -e
+
+          cat > "$out/diff-status.json" <<JSON
+          {
+            "threshold_070_exit": $status_070,
+            "threshold_080_exit": $status_080
+          }
+          JSON
+
+          python3 -m json.tool "$out/diff-status.json"
+          cat "$out/diff-070.json"
+          cat "$out/diff-080.json"
+
+          test "$status_070" -ne 0
+          test "$status_080" -eq 0
+
       - name: Upload raw R3 evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
