@@ -69,11 +69,10 @@ jobs:
             setup_rc=$?
 
             if [ "$setup_rc" -eq 0 ]; then
-              "$envdir/bin/python" - "$repo_id" "$revision" "$snapshot" <<'PY' >>"$err" 2>&1
-              from huggingface_hub import snapshot_download
-              import sys
-              print(snapshot_download(repo_id=sys.argv[1], revision=sys.argv[2], local_dir=sys.argv[3]))
-              PY
+              "$envdir/bin/python" tools/semantic_qa/hf_snapshot.py \
+                --repo "$repo_id" \
+                --revision "$revision" \
+                --output "$snapshot" >>"$err" 2>&1
               setup_rc=$?
             fi
           else

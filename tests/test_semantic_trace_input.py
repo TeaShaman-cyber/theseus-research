@@ -14,13 +14,21 @@ class SemanticTraceInputTests(unittest.TestCase):
         repo = Path(temp.name)
         subprocess.run(["git", "init", "-q", repo], check=True)
         subprocess.run(["git", "-C", repo, "config", "user.name", "test"], check=True)
-        subprocess.run(["git", "-C", repo, "config", "user.email", "test@example.invalid"], check=True)
+        subprocess.run(
+            ["git", "-C", repo, "config", "user.email", "test@example.invalid"],
+            check=True,
+        )
         return temp, repo
 
     def _commit(self, repo: Path, message: str) -> str:
         subprocess.run(["git", "-C", repo, "add", "-A"], check=True)
-        subprocess.run(["git", "-C", repo, "commit", "-q", "-m", message], check=True)
-        return subprocess.check_output(["git", "-C", repo, "rev-parse", "HEAD"], text=True).strip()
+        subprocess.run(
+            ["git", "-C", repo, "commit", "-q", "-m", message],
+            check=True,
+        )
+        return subprocess.check_output(
+            ["git", "-C", repo, "rev-parse", "HEAD"], text=True
+        ).strip()
 
     def test_changed_patch_manifest_is_deterministic_and_binds_shas(self):
         temp, repo = self._repo()
@@ -74,6 +82,37 @@ class SemanticTraceInputTests(unittest.TestCase):
         self.assertEqual(manifest["status"], "DEGRADED")
         self.assertEqual(manifest["selected"], [])
         self.assertEqual(manifest["skipped"][0]["reason"], "total_byte_budget")
+
+    def test_binary_marker_text_does_not_make_text_patch_binary(self):
+        temp, repo = self._repo()
+        self.addCleanup(temp.cleanup)
+        path = repo / "probe.py"
+        path.write_text('VALUE = "ordinary text"\n')
+        base = self._commit(repo, "base")
+        path.write_text('VALUE = "Binary files are still text"\n')
+        head = self._commit(repo, "head")
+
+        out = repo / "trace"
+        manifest = build_manifest(
+            repo,
+            base,
+            head,
+            out,
+            "owner/repo",
+            "pr-3",
+            max_files=20,
+            max_total_bytes=262144,
+            max_file_bytes=65536,
+        )
+
+        self.assertEqual(manifest["status"], "READY")
+        self.assertEqual(
+            [item["source_path"] for item in manifest["selected"]],
+            ["probe.py"],
+        )
+        self.assertFalse(
+            any(item["reason"] == "binary" for item in manifest["skipped"])
+        )
 
 
 if __name__ == "__main__":

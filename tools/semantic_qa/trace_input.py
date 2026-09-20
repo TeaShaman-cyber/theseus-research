@@ -17,6 +17,25 @@ def resolve_commit(repo: Path, value: str) -> str:
     return _git(repo, "rev-parse", "--verify", f"{value}^{{commit}}", text=True).strip()
 
 
+def _is_binary_change(repo: Path, base_sha: str, head_sha: str, path: str) -> bool:
+    numstat = _git(
+        repo,
+        "diff",
+        "--numstat",
+        "--no-renames",
+        base_sha,
+        head_sha,
+        "--",
+        path,
+        text=True,
+    )
+    for line in numstat.splitlines():
+        fields = line.split("\t", 2)
+        if len(fields) >= 2 and fields[0] == "-" and fields[1] == "-":
+            return True
+    return False
+
+
 def build_manifest(
     repo: Path,
     base: str,
@@ -55,6 +74,10 @@ def build_manifest(
     degraded = False
 
     for path in paths:
+        if _is_binary_change(repo, base_sha, head_sha, path):
+            skipped.append({"source_path": path, "reason": "binary"})
+            continue
+
         patch = _git(
             repo,
             "diff",
@@ -66,9 +89,6 @@ def build_manifest(
             path,
         )
         if not patch:
-            continue
-        if b"Binary files " in patch or b"GIT binary patch" in patch:
-            skipped.append({"source_path": path, "reason": "binary"})
             continue
         if len(selected) >= max_files:
             degraded = True
