@@ -41,7 +41,7 @@ jobs:
         continue-on-error: true
         with:
           path: ~/.cache/uv
-          key: semble-uv-v1-${{ runner.os }}-04ba3abab08d32da390f7d3d30a0195b56035664
+          key: semble-uv-v2-${{ runner.os }}-uv0.12.16-04ba3abab08d32da390f7d3d30a0195b56035664
 
       - name: Run advisory trace
         shell: bash

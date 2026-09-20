@@ -21,7 +21,7 @@
   "semble": {
     "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
     "uv_lock_blob_sha": "04ba3abab08d32da390f7d3d30a0195b56035664",
-    "uv_version": "0.8.17",
+    "uv_version": "0.12.16",
     "model_repo": "minishlab/potion-code-16M-v2",
     "model_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
     "model_files_sha256": {
@@ -32,7 +32,13 @@
       "modules.json": "a68dcbed0429dcdd5bfdca92b0b03cc30d09122c0a3fcf4758787d4b244e45b2",
       "tokenizer.json": "107bbdcbad4bff1d299b7a4c3a2fb17c52890688b7dd0e4c9deab79d3c4f3d45"
     },
-    "top_k": 3
+    "top_k": 3,
+    "uv_observed_upstream": {
+      "repository": "MinishLab/semble",
+      "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+      "workflow_run_id": 35314743423,
+      "observed_at": "2026-09-18T06:24:36Z"
+    }
   },
   "needle3": {
     "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
