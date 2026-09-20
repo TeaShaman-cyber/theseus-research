@@ -1,0 +1,106 @@
+name: semantic Semble R4 pilot
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  semble-r4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SEMBLE_SOURCE_SHA: 8e40653de0d62526b62301dcc4d087ac19f86663
+      MODEL_REPO: minishlab/potion-code-16M-v2
+      MODEL_REVISION: e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b
+      FIXTURE_ROOT: docs/qa/semantic-fixture-v1
+    steps:
+      - name: Checkout frozen fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify frozen fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b
+          observed=$(sha256sum "$FIXTURE_ROOT/fixture.sha256" | awk '{print $1}')
+          test "$observed" = "$expected"
+
+      - name: Install exact Semble source
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/semble-src"
+          out="$RUNNER_TEMP/semble-r4-out"
+          mkdir -p "$out"
+          start=$(date +%s%3N)
+          git init "$src"
+          git -C "$src" remote add origin https://github.com/MinishLab/semble.git
+          git -C "$src" fetch --depth=1 origin "$SEMBLE_SOURCE_SHA"
+          git -C "$src" checkout --detach FETCH_HEAD
+          test "$(git -C "$src" rev-parse HEAD)" = "$SEMBLE_SOURCE_SHA"
+          python3 -m pip install "$src"
+          end=$(date +%s%3N)
+          printf '%s\n' "$((end-start))" > "$out/install-wall-ms.txt"
+          python3 --version > "$out/python-version.txt"
+          python3 -m pip --version > "$out/pip-version.txt"
+          semble --version > "$out/semble-version.txt"
+
+      - name: Prefetch exact model revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          model_dir="$RUNNER_TEMP/model-snapshot"
+          out="$RUNNER_TEMP/semble-r4-out"
+          export HF_HOME="$RUNNER_TEMP/hf-home"
+          start=$(date +%s%3N)
+          python3 - "$MODEL_REPO" "$MODEL_REVISION" "$model_dir" <<'PY'
+          from huggingface_hub import snapshot_download
+          import sys
+
+          repo, revision, out = sys.argv[1:]
+          print(snapshot_download(repo_id=repo, revision=revision, local_dir=out))
+          PY
+          end=$(date +%s%3N)
+          printf '%s\n' "$((end-start))" > "$out/model-prefetch-wall-ms.txt"
+          du -sb "$model_dir" | awk '{print $1}' > "$out/model-bytes.txt"
+          find "$model_dir" -type f -not -path '*/.cache/*' -print0 | sort -z | xargs -0 sha256sum > "$out/model-files.sha256"
+          printf '%s\n' "$model_dir" > "$RUNNER_TEMP/model-dir.txt"
+
+      - name: Run raw canonical-corpus Semble fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/semble-r4-out"
+          corpus="$RUNNER_TEMP/failure-corpus"
+          cache="$RUNNER_TEMP/semble-cache"
+          model_dir=$(cat "$RUNNER_TEMP/model-dir.txt")
+          rm -rf "$corpus" "$cache"
+          mkdir -p "$corpus" "$cache"
+          cp docs/qa/failure-classes.md "$corpus/failure-classes.md"
+          test "$(sha256sum docs/qa/failure-classes.md | awk '{print $1}')" = "$(sha256sum "$corpus/failure-classes.md" | awk '{print $1}')"
+
+          export SEMBLE_MODEL_NAME="$model_dir"
+          export SEMBLE_CACHE_LOCATION="$cache"
+          export HF_HOME="$RUNNER_TEMP/hf-home"
+          export HF_HUB_OFFLINE=1
+
+          python3 .github/scripts/semantic_seemble_r4.py "$corpus" "$out"
+
+          du -sb "$cache" | awk '{print $1}' > "$out/semble-cache-bytes.txt"
+          find "$cache" -type f -print0 | sort -z | xargs -0 sha256sum > "$out/semble-cache-files.sha256"
+          sha256sum "$out/retrieval.json" > "$out/retrieval.sha256"
+
+      - name: Upload raw R4 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: semble-r4-${{ github.sha }}
+          path: ${{ runner.temp }}/semble-r4-out
+          if-no-files-found: warn
+          retention-days: 14
