@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "snapshot": {
+    "path": "docs/plans/2026-09-20-semantic-qa-roadmap.json",
+    "sha256": "00ab191eeb29510350943d41320fd3ebd79148381838ef04b26189fff84e7ac3"
+  },
+  "local_checks": {
+    "result": "PASS",
+    "acyclic": true,
+    "vertex_count": 12,
+    "edge_count": 18,
+    "sources": ["evidence-baseline"],
+    "sinks": ["promotion-decision"],
+    "reachable_from_source": 12,
+    "all_pilots_feed_compare": true,
+    "promotion_has_required_ancestors": true
+  },
+  "wolfram_checks": {
+    "result": "PASS",
+    "acyclic": true,
+    "vertex_count": 12,
+    "edge_count": 18,
+    "weak_component_count": 1,
+    "unreachable_from_baseline": [],
+    "sources": ["evidence-baseline"],
+    "sinks": ["promotion-decision"],
+    "all_pilots_feed_compare": true,
+    "promotion_has_required_ancestors": true,
+    "promotion_path_exists": true
+  },
+  "discrepancies": [],
+  "notes": [
+    "Local and Wolfram topological sorts differ only in ordering among parallel independent nodes; topological order is not unique.",
+    "Wolfram is an independent computational witness and does not become roadmap authority."
+  ],
+  "result": "PASS"
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "roadmap_id": "semantic-qa-local-tools-v1",
+  "authority": {
+    "repository": "TeaShaman-cyber/theseus-research",
+    "tracking_issue": 57,
+    "graph_method_issue": 43
+  },
+  "nodes": [
+    {"id": "evidence-baseline", "state": "DONE"},
+    {"id": "freeze-tool-identities", "state": "NEXT"},
+    {"id": "freeze-fixtures-metrics", "state": "TODO"},
+    {"id": "semdup-advisory-pilot", "state": "TODO"},
+    {"id": "semble-failure-class-pilot", "state": "TODO"},
+    {"id": "needle3-bounded-pilot", "state": "TODO"},
+    {"id": "compare-pilot-receipts", "state": "TODO"},
+    {"id": "select-advisory-roles", "state": "TODO"},
+    {"id": "ci-advisory-integration", "state": "TODO"},
+    {"id": "second-repo-reuse", "state": "TODO"},
+    {"id": "shared-runner-extraction", "state": "TODO"},
+    {"id": "promotion-decision", "state": "TODO"}
+  ],
+  "edges": [
+    ["evidence-baseline", "freeze-tool-identities"],
+    ["evidence-baseline", "freeze-fixtures-metrics"],
+    ["freeze-tool-identities", "semdup-advisory-pilot"],
+    ["freeze-fixtures-metrics", "semdup-advisory-pilot"],
+    ["freeze-tool-identities", "semble-failure-class-pilot"],
+    ["freeze-fixtures-metrics", "semble-failure-class-pilot"],
+    ["freeze-tool-identities", "needle3-bounded-pilot"],
+    ["freeze-fixtures-metrics", "needle3-bounded-pilot"],
+    ["semdup-advisory-pilot", "compare-pilot-receipts"],
+    ["semble-failure-class-pilot", "compare-pilot-receipts"],
+    ["needle3-bounded-pilot", "compare-pilot-receipts"],
+    ["compare-pilot-receipts", "select-advisory-roles"],
+    ["select-advisory-roles", "ci-advisory-integration"],
+    ["ci-advisory-integration", "second-repo-reuse"],
+    ["second-repo-reuse", "shared-runner-extraction"],
+    ["compare-pilot-receipts", "promotion-decision"],
+    ["second-repo-reuse", "promotion-decision"],
+    ["shared-runner-extraction", "promotion-decision"]
+  ],
+  "required_invariants": {
+    "single_source": "evidence-baseline",
+    "single_sink": "promotion-decision",
+    "pilots_feed_comparison": [
+      "semdup-advisory-pilot",
+      "semble-failure-class-pilot",
+      "needle3-bounded-pilot"
+    ],
+    "promotion_requires_ancestors": [
+      "compare-pilot-receipts",
+      "second-repo-reuse",
+      "shared-runner-extraction"
+    ]
+  }
+}
