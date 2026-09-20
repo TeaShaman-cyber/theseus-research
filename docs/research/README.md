@@ -36,6 +36,17 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R6/R7 role comparison — 2026-09-20
+
+- [Role comparison](2026-09-20-semantic-qa-r6-r7-role-comparison.md)
+- [Machine-readable receipt](2026-09-20-semantic-qa-r6-r7-role-comparison.json)
+
+Type: cross-pilot role assignment / runner-cost retention decision.
+
+The comparison keeps semdup, Semble and Needle as non-exclusive advisory
+signals while observed runner cost remains acceptable, and advances the
+roadmap to reusable non-blocking CI integration.
+
 ### Needle 3 R5b ready-made ranker correction — 2026-09-20
 
 - [Correction result](2026-09-20-needle3-r5b-ranking.md)

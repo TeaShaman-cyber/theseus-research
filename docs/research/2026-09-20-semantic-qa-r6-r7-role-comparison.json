@@ -1,0 +1,71 @@
+{
+  "cross_tool_rules": [
+    "Roles are non-exclusive.",
+    "No tool becomes correctness or merge authority.",
+    "No score threshold is promoted from the frozen fixture.",
+    "Keep tools while runner cost and operational noise do not materially interfere with primary QA.",
+    "Retirement is an explicit evidence-based decision after field operation.",
+    "Needle traces are research evidence only."
+  ],
+  "next_node": "ci-advisory-integration",
+  "retention_policy": "retain_by_observed_cost",
+  "roadmap_nodes": [
+    "compare-pilot-receipts",
+    "select-advisory-roles"
+  ],
+  "roles": {
+    "needle3": {
+      "observed_cost": {
+        "hosted_run_s": 42,
+        "install_step_s": 18,
+        "snapshot_step_s": 4,
+        "two_pass_probe_s": 15
+      },
+      "observed_fixture": {
+        "cold_warm_identical": true,
+        "mrr": 0.5,
+        "top1": "1/4",
+        "top3": "3/4"
+      },
+      "role": "alternative_embedding_retrieval_trace",
+      "signal_domain": "independent local embedding geometry and future Needle-lab field trace",
+      "trace_value": "preserve source/model/candidate/task provenance for future theseus-needle-lab analytics"
+    },
+    "semble": {
+      "observed_cost": {
+        "hosted_run_approx_s": 42,
+        "index_cache_bytes": 51323,
+        "install_exact_source_ms": 12303,
+        "model_prefetch_ms": 1902,
+        "model_snapshot_bytes": 33523226
+      },
+      "observed_fixture": {
+        "projected_mrr": 1.0,
+        "projected_strict_top1": "4/4",
+        "projected_strict_top3": "4/4"
+      },
+      "output_semantics": "ranked advisory top-k with provenance; score is not confidence",
+      "role": "known_failure_attention_router",
+      "signal_domain": "ranked retrieval over previously learned failure classes"
+    },
+    "semdup": {
+      "observed_cost": {
+        "cold_source_install_s": 227,
+        "model_cache_bytes": 156429571,
+        "semantic_fixture_step_s": 3,
+        "warm_cached_wall_ms": 14
+      },
+      "observed_fixture": {
+        "diff_070": "DUP / exit 1",
+        "diff_080": "REVIEW / exit 0",
+        "distinct_control_cosine": 0.4370852,
+        "planted_pair_cosine": 0.7816283
+      },
+      "r8_constraint": "cache or prebuild the exact binary/toolchain path before routine PR use",
+      "role": "semantic_duplicate_witness",
+      "signal_domain": "near-duplicate or reimplemented code"
+    }
+  },
+  "schema_version": 1,
+  "status": "COMPLETE"
+}
