@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "roadmap_node": "semble-failure-class-pilot",
+  "status": "COMPLETE",
+  "disposition": "KEEP_ADVISORY_CANDIDATE_WITH_THIN_PROJECTION",
+  "acceptance_authority": false,
+  "source": {
+    "repository": "TeaShaman-cyber/theseus-research",
+    "tracking_issue": 57,
+    "fixture_id": "theseus-semantic-qa-v1",
+    "fixture_digest": "df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b",
+    "fixture_frozen_main_sha": "8eef3f5ca80c6710be08204be08a610c0d59e494",
+    "pilot_branch_head_sha": "21a2cda5fb835ef235e62c72456014e4ea93703a",
+    "hosted_run_id": 35533735274,
+    "hosted_run_conclusion": "success",
+    "artifact": {
+      "id": 10611593337,
+      "name": "semble-r4-1dce1659a917d96a684ad2e79fc4d6ecb80e1a90",
+      "size_bytes": 10852,
+      "digest": "sha256:3dd3755f4432052f2b887b3c6a3bf27112ee2352f544896d9ffd53e980b86d4b",
+      "expires_at": "2026-10-04T19:53:30Z"
+    }
+  },
+  "execution_route": {
+    "preferred": "MarcoPolo",
+    "actual": "native GitHub fallback plus GitHub-hosted Actions",
+    "reason": "MarcoPolo write route returned HTTP 403 after the R4 worktree was created",
+    "authority_changed": false
+  },
+  "semble": {
+    "source_sha": "8e40653de0d62526b62301dcc4d087ac19f86663",
+    "version": "0.6.0",
+    "python": "3.12.3",
+    "model_repo": "minishlab/potion-code-16M-v2",
+    "model_revision": "e9d2a44ca6a05ac6685f3b23709ea57eb7352d5b",
+    "model_delivery": "exact Hugging Face snapshot prefetched, then passed as local SEMBLE_MODEL_NAME",
+    "retrieval_network_mode": "HF_HUB_OFFLINE=1 after model prefetch",
+    "upstream_uv_lock_blob_sha": "04ba3abab08d32da390f7d3d30a0195b56035664",
+    "dependency_pin_status": "DEGRADED",
+    "dependency_pin_note": "Exact Semble source and model snapshot were pinned, but this pilot used pip install from source and therefore observed rather than froze transitive PyPI resolution.",
+    "observed_dependencies": {
+      "model2vec": "0.9.0",
+      "vicinity": "0.4.4",
+      "numpy": "2.5.3",
+      "pathspec": "1.1.1",
+      "orjson": "3.12.0",
+      "questionary": "2.1.1",
+      "semble-grammars": "0.1.2",
+      "tqdm": "4.70.1",
+      "tree-sitter": "0.26.0",
+      "huggingface-hub": "1.32.0",
+      "tokenizers": "0.23.2"
+    }
+  },
+  "model_artifact": {
+    "bytes": 33523226,
+    "prefetch_wall_ms": 1902,
+    "files_sha256": {
+      ".gitattributes": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+      "README.md": "835e4161a3942cd5284d423dbdb4ca69024b671436273142d7512153e770794c",
+      "config.json": "148e5691a6fcc553437156859701fba017a1ba5d340b170f17e0f3668fb861a7",
+      "model.safetensors": "75cf7a6c2171b230ad19b1e7d8e0b1aee86da5a02af8e7cacedd9921d227623c",
+      "modules.json": "a68dcbed0429dcdd5bfdca92b0b03cc30d09122c0a3fcf4758787d4b244e45b2",
+      "tokenizer.json": "107bbdcbad4bff1d299b7a4c3a2fb17c52890688b7dd0e4c9deab79d3c4f3d45"
+    }
+  },
+  "raw_canonical_corpus": {
+    "source_path": "docs/qa/failure-classes.md",
+    "projection": null,
+    "cold_wall_ms": 4832.8627799999995,
+    "warm_wall_ms": 4683.012399000007,
+    "cold_warm_results_identical": true,
+    "metrics": {
+      "positive_count": 4,
+      "negative_count": 3,
+      "inclusive_top1": 4,
+      "inclusive_top3": 4,
+      "inclusive_mrr": 1,
+      "strict_top1": 3,
+      "strict_top3": 3,
+      "strict_mrr": 0.75
+    },
+    "observed_ambiguity": {
+      "case_id": "retrieval-boundary-reserved-markers",
+      "expected_class": "boundary-transport-contract",
+      "top_rank": 1,
+      "top_chunk_lines": [
+        18,
+        19
+      ],
+      "top_chunk_class_hits": [
+        "boundary-transport-contract",
+        "derived-state-heuristic-coverage"
+      ],
+      "score": 0.01639344262295082
+    }
+  },
+  "projected_corpus": {
+    "derivation": "Exact canonical table rows 12-19 copied one-for-one to anonymous record-01.md through record-08.md with class mapping kept outside record text.",
+    "content_rewrite": false,
+    "cold_wall_ms": 4665.604253999987,
+    "warm_wall_ms": 4668.56764100001,
+    "metrics": {
+      "positive_count": 4,
+      "negative_count": 3,
+      "inclusive_top1": 4,
+      "inclusive_top3": 4,
+      "inclusive_mrr": 1,
+      "strict_top1": 4,
+      "strict_top3": 4,
+      "strict_mrr": 1
+    },
+    "positive_top1": {
+      "retrieval-authority-readback": {
+        "class_id": "authority-provenance-closure",
+        "record": "record-02.md",
+        "score": 0.01639344262295082
+      },
+      "retrieval-claim-search-completeness": {
+        "class_id": "claim-status-semantics",
+        "record": "record-05.md",
+        "score": 0.01639344262295082
+      },
+      "retrieval-identity-downstream-grammar": {
+        "class_id": "identity-grammar-mismatch",
+        "record": "record-04.md",
+        "score": 0.01639344262295082
+      },
+      "retrieval-boundary-reserved-markers": {
+        "class_id": "boundary-transport-contract",
+        "record": "record-07.md",
+        "score": 0.01626123744050767
+      }
+    },
+    "cold_warm_full_ranking_identical": false,
+    "tie_instability": [
+      {
+        "case_id": "retrieval-boundary-reserved-markers",
+        "scope": "lower tail only",
+        "tied_score": 0.014928698752228164,
+        "records_swapped": [
+          "record-01.md",
+          "record-05.md"
+        ],
+        "expected_top1_changed": false
+      },
+      {
+        "case_id": "retrieval-negative-automem-resource-table",
+        "scope": "top tie and lower tie",
+        "top_tied_score": 0.01626123744050767,
+        "top_records_swapped": [
+          "record-04.md",
+          "record-06.md"
+        ],
+        "positive_oracle_affected": false
+      }
+    ]
+  },
+  "negative_controls": {
+    "interpretation": "Every query returns a ranked result; negative controls also receive top failure-class candidates at scores overlapping positive cases. The score is therefore not a confidence or abstention signal.",
+    "projected_top": {
+      "retrieval-negative-automem-resource-table": {
+        "cold_class": "identity-grammar-mismatch",
+        "warm_class": "phase-dag-closure",
+        "tied_score": 0.01626123744050767
+      },
+      "retrieval-negative-benign-json-loader": {
+        "class_id": "authority-provenance-closure",
+        "score": 0.016001024065540194
+      },
+      "retrieval-negative-program-mission": {
+        "class_id": "identity-preservation",
+        "score": 0.01626123744050767
+      }
+    }
+  },
+  "runtime": {
+    "hosted_run_total_approx_s": 42,
+    "install_exact_source_wall_ms": 12303,
+    "model_prefetch_wall_ms": 1902,
+    "model_snapshot_bytes": 33523226,
+    "semble_index_cache_bytes": 51323,
+    "note": "The harness invoked the Semble CLI once per query, so per-query subprocess latency is not a measurement of a persistent Python or MCP integration."
+  },
+  "conclusions": {
+    "custom_embedding_or_search_required": false,
+    "thin_projection_useful": true,
+    "promoted_threshold": null,
+    "recommended_output_semantics": "ranked top-k advisory evidence with provenance; no MATCH/NOVEL or correctness verdict from score alone"
+  },
+  "limits": [
+    "Only four historical positive retrieval cases and three negatives were evaluated.",
+    "No confidence or abstention threshold was established; negative scores overlap positive scores.",
+    "Exact source and model were pinned, but transitive Python dependencies were observed rather than installed from the upstream uv.lock.",
+    "Full projected ranking order is unstable under exact-score ties, although all four positive top-1 results remained stable.",
+    "Persistent in-process or MCP latency was not measured."
+  ]
+}
