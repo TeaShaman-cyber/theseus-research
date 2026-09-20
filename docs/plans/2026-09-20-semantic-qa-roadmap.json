@@ -33,15 +33,15 @@
     },
     {
       "id": "compare-pilot-receipts",
-      "state": "NEXT"
+      "state": "DONE"
     },
     {
       "id": "select-advisory-roles",
-      "state": "TODO"
+      "state": "DONE"
     },
     {
       "id": "ci-advisory-integration",
-      "state": "TODO"
+      "state": "NEXT"
     },
     {
       "id": "second-repo-reuse",

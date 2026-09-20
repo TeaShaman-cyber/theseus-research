@@ -240,6 +240,6 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R6**: compare the durable R3 semdup, R4 Semble and corrected R5/R5b
-Needle receipts under the retention-by-cost policy. Record role, runner cost,
-operational noise and trace value without forcing a single winner.
+Execute **R8**: integrate semdup, Semble and Needle as reusable non-blocking
+advisory CI templates with bounded runner/input budgets and durable trace
+receipts. Do not make any semantic result a required merge gate.
