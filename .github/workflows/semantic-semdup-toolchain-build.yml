@@ -57,6 +57,24 @@ jobs:
           "$pkg/bin/semdup" --db "$db" extract             --root "$fixture"             --corpus bootstrap             --granularity function
           "$pkg/bin/semdup" --db "$db" embed             --model "$model_key"             --provider cpu
 
+          python3 -m pip install --disable-pip-version-check --quiet "blake3==1.0.8"
+          python3 - "$profile" "$pkg/cache" <<'PYVERIFY'
+          import json
+          import sys
+          from pathlib import Path
+          import blake3
+
+          profile = json.loads(Path(sys.argv[1]).read_text())["semdup"]
+          model = Path(sys.argv[2]) / "models" / "coderankembed-nbits-int4-asym"
+          for rel, expected in profile["assets_blake3"].items():
+              path = model / rel
+              if not path.is_file():
+                  raise SystemExit(f"missing semdup model asset: {rel}")
+              got = blake3.blake3(path.read_bytes()).hexdigest()
+              if got != expected:
+                  raise SystemExit(f"semdup BLAKE3 mismatch {rel}: {got} != {expected}")
+          PYVERIFY
+
           python3 - "$pkg" "$source_sha" "$model_key" <<'PY'
           import hashlib
           import json
