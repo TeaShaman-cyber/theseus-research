@@ -1,0 +1,101 @@
+name: semantic Needle 3 R5 probe
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  needle3-r5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEEDLE_SOURCE_SHA: fc5bae0f9b6138828fe7589f6b531fb9a26968de
+      MODEL_REPO: Cactus-Compute/needle3
+      MODEL_REVISION: b274efcb211a9eef48c9a88da4b43bd569696a39
+      FIXTURE_ROOT: docs/qa/semantic-fixture-v1
+      NEEDLE_TELEMETRY: "0"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+    steps:
+      - name: Checkout frozen fixture
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify frozen fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected=df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b
+          observed=$(sha256sum "$FIXTURE_ROOT/fixture.sha256" | awk '{print $1}')
+          test "$observed" = "$expected"
+
+      - name: Install exact Needle source
+        shell: bash
+        run: |
+          set -euo pipefail
+          src="$RUNNER_TEMP/needle-src"
+          out="$RUNNER_TEMP/needle3-r5-out"
+          mkdir -p "$out"
+          start=$(date +%s%3N)
+          git init "$src"
+          git -C "$src" remote add origin https://github.com/cactus-compute/needle.git
+          git -C "$src" fetch --depth=1 origin "$NEEDLE_SOURCE_SHA"
+          git -C "$src" checkout --detach FETCH_HEAD
+          test "$(git -C "$src" rev-parse HEAD)" = "$NEEDLE_SOURCE_SHA"
+          python3 -m pip install "$src"
+          end=$(date +%s%3N)
+          printf '%s\n' "$((end-start))" > "$out/install-wall-ms.txt"
+          python3 --version > "$out/python-version.txt"
+          python3 -m pip --version > "$out/pip-version.txt"
+          python3 -m pip freeze > "$out/dependencies.txt"
+          python3 - <<'PY' > "$out/needle-version.txt"
+          import needle
+          print(needle.__version__)
+          PY
+
+      - name: Prefetch exact Needle 3 snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          snapshot="$RUNNER_TEMP/needle3-snapshot"
+          out="$RUNNER_TEMP/needle3-r5-out"
+          export HF_HOME="$RUNNER_TEMP/hf-home"
+          start=$(date +%s%3N)
+          python3 - "$MODEL_REPO" "$MODEL_REVISION" "$snapshot" <<'PY'
+          from huggingface_hub import snapshot_download
+          import sys
+
+          repo, revision, out = sys.argv[1:]
+          print(snapshot_download(repo_id=repo, revision=revision, local_dir=out))
+          PY
+          end=$(date +%s%3N)
+          printf '%s\n' "$((end-start))" > "$out/model-prefetch-wall-ms.txt"
+          du -sb "$snapshot" | awk '{print $1}' > "$out/snapshot-bytes.txt"
+          find "$snapshot" -type f -not -path '*/.cache/*' -print0             | sort -z | xargs -0 sha256sum > "$out/snapshot-files.sha256"
+          printf '%s\n' "$snapshot" > "$RUNNER_TEMP/snapshot-dir.txt"
+
+      - name: Run exact offline capability probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          snapshot=$(cat "$RUNNER_TEMP/snapshot-dir.txt")
+          out="$RUNNER_TEMP/needle3-r5-out"
+          export HF_HOME="$RUNNER_TEMP/hf-home"
+          start=$(date +%s%3N)
+          python3 .github/scripts/needle3_r5_probe.py "$snapshot" "$out"
+          end=$(date +%s%3N)
+          printf '%s\n' "$((end-start))" > "$out/probe-wall-ms.txt"
+          sha256sum "$out/needle3-r5-probe.json" > "$out/probe.sha256"
+
+      - name: Upload raw R5 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: needle3-r5-${{ github.sha }}
+          path: ${{ runner.temp }}/needle3-r5-out
+          if-no-files-found: warn
+          retention-days: 14
