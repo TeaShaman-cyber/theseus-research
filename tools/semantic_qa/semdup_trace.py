@@ -4,11 +4,12 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
 import subprocess
 import tempfile
 import time
 from pathlib import Path
+
+import blake3
 
 
 def _run(cmd: list[str], *, cwd: Path, log: Path) -> float:
@@ -21,7 +22,27 @@ def _run(cmd: list[str], *, cwd: Path, log: Path) -> float:
 
 
 def _dir_bytes(path: Path) -> int:
-    return sum(p.stat().st_size for p in path.rglob("*") if p.is_file()) if path.exists() else 0
+    return (
+        sum(p.stat().st_size for p in path.rglob("*") if p.is_file())
+        if path.exists()
+        else 0
+    )
+
+
+def _verify_model_cache(cache: Path, profile: dict) -> dict[str, str]:
+    model_dir = cache / "models" / "coderankembed-nbits-int4-asym"
+    observed = {}
+    for name, expected in profile["assets_blake3"].items():
+        path = model_dir / name
+        if not path.is_file():
+            raise RuntimeError(f"missing semdup model asset: {path}")
+        got = blake3.blake3(path.read_bytes()).hexdigest()
+        if got != expected:
+            raise RuntimeError(
+                f"semdup model asset blake3 mismatch for {name}: {got} != {expected}"
+            )
+        observed[name] = got
+    return observed
 
 
 def main() -> int:
@@ -43,33 +64,30 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     receipt_path = out / "receipt.json"
 
+    base_receipt = {
+        "schema_version": 1,
+        "tool": "semdup",
+        "repository": args.repository,
+        "task_id": args.task_id,
+        "base_sha": args.base_sha,
+        "candidate_sha": args.candidate_sha,
+        "profile_sha256": hashlib.sha256(args.profile.read_bytes()).hexdigest(),
+        "tool_profile": profile,
+        "input_status": manifest["status"],
+        "input_manifest_sha256": hashlib.sha256(args.input_manifest.read_bytes()).hexdigest(),
+        "acceptance_authority": False,
+    }
+
     if manifest["status"] == "NO_SIGNAL":
-        receipt = {
-            "schema_version": 1,
-            "tool": "semdup",
-            "status": "NO_SIGNAL",
-            "repository": args.repository,
-            "task_id": args.task_id,
-            "base_sha": args.base_sha,
-            "candidate_sha": args.candidate_sha,
-            "profile_sha256": hashlib.sha256(args.profile.read_bytes()).hexdigest(),
-            "acceptance_authority": False,
-        }
+        receipt = {**base_receipt, "status": "NO_SIGNAL"}
         receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
         return 0
 
     if manifest["status"] == "DEGRADED":
         receipt = {
-            "schema_version": 1,
-            "tool": "semdup",
+            **base_receipt,
             "status": "DEGRADED",
-            "repository": args.repository,
-            "task_id": args.task_id,
-            "base_sha": args.base_sha,
-            "candidate_sha": args.candidate_sha,
-            "profile_sha256": hashlib.sha256(args.profile.read_bytes()).hexdigest(),
             "reason": "input_budget_exceeded; semdup full diff skipped to preserve runner budget",
-            "acceptance_authority": False,
         }
         receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
         return 0
@@ -90,7 +108,16 @@ def main() -> int:
         base_worktree = temp_path / "base"
         db = temp_path / "semdup.sqlite"
         subprocess.run(
-            ["git", "-C", str(repo), "worktree", "add", "--detach", str(base_worktree), args.base_sha],
+            [
+                "git",
+                "-C",
+                str(repo),
+                "worktree",
+                "add",
+                "--detach",
+                str(base_worktree),
+                args.base_sha,
+            ],
             check=True,
         )
         try:
@@ -125,6 +152,7 @@ def main() -> int:
                 cwd=repo,
                 log=out / "embed.log",
             )
+            verified_assets = _verify_model_cache(cache, profile)
             cache_after_cold = _dir_bytes(cache)
 
             cold_json = out / "raw-cold.json"
@@ -173,28 +201,27 @@ def main() -> int:
             )
         finally:
             subprocess.run(
-                ["git", "-C", str(repo), "worktree", "remove", "--force", str(base_worktree)],
+                [
+                    "git",
+                    "-C",
+                    str(repo),
+                    "worktree",
+                    "remove",
+                    "--force",
+                    str(base_worktree),
+                ],
                 check=False,
             )
 
     cold = json.loads(cold_json.read_text()) if cold_json.exists() else []
     warm = json.loads(warm_json.read_text()) if warm_json.exists() else []
     cache_after_warm = _dir_bytes(cache)
-    status = "OK" if cold else "NO_SIGNAL"
     receipt = {
-        "schema_version": 1,
-        "tool": "semdup",
-        "status": status,
-        "repository": args.repository,
-        "task_id": args.task_id,
-        "base_sha": args.base_sha,
-        "candidate_sha": args.candidate_sha,
-        "profile_sha256": hashlib.sha256(args.profile.read_bytes()).hexdigest(),
-        "tool_profile": profile,
-        "input_status": manifest["status"],
-        "input_manifest_sha256": hashlib.sha256(args.input_manifest.read_bytes()).hexdigest(),
+        **base_receipt,
+        "status": "OK" if cold else "NO_SIGNAL",
         "evidence_only": True,
         "threshold": None,
+        "model_cache_verified_blake3": verified_assets,
         "timing_ms": {
             "base_extract": extract_ms,
             "base_embed": embed_ms,
@@ -210,7 +237,6 @@ def main() -> int:
         "cold_findings": cold,
         "warm_findings": warm,
         "cold_warm_results_identical": cold == warm,
-        "acceptance_authority": False,
         "score_semantics": "upstream evidence-only nearest-neighbor output; no threshold promoted",
     }
     receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")

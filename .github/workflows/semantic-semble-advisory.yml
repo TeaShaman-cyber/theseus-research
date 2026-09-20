@@ -1,0 +1,145 @@
+name: semantic Semble advisory
+
+on:
+  workflow_call:
+    inputs:
+      base_sha:
+        required: true
+        type: string
+      head_sha:
+        required: true
+        type: string
+      task_id:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.head_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Prepare bounded trace input
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/semantic-input"
+          profile=tools/semantic_qa/profiles.json
+          python3 tools/semantic_qa/trace_input.py             --base "${{ inputs.base_sha }}"             --head "${{ inputs.head_sha }}"             --output "$out"             --repository "${{ github.repository }}"             --task-id "${{ inputs.task_id }}"             --max-files "$(jq -r '.input_budget.max_files' "$profile")"             --max-total-bytes "$(jq -r '.input_budget.max_total_bytes' "$profile")"             --max-file-bytes "$(jq -r '.input_budget.max_file_bytes' "$profile")"
+
+      - name: Restore uv package cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        continue-on-error: true
+        with:
+          path: ~/.cache/uv
+          key: semble-uv-v1-${{ runner.os }}-04ba3abab08d32da390f7d3d30a0195b56035664
+
+      - name: Run advisory trace
+        shell: bash
+        run: |
+          set +e
+          started=$(date +%s%3N)
+          out="$RUNNER_TEMP/semantic-semble"
+          input="$RUNNER_TEMP/semantic-input"
+          profile=tools/semantic_qa/profiles.json
+          mkdir -p "$out"
+          err="$out/setup-error.log"
+
+          input_status=$(jq -r '.status' "$input/input-manifest.json")
+          if [ "$input_status" != "NO_SIGNAL" ]; then
+            src="$RUNNER_TEMP/semble-src"
+            uvvenv="$RUNNER_TEMP/uv-bootstrap"
+            envdir="$RUNNER_TEMP/semble-env"
+            source_sha=$(jq -r '.semble.source_sha' "$profile")
+            uv_version=$(jq -r '.semble.uv_version' "$profile")
+            git init "$src" >"$err" 2>&1
+            git -C "$src" remote add origin https://github.com/MinishLab/semble.git >>"$err" 2>&1
+            git -C "$src" fetch --depth=1 origin "$source_sha" >>"$err" 2>&1
+            git -C "$src" checkout --detach FETCH_HEAD >>"$err" 2>&1
+            test "$(git -C "$src" rev-parse HEAD)" = "$source_sha" >>"$err" 2>&1
+            expected_lock=$(jq -r '.semble.uv_lock_blob_sha' "$profile")
+            test "$(git -C "$src" hash-object uv.lock)" = "$expected_lock" >>"$err" 2>&1
+            python3 -m venv "$uvvenv" >>"$err" 2>&1
+            "$uvvenv/bin/pip" install --disable-pip-version-check --quiet "uv==$uv_version" >>"$err" 2>&1
+            export UV_PROJECT_ENVIRONMENT="$envdir"
+            "$uvvenv/bin/uv" sync --frozen --no-dev --project "$src" >>"$err" 2>&1
+            setup_rc=$?
+
+            if [ "$setup_rc" -eq 0 ]; then
+              model="$RUNNER_TEMP/semble-model"
+              repo_id=$(jq -r '.semble.model_repo' "$profile")
+              revision=$(jq -r '.semble.model_revision' "$profile")
+              "$envdir/bin/python" - "$repo_id" "$revision" "$model" <<'PY' >>"$err" 2>&1
+from huggingface_hub import snapshot_download
+import sys
+print(snapshot_download(repo_id=sys.argv[1], revision=sys.argv[2], local_dir=sys.argv[3]))
+PY
+              setup_rc=$?
+            fi
+
+            if [ "$setup_rc" -eq 0 ]; then
+              "$envdir/bin/python" - "$profile" "$model" <<'PY' >>"$err" 2>&1
+import hashlib, json, sys
+from pathlib import Path
+profile=json.loads(Path(sys.argv[1]).read_text())["semble"]["model_files_sha256"]
+root=Path(sys.argv[2])
+for rel,expected in profile.items():
+    path=root/rel
+    got=hashlib.sha256(path.read_bytes()).hexdigest()
+    if got != expected:
+        raise SystemExit(f"model sha mismatch {rel}: {got} != {expected}")
+PY
+              setup_rc=$?
+            fi
+          else
+            setup_rc=0
+            envdir=""
+            model=""
+          fi
+
+          if [ "$setup_rc" -eq 0 ]; then
+            if [ -n "$envdir" ]; then
+              export PATH="$envdir/bin:$PATH"
+              export SEMBLE_MODEL_NAME="$model"
+              export SEMBLE_CACHE_LOCATION="$RUNNER_TEMP/semble-cache"
+              export HF_HUB_OFFLINE=1
+            fi
+            python3 tools/semantic_qa/semble_trace.py               --input-manifest "$input/input-manifest.json"               --input-root "$input"               --failure-classes docs/qa/failure-classes.md               --profile "$profile"               --output "$out/receipt.json"               --top-k "$(jq -r '.semble.top_k' "$profile")" >>"$out/runner.log" 2>&1
+            run_rc=$?
+          else
+            run_rc=$setup_rc
+          fi
+
+          if [ "$run_rc" -ne 0 ] || [ ! -f "$out/receipt.json" ]; then
+            python3 tools/semantic_qa/status_receipt.py               --output "$out/receipt.json"               --tool semble               --status UNAVAILABLE               --repository "${{ github.repository }}"               --task-id "${{ inputs.task_id }}"               --base-sha "${{ inputs.base_sha }}"               --candidate-sha "${{ inputs.head_sha }}"               --profile "$profile"               --error-file "$err"               --reason "setup_or_execution_failed"               --started-ms "$started"
+          fi
+
+          status=$(jq -r '.status' "$out/receipt.json")
+          {
+            echo "### Semble advisory"
+            echo
+            echo "- status: `$status`"
+            echo "- candidate: `${{ inputs.head_sha }}`"
+            echo "- task: `${{ inputs.task_id }}`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+
+      - name: Upload advisory trace
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: semantic-semble-${{ inputs.task_id }}-${{ inputs.head_sha }}
+          path: |
+            ${{ runner.temp }}/semantic-input
+            ${{ runner.temp }}/semantic-semble
+          if-no-files-found: warn
+          retention-days: 90
