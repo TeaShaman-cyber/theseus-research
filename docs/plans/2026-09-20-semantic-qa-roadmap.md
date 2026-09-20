@@ -240,6 +240,6 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R8**: integrate semdup, Semble and Needle as reusable non-blocking
-advisory CI templates with bounded runner/input budgets and durable trace
-receipts. Do not make any semantic result a required merge gate.
+Execute **R9**: reuse the package-based non-blocking semantic QA mechanics in
+one second Theseus repository, preferably `theseus-1f916-client`. Keep
+repository-specific corpora, path policies and invariants local.

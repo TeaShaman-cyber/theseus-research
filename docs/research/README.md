@@ -36,6 +36,17 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R8 package-based CI integration — 2026-09-20
+
+- [Integration note](2026-09-20-semantic-qa-r8-ci-integration.md)
+- [Machine-readable receipt](2026-09-20-semantic-qa-r8-ci-integration-receipt.json)
+
+Type: reusable advisory CI integration / immutable toolchain lifecycle / field trace.
+
+R8 separates rare toolchain builds from routine semantic QA, pins exact package
+artifacts, adds non-blocking freshness warnings, and verifies package-based
+field execution on PR #68.
+
 ### Semantic QA R6/R7 role comparison — 2026-09-20
 
 - [Role comparison](2026-09-20-semantic-qa-r6-r7-role-comparison.md)

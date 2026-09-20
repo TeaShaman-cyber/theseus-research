@@ -41,11 +41,11 @@
     },
     {
       "id": "ci-advisory-integration",
-      "state": "NEXT"
+      "state": "DONE"
     },
     {
       "id": "second-repo-reuse",
-      "state": "TODO"
+      "state": "NEXT"
     },
     {
       "id": "shared-runner-extraction",
