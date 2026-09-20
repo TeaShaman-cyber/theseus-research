@@ -1,7 +1,7 @@
 # Research DevOps principles — small-batch lifecycle — 2026-09-19
 
 Status: CURRENT / WORKING CROSS-REPOSITORY GUIDANCE
-Scope: Theseus project-owned repositories
+Scope: Theseus research lines declared in `registry/research-lines.json`
 Coordination anchor: #51 — Architecture: define a cross-repository Research DevOps lifecycle
 
 This note captures the practical DevOps principles that converged during active repository work on 2026-09-18 and 2026-09-19. It is a working architecture snapshot, not a claim that every repository must implement identical machinery.
@@ -106,6 +106,8 @@ External projections intentionally have narrower roles:
 - Basic Memory: durable semantic guidance and continuity evidence;
 - ButlerBrain: compact DIFF/pointer;
 - GitHub Issues/Projects: coordination and lifecycle state;
-- live Git/CI/runtime readback: authority for current repository and execution state.
+- promoted remote Git state: authority for current versioned repository state;
+- CI: evidence bound to the exact revision/input executed by the workflow;
+- runtime readback: evidence for current execution/runtime state and installed projections.
 
-No memory projection overrides live repository state, permissions, exact-head CI, or promotion authority.
+No memory projection overrides promoted remote Git state, current permissions, or explicit promotion authority. CI and runtime readback retain their bounded evidentiary roles and do not become promotion authority.
