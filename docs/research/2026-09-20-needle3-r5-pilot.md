@@ -11,6 +11,15 @@
 Machine-readable receipt:
 `docs/research/2026-09-20-needle3-r5-pilot-receipt.json`
 
+> **Correction (R5b, 2026-09-20):** the statement below that a
+> failure-class ranking experiment would necessarily require project-owned
+> cosine/search logic was too strong. A bounded follow-up used the mature
+> `sklearn.neighbors.NearestNeighbors(metric="cosine", algorithm="brute")`
+> directly on Needle-produced vectors, with no custom similarity or vector
+> index implementation. The native Needle capability findings in this note
+> remain valid; the ranking-quality result is recorded in
+> [R5b](2026-09-20-needle3-r5b-ranking.md).
+
 ## Question
 
 Can the frozen Needle 3 release act as the third local semantic-QA comparison

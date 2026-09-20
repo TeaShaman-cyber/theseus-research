@@ -36,6 +36,20 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Needle 3 R5b ready-made ranker correction — 2026-09-20
+
+- [Correction result](2026-09-20-needle3-r5b-ranking.md)
+- [Machine-readable receipt](2026-09-20-needle3-r5b-ranking-receipt.json)
+
+Type: frozen-fixture retrieval correction / off-the-shelf exact cosine ranking.
+
+R5b corrects the earlier inference that testing Needle's exported vectors would
+require project-owned similarity code. Needle still provides the embeddings,
+while scikit-learn NearestNeighbors performs exact cosine top-k ranking. The
+ready-made ranker works cleanly, but the current Needle fallback embedding
+geometry reaches only 1/4 top-1 and 3/4 top-3 on the frozen failure-class
+positives, below the observed Semble retrieval result.
+
 ### Needle 3 R5 capability boundary pilot — 2026-09-20
 
 - [Pilot result](2026-09-20-needle3-r5-pilot.md)

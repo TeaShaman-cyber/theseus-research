@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "roadmap_node": "needle3-bounded-pilot",
+  "subphase": "R5b-ready-made-ranker-correction",
+  "status": "COMPLETE",
+  "disposition": "READY_MADE_RANKER_WORKS_EMBEDDING_GEOMETRY_WEAK_ON_FIXTURE",
+  "acceptance_authority": false,
+  "correction": {
+    "supersedes_inference": "Testing Needle vectors would require project-owned cosine or nearest-neighbor ranking code.",
+    "preserves_facts": [
+      "The frozen Needle archive has no native contrastive retrieval head.",
+      "The frozen Python surface has no native search/retrieve_tools API.",
+      "Needle.embed() returns deterministic 3072-dimensional vectors."
+    ],
+    "replacement": "Use an off-the-shelf exact ranker over Needle-produced vectors; custom similarity code is unnecessary."
+  },
+  "source": {
+    "repository": "TeaShaman-cyber/theseus-research",
+    "tracking_issue": 57,
+    "pull_request": 65,
+    "branch_head_sha": "320afdd21c8801785e049c805880cfb946268143",
+    "hosted_run_id": 35535104193,
+    "hosted_run_conclusion": "success",
+    "artifact": {
+      "id": 10612715102,
+      "name": "needle-r5b-eb856d2b0f41b8338338e1fa92a0ff5600712af8",
+      "size_bytes": 552805,
+      "digest": "sha256:bf8b7e969ef9c18b481624db182eb8af6701f8d70b14fe53b5f923215cbd6604",
+      "expires_at": "2026-10-04T20:18:53Z"
+    },
+    "fixture_id": "theseus-semantic-qa-v1",
+    "fixture_digest": "df3bf51cee0a7a57786b140979586ae28f4df7951fb2968e2a39eb1a1ed7048b"
+  },
+  "execution_route": {
+    "preferred": "MarcoPolo",
+    "actual_write_route": "native GitHub fallback",
+    "witness_route": "GitHub-hosted Actions",
+    "reason": "MarcoPolo write call returned HTTP 403 before harness creation.",
+    "authority_changed": false
+  },
+  "needle": {
+    "source_sha": "fc5bae0f9b6138828fe7589f6b531fb9a26968de",
+    "version": "3.0.1",
+    "model_repo": "Cactus-Compute/needle3",
+    "model_revision": "b274efcb211a9eef48c9a88da4b43bd569696a39",
+    "vector_dimension": 3072,
+    "weights_sha256": "c9d915eca282ed42d1a09b143b592adb4cc6744ffe2d294adf5cfc5548170c38",
+    "engine_wheel_sha256": "05770ef9a85686583968ea15f62f9ad44217e078efdaa99559d3208bb8a369b0",
+    "engine_library_sha256": "978fce130aac08af506b5fe8bb2950da58e9479d0de69d972d9bd69db953568d"
+  },
+  "ranker": {
+    "library": "scikit-learn",
+    "version": "1.9.1",
+    "class": "sklearn.neighbors.NearestNeighbors",
+    "metric": "cosine",
+    "algorithm": "brute",
+    "n_neighbors": 8,
+    "n_jobs": 1,
+    "exact_search": true,
+    "custom_similarity_code": false,
+    "vector_database": false,
+    "ann_index": false
+  },
+  "corpus": {
+    "source_path": "docs/qa/failure-classes.md",
+    "source_lines": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "record_count": 8,
+    "projection": "exact canonical table rows, one vector per failure class"
+  },
+  "metrics": {
+    "positive_count": 4,
+    "negative_count": 3,
+    "top1_accuracy": 0.25,
+    "top3_recall": 0.75,
+    "mrr": 0.5,
+    "positive_expected_ranks": {
+      "retrieval-authority-readback": 2,
+      "retrieval-claim-search-completeness": 6,
+      "retrieval-identity-downstream-grammar": 1,
+      "retrieval-boundary-reserved-markers": 3
+    },
+    "negative_top1": {
+      "retrieval-negative-automem-resource-table": {
+        "class_id": "identity-grammar-mismatch",
+        "cosine_distance": 0.03237473964691162
+      },
+      "retrieval-negative-benign-json-loader": {
+        "class_id": "identity-grammar-mismatch",
+        "cosine_distance": 0.03537881374359131
+      },
+      "retrieval-negative-program-mission": {
+        "class_id": "identity-preservation",
+        "cosine_distance": 0.03214240074157715
+      }
+    },
+    "no_threshold_promoted": true
+  },
+  "repeatability": {
+    "cold_warm_ranking_receipt_identical": true,
+    "cold_wall_ms": 7018.3136450000065,
+    "warm_wall_ms": 6846.460383000001,
+    "positive_ranks_stable": true
+  },
+  "comparison_context": {
+    "semble_r4_projected_strict_top1": "4/4",
+    "semble_r4_projected_strict_top3": "4/4",
+    "semble_r4_projected_mrr": 1,
+    "needle_r5b_top1": "1/4",
+    "needle_r5b_top3": "3/4",
+    "needle_r5b_mrr": 0.5,
+    "interpretation": "The off-the-shelf ranking layer is not the limiting factor observed here; the current Needle fallback embedding geometry is less useful on this frozen failure-class fixture than the Semble pipeline."
+  },
+  "runtime": {
+    "hosted_job_duration_s": 42,
+    "install_exact_needle_and_ranker_step_s": 18,
+    "exact_snapshot_step_s": 4,
+    "two_pass_ranking_probe_step_s": 15
+  },
+  "conclusions": {
+    "ready_made_ranker_exists": true,
+    "custom_embedding_or_similarity_search_required": false,
+    "current_needle_vectors_show_retrieval_signal": true,
+    "current_needle_vectors_match_semble_on_fixture": false,
+    "promoted_threshold": null,
+    "r5_native_surface_finding_changed": false,
+    "r5_stop_rationale_changed": true,
+    "role_for_r6": "measured alternative/local embedding primitive; include in comparison, but do not treat missing native ranker as the reason for lower utility"
+  },
+  "limits": [
+    "Only four historical positive retrieval cases and three negatives were evaluated.",
+    "The current Needle release lacks its dedicated contrastive retrieval head; R5b ranks the fallback 3072-dimensional probe vectors.",
+    "scikit-learn was pinned exactly, but its transitive numerical dependencies were observed rather than frozen in this pilot.",
+    "The same corpus rows used by Semble were embedded directly; Needle and Semble remain different retrieval architectures, so runtime and score scales are not directly comparable.",
+    "No confidence, abstention, or blocking threshold was established."
+  ]
+}
