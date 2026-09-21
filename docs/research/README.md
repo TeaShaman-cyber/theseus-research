@@ -36,6 +36,17 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R9 second-repository reuse — 2026-09-21
+
+- [Reuse note](2026-09-21-semantic-qa-r9-second-repo-reuse.md)
+- [Machine-readable receipt](2026-09-21-semantic-qa-r9-second-repo-reuse-receipt.json)
+
+Type: second-repository reuse / package-based advisory QA / consumer-local semantics.
+
+R9 verifies that semdup, Semble and Needle mechanics can be reused by
+theseus-1f916-client without moving that repository's contract corpus or
+semantic authority into the shared research repository.
+
 ### Semantic QA R8 package-based CI integration — 2026-09-20
 
 - [Integration note](2026-09-20-semantic-qa-r8-ci-integration.md)

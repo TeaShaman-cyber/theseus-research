@@ -1,0 +1,50 @@
+{
+  "authority": {
+    "auto_remediation": false,
+    "domain_semantics_shared": false,
+    "practical_defect_yield": "UNKNOWN",
+    "semantic_merge_gate": false
+  },
+  "consumer_bootstrap_head": "8fbb081e782139c225a8f3f1033ce2092c1fbb36",
+  "consumer_issue": 41,
+  "consumer_merge_commit": "36a66f8c83b86ed2e67ac4f45d6d0918ac81dc3e",
+  "consumer_merge_pr": 45,
+  "consumer_repository": "TeaShaman-cyber/theseus-1f916-client",
+  "hosted_contract_run": 35563619680,
+  "needle3": {
+    "bootstrap_self_reference": true,
+    "cold_ms": 13740.841192000005,
+    "corpus_records": 8,
+    "freshness": "STALE_AVAILABLE",
+    "freshness_reason": "upstream_git_moved",
+    "orchestration_ms": 47551.581421999996,
+    "setup_ms": 17691.47702000001,
+    "toolchain_status": "READY",
+    "warm_ms": 13675.286954000001
+  },
+  "next_node": "shared-runner-extraction",
+  "roadmap_node": "second-repo-reuse",
+  "schema_version": 1,
+  "semble": {
+    "bootstrap_self_reference": true,
+    "cold_ms": 14098.074577000005,
+    "corpus_records": 8,
+    "freshness": "CURRENT",
+    "orchestration_ms": 40277.45472000001,
+    "setup_ms": 12789.694122,
+    "toolchain_status": "READY",
+    "warm_ms": 13001.790499999992
+  },
+  "semdup": {
+    "cross_repo_package_reuse": true,
+    "current_value_claim": "semantic_neighborhood_observability_only",
+    "incremental_main_embed_s": 21.061,
+    "initial_seed_embed_s": 1551.747,
+    "trusted_main_seed_cache": true,
+    "warm_pr_orchestration_s": [
+      23.24,
+      28.39
+    ]
+  },
+  "status": "COMPLETE"
+}

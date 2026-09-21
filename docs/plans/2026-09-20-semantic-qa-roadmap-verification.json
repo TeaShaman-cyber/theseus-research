@@ -2,7 +2,7 @@
   "schema_version": 1,
   "snapshot": {
     "path": "docs/plans/2026-09-20-semantic-qa-roadmap.json",
-    "sha256": "4ac52db977503a4100081e29ffc48966228dc33429a2380db94328b29fa0141e"
+    "sha256": "decc0dfc9dec424a770b55de8237c3e5c85c5e20d3d8e947979218003d869558"
   },
   "local_checks": {
     "result": "PASS",
@@ -38,7 +38,7 @@
   },
   "discrepancies": [],
   "notes": [
-    "Graph structure remains 12 vertices / 18 edges; only roadmap node states advanced through R8.",
+    "Graph structure remains 12 vertices / 18 edges; only roadmap node states advanced through R9.",
     "The previously verified local/Wolfram DAG invariants remain structurally unchanged.",
     "Wolfram is an independent computational witness and does not become roadmap authority."
   ],

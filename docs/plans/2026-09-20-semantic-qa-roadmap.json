@@ -45,11 +45,11 @@
     },
     {
       "id": "second-repo-reuse",
-      "state": "NEXT"
+      "state": "DONE"
     },
     {
       "id": "shared-runner-extraction",
-      "state": "TODO"
+      "state": "NEXT"
     },
     {
       "id": "promotion-decision",
