@@ -49,11 +49,11 @@
     },
     {
       "id": "shared-runner-extraction",
-      "state": "NEXT"
+      "state": "DONE"
     },
     {
       "id": "promotion-decision",
-      "state": "TODO"
+      "state": "NEXT"
     }
   ],
   "edges": [

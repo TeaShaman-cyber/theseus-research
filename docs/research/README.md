@@ -36,6 +36,16 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R10 shared runner extraction — 2026-09-21
+
+- [Extraction note](2026-09-21-semantic-qa-r10-shared-runner-extraction.md)
+- [Machine-readable receipt](2026-09-21-semantic-qa-r10-shared-runner-extraction-receipt.json)
+
+Type: shared CI mechanics / second-consumer reuse / authority-preserving extraction.
+
+R10 moves only duplicated bounded-input, freshness, artifact verification and
+receipt mechanics into marcopolo-cookbook; domain semantics remain local.
+
 ### Semantic QA R9 second-repository reuse — 2026-09-21
 
 - [Reuse note](2026-09-21-semantic-qa-r9-second-repo-reuse.md)
