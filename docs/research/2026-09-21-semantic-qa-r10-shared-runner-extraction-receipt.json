@@ -1,0 +1,52 @@
+{
+  "authority": {
+    "semantic_merge_gate": false,
+    "shared_acceptance_authority": false,
+    "shared_semantic_policy": false
+  },
+  "consumer_head": "48aad65075d7499d19d94ea6c748187cb14baa2b",
+  "consumer_issue": 41,
+  "consumer_local": [
+    "tool_specific_build_receipt_validation",
+    "offline_install",
+    "contract_corpus",
+    "retrieval",
+    "semantic_interpretation",
+    "acceptance_authority"
+  ],
+  "consumer_main": "9886e90ca3eba7a59f9397273dbe57b44186384c",
+  "consumer_pr": 46,
+  "consumer_repository": "TeaShaman-cyber/theseus-1f916-client",
+  "cookbook_issue": 92,
+  "cookbook_main": "01af605cd35e60cb55724e1abfcff7331bbfda3e",
+  "cookbook_pr": 93,
+  "hosted_consumer_run": 35583526179,
+  "next_node": "promotion-decision",
+  "roadmap_node": "shared-runner-extraction",
+  "schema_version": 1,
+  "shared_mechanics": [
+    "bounded_exact_diff_input",
+    "freshness_currentness",
+    "artifact_identity",
+    "outer_sha256",
+    "inner_tar_sha256",
+    "safe_extraction",
+    "non_authoritative_receipt"
+  ],
+  "status": "COMPLETE",
+  "verification": {
+    "consumer_actionlint": "PASS",
+    "consumer_dev_check": "PASS",
+    "consumer_hosted_canonical_qa": "PASS",
+    "consumer_hosted_needle": "PASS",
+    "consumer_hosted_property": "PASS",
+    "consumer_hosted_semble": "PASS",
+    "consumer_hosted_semdup": "PASS",
+    "consumer_local_suite": "172/172 PASS",
+    "cookbook_canonical_suite": "78/78 PASS",
+    "cookbook_dependency_security": "KNOWN_BASELINE_ISSUE_79",
+    "cookbook_dev_check": "PASS",
+    "cookbook_mechanics_tests": "6/6 PASS",
+    "cookbook_workflow_security": "PASS"
+  }
+}

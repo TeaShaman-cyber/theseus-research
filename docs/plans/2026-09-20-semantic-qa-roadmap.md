@@ -240,8 +240,9 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R10**: evaluate extracting only generic cache/orchestration/receipt
-mechanics into `marcopolo-cookbook`.
+Execute **R11**: make the explicit promotion decision from accumulated field
+evidence.
 
-Do not move repository-specific corpora, thresholds, invariants, semantic
-interpretation or acceptance authority into the shared layer.
+Do not promote generic embedding similarity into a correctness gate. Allowed
+dispositions remain: keep advisory, promote one narrowly deterministic
+condition, retain periodic/manual witness only, or retire a low-value tool.
