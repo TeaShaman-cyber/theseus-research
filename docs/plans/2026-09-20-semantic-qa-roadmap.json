@@ -53,7 +53,7 @@
     },
     {
       "id": "promotion-decision",
-      "state": "NEXT"
+      "state": "DONE"
     }
   ],
   "edges": [

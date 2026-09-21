@@ -240,9 +240,9 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R11**: make the explicit promotion decision from accumulated field
-evidence.
+Roadmap complete.
 
-Do not promote generic embedding similarity into a correctness gate. Allowed
-dispositions remain: keep advisory, promote one narrowly deterministic
-condition, retain periodic/manual witness only, or retire a low-value tool.
+Collect field traces opportunistically during ordinary repository work. Do not
+extend this research line by default. Any future promotion, retirement,
+threshold change or shared semantic policy requires a new narrow issue and
+fresh evidence.
