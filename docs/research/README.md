@@ -36,6 +36,16 @@ The note records a local AutoMem resource-reduction and helper-model experiment.
 Its conclusions are bounded to the tested setup and do not define the active
 memory architecture or a universal model ranking.
 
+### Semantic QA R11 promotion decision — 2026-09-21
+
+- [Decision note](2026-09-21-semantic-qa-r11-promotion-decision.md)
+- [Machine-readable decision](2026-09-21-semantic-qa-r11-promotion-decision.json)
+
+Type: explicit promotion decision / advisory retention / no semantic gate.
+
+R11 closes the roadmap without promoting similarity scores or semantic tools
+into correctness or merge authority.
+
 ### Semantic QA R10 shared runner extraction — 2026-09-21
 
 - [Extraction note](2026-09-21-semantic-qa-r10-shared-runner-extraction.md)

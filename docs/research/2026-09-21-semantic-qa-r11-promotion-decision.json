@@ -1,0 +1,61 @@
+{
+  "future_change_control": "Any future promotion, retirement, threshold, or shared semantic policy requires a new narrow issue and fresh evidence.",
+  "overall_disposition": "KEEP_ADVISORY_NO_SEMANTIC_GATE",
+  "promotions": {
+    "auto_remediation": false,
+    "correctness_authority": false,
+    "semantic_merge_gate": false,
+    "semantic_score_thresholds": "NONE"
+  },
+  "retention_rule": "Retain advisory tools while runner cost and operational noise do not materially interfere with primary QA; retirement or promotion requires new field evidence.",
+  "roadmap_node": "promotion-decision",
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "tools": {
+    "needle3": {
+      "authority": "NONE",
+      "disposition": "KEEP_INDEPENDENT_ADVISORY_WHILE_COST_ACCEPTABLE",
+      "evidence": {
+        "consumer_freshness": "STALE_AVAILABLE",
+        "consumer_migrated_orchestration_ms": 27096.156171000002,
+        "field_defect_yield": "INSUFFICIENT_FOR_GATE",
+        "frozen_fixture_mrr": 0.5,
+        "frozen_fixture_top1": "1/4",
+        "frozen_fixture_top3": "3/4"
+      },
+      "refresh_policy": "refresh only when upstream changes are worth adopting",
+      "role": "alternative_embedding_retrieval_trace"
+    },
+    "semble": {
+      "authority": "NONE",
+      "disposition": "KEEP_PER_PR_ADVISORY",
+      "evidence": {
+        "consumer_freshness": "CURRENT",
+        "consumer_migrated_orchestration_ms": 13303.231107999998,
+        "field_defect_yield": "INSUFFICIENT_FOR_GATE",
+        "frozen_fixture_mrr": 1.0,
+        "frozen_fixture_projected_top1": "4/4",
+        "frozen_fixture_projected_top3": "4/4"
+      },
+      "role": "known_failure_attention_router"
+    },
+    "semdup": {
+      "authority": "NONE",
+      "disposition": "KEEP_ADVISORY_WITH_REPOSITORY_LOCAL_CADENCE",
+      "evidence": {
+        "client_incremental_main_embed_s": 21.061,
+        "client_initial_seed_embed_s": 1551.747,
+        "client_warm_pr_orchestration_s": [
+          23.24,
+          28.39
+        ],
+        "field_defect_yield": "INSUFFICIENT_FOR_GATE",
+        "fixture_distinct_control_cosine": 0.4370852,
+        "fixture_planted_pair_cosine": 0.7816283,
+        "research_docs_only_runtime": "MULTI_MINUTE_OBSERVED"
+      },
+      "operational_rule": "Use per-PR only where cache/cost is acceptable; repository-local cadence may be reduced without changing semantic authority.",
+      "role": "semantic_duplicate_witness"
+    }
+  }
+}
