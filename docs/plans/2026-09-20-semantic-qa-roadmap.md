@@ -240,6 +240,8 @@ A disagreement is REVIEW_REQUIRED, not an automatic override.
 
 ## Immediate next action
 
-Execute **R9**: reuse the package-based non-blocking semantic QA mechanics in
-one second Theseus repository, preferably `theseus-1f916-client`. Keep
-repository-specific corpora, path policies and invariants local.
+Execute **R10**: evaluate extracting only generic cache/orchestration/receipt
+mechanics into `marcopolo-cookbook`.
+
+Do not move repository-specific corpora, thresholds, invariants, semantic
+interpretation or acceptance authority into the shared layer.
