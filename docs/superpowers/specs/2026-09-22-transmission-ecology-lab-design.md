@@ -235,6 +235,98 @@ Preferred independent routes, in order of operational simplicity:
 
 External verifier availability must not make the basic local QA path unusable.
 
+
+## 9.1. Two canonical QA endpoints
+
+The lab must expose two distinct executable QA entrypoints with non-overlapping claims.
+
+### Repository QA endpoint
+
+`tools/dev/check` answers only:
+
+> Is the repository-local deterministic state structurally and mechanically valid for the exact state under test?
+
+It covers code/tests/schema/fixtures/formatting and remains network-free. `DEV_CHECK_PASS` does not establish scientific truth or acceptance.
+
+### Research QA endpoint
+
+`tools/research/check` answers only:
+
+> Did this experiment satisfy the declared research contract for provenance, preregistration, controls, reproducibility, and claim boundaries?
+
+It must be deterministic for the same committed experiment inputs and emit a machine-readable research-QA receipt.
+
+The first version should validate at least:
+
+1. exact source commit and experiment identity;
+2. frozen fixture and parameter hashes;
+3. declared hypothesis / question / falsifiers;
+4. declared metrics before result interpretation;
+5. positive, negative, and topology-only controls;
+6. receipt schema and complete observed values;
+7. explicit domain-model limitations;
+8. independent witness status when the experiment requires one;
+9. scientific disposition vocabulary;
+10. separation between automated QA status and scientific judgment.
+
+Recommended output dimensions:
+
+- `contract_status`: PASS / FAIL / DEGRADED / UNKNOWN;
+- `epistemic_state`: FACT / INFERENCE / HYPOTHESIS / UNVERIFIED / DEGRADED;
+- `scientific_disposition`: FOUND_USEFUL_STRUCTURE / NO_SIGNAL / REFINE / REJECT / UNKNOWN_WITHIN_CURRENT_CONTRACT;
+- `authority`: NONE for automated QA.
+
+A `contract_status=PASS` means only that the experiment satisfied its declared research contract. It must never be rendered as `hypothesis=true`, `scientific_truth=PASS`, or an automatic promotion decision.
+
+## 9.2. KnowledgeOps-derived research QA framework
+
+The research-QA lifecycle reuses the existing Theseus KnowledgeOps shape:
+
+```text
+question / hypothesis
+    -> preregistered experiment contract
+    -> provenance + normalization
+    -> schema / structural checks
+    -> controls + domain-specific witness
+    -> contradiction / falsifier handling
+    -> independent verification when required
+    -> explicit scientific disposition
+    -> durable receipt
+    -> drift / invalidation / learning loop
+```
+
+This deliberately mirrors informational CI/CD without pretending that automation can decide scientific truth.
+
+Research-QA meta-lenses inherited from current Theseus practice:
+
+- **BOUNDARY** — did representation or serialization weaken evidence/identity?
+- **PHASE** — is a consumer evaluating only produced and verified state?
+- **CLAIM** — did the verifier observe exactly the proposition being marked PASS/FOUND/VERIFIED?
+- **AUTHORITY** — is a tool result being confused with permission or acceptance?
+- **PROVENANCE** — are observations bound to exact source/input/model/profile identities?
+
+Known-failure-class tracking should be local to the lab once repeated defects exist. Do not invent failure classes speculatively.
+
+## 9.3. Advisory semantic QA
+
+The existing Theseus semantic-QA research provides optional attention-routing witnesses:
+
+- Semble-style known-failure retrieval;
+- semdup-style semantic duplication witness;
+- Needle-style alternative embedding/retrieval trace.
+
+These are **not** required for bootstrap and are not correctness gates. They may be added only after the lab has a real failure-class corpus or repeated research-review scars worth retrieving.
+
+Any semantic witness must preserve:
+
+- exact tool/model/profile identity;
+- candidate/source SHA;
+- corpus digest;
+- named UNAVAILABLE/DEGRADED states;
+- authority = NONE.
+
+Current Theseus precedent remains `KEEP_ADVISORY_NO_SEMANTIC_GATE`.
+
 ## 10. Scientific falsifiers
 
 Park or reject the common-invariant hypothesis if:
@@ -275,6 +367,17 @@ Initial roadmap issues after bootstrap:
 10. Decide whether stochastic/nonlinear v1 earns promotion.
 
 Item 10 starts `Proposed` and must not become `Active` until item 9 records a disposition.
+
+
+## 11.1. Roadmap amendment for research QA
+
+Add an explicit roadmap item immediately after repository bootstrap:
+
+**Research QA: implement canonical `tools/research/check` contract and machine-readable receipt schema.**
+
+This item is P0 / Area=QA / Maturity=Proposed at Project creation and becomes Active before substrate-specific adapters are considered research-ready.
+
+The existing `tools/dev/check` bootstrap item remains separate. Neither endpoint substitutes for the other.
 
 ## 12. Source relationships
 
