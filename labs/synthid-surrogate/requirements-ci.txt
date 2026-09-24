@@ -1,0 +1,2 @@
+# Runtime installed separately from the PyTorch CPU index in CI.
+transformers @ git+https://github.com/huggingface/transformers.git@98d39824ed30e684e5122d04a2d9564efffc4965

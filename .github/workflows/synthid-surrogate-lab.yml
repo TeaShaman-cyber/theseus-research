@@ -1,0 +1,36 @@
+name: SynthID surrogate lab
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'labs/synthid-surrogate/**'
+      - '.github/workflows/synthid-surrogate-lab.yml'
+      - 'tests/test_synthid_surrogate_lab_contract.py'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install CPU runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu 'torch==2.4.0'
+          python -m pip install -r labs/synthid-surrogate/requirements-ci.txt
+      - name: Run deterministic surrogate smoke
+        run: |
+          python labs/synthid-surrogate/run_smoke.py --receipt synthid-surrogate-receipt.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: synthid-surrogate-receipt
+          path: synthid-surrogate-receipt.json
+          if-no-files-found: error
