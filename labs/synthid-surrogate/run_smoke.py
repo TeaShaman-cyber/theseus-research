@@ -16,6 +16,7 @@ from transformers import SynthIDTextWatermarkLogitsProcessor
 
 STATUS = "SURROGATE_ONLY"
 KEYS = [654, 400, 836, 123, 340, 443, 597, 160, 57]
+WRONG_KEYS = [655, 401, 837, 124, 341, 444, 598, 161, 58]
 NGRAM_LEN = 5
 TABLE_SIZE = 2**16
 TABLE_SEED = 0
@@ -25,10 +26,10 @@ DEFAULT_SAMPLES = 12
 DEFAULT_TOKENS = 160
 
 
-def processor() -> SynthIDTextWatermarkLogitsProcessor:
+def processor(keys: list[int] = KEYS) -> SynthIDTextWatermarkLogitsProcessor:
     return SynthIDTextWatermarkLogitsProcessor(
         ngram_len=NGRAM_LEN,
-        keys=KEYS,
+        keys=keys,
         sampling_table_size=TABLE_SIZE,
         sampling_table_seed=TABLE_SEED,
         context_history_size=CONTEXT_HISTORY,
@@ -51,9 +52,9 @@ def generate_tokens(*, watermarked: bool, seed: int, tokens: int) -> torch.Tenso
     return ids
 
 
-def weighted_mean_score(ids: torch.Tensor) -> float:
+def weighted_mean_score(ids: torch.Tensor, keys: list[int] = KEYS) -> float:
     """Torch equivalent of DeepMind's public weighted_mean_score reference."""
-    proc = processor()
+    proc = processor(keys)
     g = proc.compute_g_values(ids).to(torch.float32)
     mask = proc.compute_context_repetition_mask(ids).to(torch.float32)
     depth = g.shape[-1]
@@ -93,21 +94,31 @@ def run(samples: int, tokens: int) -> dict:
     wm: list[float] = []
     plain: list[float] = []
     edited: list[float] = []
+    wrong_key: list[float] = []
     for index in range(samples):
         seed = 1000 + index
         wm_ids = generate_tokens(watermarked=True, seed=seed, tokens=tokens)
         plain_ids = generate_tokens(watermarked=False, seed=seed, tokens=tokens)
         wm.append(weighted_mean_score(wm_ids))
         plain.append(weighted_mean_score(plain_ids))
+        wrong_key.append(weighted_mean_score(wm_ids, WRONG_KEYS))
         edited.append(weighted_mean_score(perturb(wm_ids, seed=9000 + index)))
 
     wm_summary = summarize(wm)
     plain_summary = summarize(plain)
     edited_summary = summarize(edited)
+    wrong_key_summary = summarize(wrong_key)
     separation = wm_summary["mean"] - plain_summary["mean"]
+    key_separation = wm_summary["mean"] - wrong_key_summary["mean"]
 
-    # This gates only the deterministic surrogate mechanics, not Claude attribution.
-    passed = separation >= 0.08 and wm_summary["mean"] > 0.60 and plain_summary["mean"] < 0.60
+    # This gates only deterministic surrogate mechanics and key specificity, not Claude attribution.
+    passed = (
+        separation >= 0.08
+        and key_separation >= 0.08
+        and wm_summary["mean"] > 0.60
+        and plain_summary["mean"] < 0.60
+        and wrong_key_summary["mean"] < 0.60
+    )
     return {
         "schema": "theseus.synthid-surrogate-smoke.v1",
         "status": STATUS,
@@ -125,7 +136,9 @@ def run(samples: int, tokens: int) -> dict:
             "watermarked": wm_summary,
             "unwatermarked": plain_summary,
             "watermarked_after_fixed_10pct_token_substitution": edited_summary,
+            "watermarked_scored_with_wrong_key": wrong_key_summary,
             "mean_separation": round(separation, 6),
+            "correct_vs_wrong_key_mean_separation": round(key_separation, 6),
         },
         "gate": {
             "passed": passed,
