@@ -46,7 +46,7 @@ historical Theseus Sonar / semantic-echolocation discipline
 
 The older Sonar protocol already required multiple controlled formulations, at least one functional/semantic probe that did not repeat the planted canary name, explicit source/conflict/gap recording, and `UNKNOWN` on retrieval failure rather than absence.
 
-Issue #11 then calibrated that method against known historical episodes from Session Search. A Library-of-Congress fixture showed that functional and relational probes could recover the same target without repeating its headline entity. A later DeepSeek-corpus calibration supplied the next refinement: recovering a vivid semantic attractor is weaker than recovering the surrounding corrections, counterexamples, epistemic limits, and temporal drift.
+Issue #11 then calibrated that method against known historical episodes from Session Search. A Library-of-Congress fixture showed that functional and relational probes could recover the same target without repeating its headline entity. A later historical calibration corpus with strong semantic attractors and later corrections supplied the next refinement: recovering a vivid attractor is weaker than recovering the surrounding corrections, counterexamples, epistemic limits, and temporal drift.
 
 So the proposed skill is a productized retrieval discipline derived from observed experiments, not a claim that this is the hidden OpenAI retrieval algorithm.
 
