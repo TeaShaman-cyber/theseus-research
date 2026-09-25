@@ -46,7 +46,7 @@ historical Theseus Sonar / semantic-echolocation discipline
 
 The older Sonar protocol already required multiple controlled formulations, at least one functional/semantic probe that did not repeat the planted canary name, explicit source/conflict/gap recording, and `UNKNOWN` on retrieval failure rather than absence.
 
-Issue #11 then calibrated that method against known historical episodes from Session Search. A Library-of-Congress fixture showed that functional and relational probes could recover the same target without repeating its headline entity. A later historical calibration corpus with strong semantic attractors and later corrections supplied the next refinement: recovering a vivid attractor is weaker than recovering the surrounding corrections, counterexamples, epistemic limits, and temporal drift.
+Issue #11 then calibrated that method against known historical episodes from Session Search. A Library-of-Congress fixture showed that functional and relational probes could recover the same target without repeating its headline entity. A later user-owned ChatGPT conversation corpus, derived from an official OpenAI account-export ZIP and indexed through Session Search, supplied the next refinement: recovering a vivid attractor is weaker than recovering the surrounding corrections, counterexamples, epistemic limits, and temporal drift. The export is treated conservatively as `PARTIAL_SESSION_SLICE`: a downloaded snapshot is evidence of exported history, not proof of complete or current account history.
 
 So the proposed skill is a productized retrieval discipline derived from observed experiments, not a claim that this is the hidden OpenAI retrieval algorithm.
 
