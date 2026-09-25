@@ -30,6 +30,26 @@ recovering the attractor != recovering its later corrections and limits
 
 If materially different formulations keep returning the same fragment without new provenance, stop probing rather than treating repetition as stronger evidence.
 
+## Method lineage
+
+This proposal is not an ad-hoc prompt recipe. It is a condensed form of an existing Sonar research line preserved in `theseus-research#11`.
+
+The lineage is:
+
+```text
+historical Theseus Sonar / semantic-echolocation discipline
+  -> controlled multi-probe retrieval
+  -> calibrated against independently inspectable Session Search targets
+  -> extended with literal / semantic / functional / relational / negative-control probes
+  -> extended again with correction / falsifier / epistemic-boundary probes
+```
+
+The older Sonar protocol already required multiple controlled formulations, at least one functional/semantic probe that did not repeat the planted canary name, explicit source/conflict/gap recording, and `UNKNOWN` on retrieval failure rather than absence.
+
+Issue #11 then calibrated that method against known historical episodes from Session Search. A Library-of-Congress fixture showed that functional and relational probes could recover the same target without repeating its headline entity. A later DeepSeek-corpus calibration supplied the next refinement: recovering a vivid semantic attractor is weaker than recovering the surrounding corrections, counterexamples, epistemic limits, and temporal drift.
+
+So the proposed skill is a productized retrieval discipline derived from observed experiments, not a claim that this is the hidden OpenAI retrieval algorithm.
+
 ## Why
 
 In a live reconstruction exercise, broad/default retrieval found the correct semantic area for an older heartbeat/liveness discussion but attached one concrete repository/issue reference incorrectly. Independent repository readback found the exact historical source elsewhere.

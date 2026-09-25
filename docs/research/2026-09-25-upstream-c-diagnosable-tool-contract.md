@@ -14,6 +14,44 @@ model misinterpretation of a valid tool result
 
 This is broader than memory or retrieval. Historical retrieval is simply a strong first use case because an opaque tool failure often looks to the user like the model forgot something.
 
+## User-language diagnostic trigger
+
+The diagnostic path should not require the user to know that a tool, retrieval layer, connector, or backend exists. A model should be able to infer a possible tool/retrieval failure from ordinary corrective language.
+
+Examples of high-value triggers include:
+
+```text
+"you mixed this up again"
+"that is not what I told you"
+"I already told you this in another chat"
+"that is the wrong issue / file / project"
+"you said you searched, but this is not the right result"
+"you said it was done, but nothing changed"
+"why did you forget this again?"
+```
+
+These phrases do not prove a tool failure. They are a trigger for a bounded diagnostic reflex when the disputed answer plausibly depended on history retrieval, files, connectors, external actions, or another tool-backed capability.
+
+A useful reflex is:
+
+```text
+user reports contradiction / omission / wrong reference / missing effect
+        ->
+identify whether the disputed claim depended on a tool-backed surface
+        ->
+inspect EXPOSED / INVOKED / RETURNED / USED / VERIFIED
+        ->
+run the smallest safe read-only reprobe or postcondition check
+        ->
+classify: reasoning error / tool failure / stale data / result misuse / UNKNOWN
+        ->
+correct the answer with evidence
+```
+
+For an ordinary user this can remain conversational. The model does not need to expose internal diagnostic jargon unless useful. The important behavioral change is that a credible report of "you got this wrong again" can cause evidence gathering, not only an apology followed by another unsupported reconstruction.
+
+Guardrail: a simple disagreement or preference correction should not trigger a full diagnostic sweep. Escalation is warranted when the disputed claim depended on a tool/retrieval/action surface or when the same failure recurs after correction.
+
 ## Minimal state model
 
 ```text
