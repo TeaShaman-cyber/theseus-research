@@ -19,6 +19,8 @@ The system must preserve the existing Theseus boundary:
 
 > The registry lists only research lines explicitly declared part of Theseus. It is not an inventory of every repository owned by the maintainer.
 
+In this contract, a **research line** is an explicitly declared durable, research-bearing workstream; it does not have to be a repository whose primary form is a research lab. A client, skill, debugging workspace, or other infrastructure repository may be a research line when the program explicitly uses it as a continuing surface for hypothesis, experiment, observation, and learning. The localized `role` field describes that execution form. Repository naming and candidate discovery never establish membership by themselves.
+
 Automation may detect likely drift. It must not autonomously declare a repository part of Theseus.
 
 ## 2. Current observed state

@@ -6,7 +6,7 @@ Its tools and experiments may change; the principles below are the stable part t
 
 ## Public Research Program Contract
 
-**Version:** `1.1`
+**Version:** `1.2`
 
 **Status:** `ACTIVE RESEARCH`
 
@@ -49,6 +49,14 @@ This contract is versioned, not timeless. Changes follow a reviewable path:
 - **MINOR** adds compatible principles, areas, or clarifications. A MINOR change must preserve every existing invariant: it cannot remove, weaken, or silently narrow consent, least-privilege, provenance, reversibility, sponsor independence, or public-status commitments;
 - **MAJOR** changes the mission, an invariant, a security, privacy, or authorization boundary, the autonomy boundary, sponsor independence, or public status. When compatibility is uncertain, use the higher version.
 Every accepted change records its version, date, summary, reason, and review status.
+
+### Revision record: `1.2` — 2026-09-28
+
+- **Lifecycle:** clarifies that an explicitly declared Theseus research line is a durable research-bearing workstream and does not have to take the form of a research laboratory.
+- **Scope:** declares `theseus-1f916-client`, `theseus-hermes-debug`, `theseus-sonar-skill`, `theseus-transmission-ecology-lab`, and `theseus-typed-decision-lab` as active public research lines while keeping their client, infrastructure, skill, or lab execution form in the existing localized `role` field.
+- **Compatibility:** MINOR; this extends compatible registry membership semantics without weakening mission, consent, provenance, reversibility, sponsor-independence, public-interest, human-responsibility, or repository-local authority boundaries.
+- **Review status:** Codex review on PR #84 identified that the public contract definition had changed without an atomic version revision; the finding was accepted and corrected in the same PR.
+- **Acceptance record:** this revision becomes authoritative only through explicit maintainer merge together with the changelog, registry membership update, and bilingual projections, followed by exact remote readback.
 
 ### Revision record: `1.1` — 2026-09-18
 
@@ -98,6 +106,8 @@ The machine-readable research-line registry is versioned in `registry/research-l
 
 ### Theseus research lines
 
+A research line is a declared research-bearing workstream, not necessarily a laboratory. Infrastructure, client, skill, or debugging repositories may belong here when that role is explicitly declared; the registry remains the membership authority.
+
 <!-- BEGIN THESEUS_RESEARCH_LINES -->
 | Research line | Visibility / status | Role |
 | --- | --- | --- |
@@ -111,6 +121,11 @@ The machine-readable research-line registry is versioned in `registry/research-l
 | Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
 | [`theseus-repo-search-lab`](https://github.com/TeaShaman-cyber/theseus-repo-search-lab) | public · active | Reproducible repository indexing, dependency graphs, and bounded evidence retrieval for research corpora |
 | [`theseus-math-research-lab`](https://github.com/TeaShaman-cyber/theseus-math-research-lab) | public · active | Evidence-grounded mathematical bridge research, proof-search experiments, and bounded problem decomposition |
+| [`theseus-1f916-client`](https://github.com/TeaShaman-cyber/theseus-1f916-client) | public · active | Versioned 1F916 forum client and research-bearing infrastructure for transport, routing, liveness, and verified social operations |
+| [`theseus-hermes-debug`](https://github.com/TeaShaman-cyber/theseus-hermes-debug) | public · active | Research-bearing reproduction, debugging, review, and upstream handoff infrastructure for Hermes Agent workflow and harness defects |
+| [`theseus-sonar-skill`](https://github.com/TeaShaman-cyber/theseus-sonar-skill) | public · active | Public prototype and validation line for bounded model-facing retrieval skills, query formulation, provenance, and uncertainty |
+| [`theseus-transmission-ecology-lab`](https://github.com/TeaShaman-cyber/theseus-transmission-ecology-lab) | public · active | Reproducible cross-substrate transmission ecology experiments for virus, meme, and agent systems |
+| [`theseus-typed-decision-lab`](https://github.com/TeaShaman-cyber/theseus-typed-decision-lab) | public · active | Reproducible research lab for typed System-1 decision models and bounded decision contracts |
 <!-- END THESEUS_RESEARCH_LINES -->
 
 ## Methodological foundation

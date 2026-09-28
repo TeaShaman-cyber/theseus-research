@@ -28,6 +28,11 @@ class RegistryContractTests(unittest.TestCase):
                 "theseus-tech-review-graph",
                 "theseus-repo-search-lab",
                 "theseus-math-research-lab",
+                "theseus-1f916-client",
+                "theseus-hermes-debug",
+                "theseus-sonar-skill",
+                "theseus-transmission-ecology-lab",
+                "theseus-typed-decision-lab",
             ],
             [line["id"] for line in public_lines(doc)],
         )
