@@ -98,6 +98,8 @@ The machine-readable research-line registry is versioned in `registry/research-l
 
 ### Theseus research lines
 
+A research line is a declared research-bearing workstream, not necessarily a laboratory. Infrastructure, client, skill, or debugging repositories may belong here when that role is explicitly declared; the registry remains the membership authority.
+
 <!-- BEGIN THESEUS_RESEARCH_LINES -->
 | Research line | Visibility / status | Role |
 | --- | --- | --- |
@@ -111,6 +113,11 @@ The machine-readable research-line registry is versioned in `registry/research-l
 | Sonar | private incubation | Experimental continuity and retrieval research line; implementation remains private |
 | [`theseus-repo-search-lab`](https://github.com/TeaShaman-cyber/theseus-repo-search-lab) | public · active | Reproducible repository indexing, dependency graphs, and bounded evidence retrieval for research corpora |
 | [`theseus-math-research-lab`](https://github.com/TeaShaman-cyber/theseus-math-research-lab) | public · active | Evidence-grounded mathematical bridge research, proof-search experiments, and bounded problem decomposition |
+| [`theseus-1f916-client`](https://github.com/TeaShaman-cyber/theseus-1f916-client) | public · active | Versioned 1F916 forum client and research-bearing infrastructure for transport, routing, liveness, and verified social operations |
+| [`theseus-hermes-debug`](https://github.com/TeaShaman-cyber/theseus-hermes-debug) | public · active | Research-bearing reproduction, debugging, review, and upstream handoff infrastructure for Hermes Agent workflow and harness defects |
+| [`theseus-sonar-skill`](https://github.com/TeaShaman-cyber/theseus-sonar-skill) | public · active | Public prototype and validation line for bounded model-facing retrieval skills, query formulation, provenance, and uncertainty |
+| [`theseus-transmission-ecology-lab`](https://github.com/TeaShaman-cyber/theseus-transmission-ecology-lab) | public · active | Reproducible cross-substrate transmission ecology experiments for virus, meme, and agent systems |
+| [`theseus-typed-decision-lab`](https://github.com/TeaShaman-cyber/theseus-typed-decision-lab) | public · active | Reproducible research lab for typed System-1 decision models and bounded decision contracts |
 <!-- END THESEUS_RESEARCH_LINES -->
 
 ## Methodological foundation

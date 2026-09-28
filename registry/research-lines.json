@@ -162,6 +162,86 @@
         "mathematics"
       ],
       "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-1f916-client",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-1f916-client",
+      "role": {
+        "en": "Versioned 1F916 forum client and research-bearing infrastructure for transport, routing, liveness, and verified social operations",
+        "ru": "Версионируемый клиент форума 1F916 и исследовательская инфраструктура для транспорта, маршрутизации, живости и проверяемых социальных операций"
+      },
+      "status": "active",
+      "topics": [
+        "theseus",
+        "theseus-research-line",
+        "1f916-client"
+      ],
+      "release_policy": "product"
+    },
+    {
+      "id": "theseus-hermes-debug",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-hermes-debug",
+      "role": {
+        "en": "Research-bearing reproduction, debugging, review, and upstream handoff infrastructure for Hermes Agent workflow and harness defects",
+        "ru": "Исследовательская инфраструктура для воспроизведения, отладки, ревью и передачи upstream дефектов workflow и harness Hermes Agent"
+      },
+      "status": "active",
+      "topics": [
+        "theseus",
+        "theseus-research-line",
+        "hermes-debug"
+      ],
+      "release_policy": "none"
+    },
+    {
+      "id": "theseus-sonar-skill",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-sonar-skill",
+      "role": {
+        "en": "Public prototype and validation line for bounded model-facing retrieval skills, query formulation, provenance, and uncertainty",
+        "ru": "Публичная линия прототипирования и валидации ограниченного навыка извлечения контекста для моделей, формулировки запросов, происхождения данных и неопределённости"
+      },
+      "status": "active",
+      "topics": [
+        "theseus",
+        "theseus-research-line",
+        "sonar-skill"
+      ],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-transmission-ecology-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-transmission-ecology-lab",
+      "role": {
+        "en": "Reproducible cross-substrate transmission ecology experiments for virus, meme, and agent systems",
+        "ru": "Воспроизводимые межсубстратные эксперименты по экологии передачи в вирусных, меметических и агентных системах"
+      },
+      "status": "active",
+      "topics": [
+        "theseus",
+        "theseus-research-line",
+        "transmission-ecology"
+      ],
+      "release_policy": "checkpoint"
+    },
+    {
+      "id": "theseus-typed-decision-lab",
+      "visibility": "public",
+      "repository": "TeaShaman-cyber/theseus-typed-decision-lab",
+      "role": {
+        "en": "Reproducible research lab for typed System-1 decision models and bounded decision contracts",
+        "ru": "Воспроизводимая исследовательская лаборатория типизированных моделей решений System-1 и ограниченных контрактов принятия решений"
+      },
+      "status": "active",
+      "topics": [
+        "theseus",
+        "theseus-research-line",
+        "typed-decision"
+      ],
+      "release_policy": "checkpoint"
     }
   ]
 }
