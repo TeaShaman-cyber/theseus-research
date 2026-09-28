@@ -4,6 +4,26 @@ This changelog records revisions to the public Theseus program contract.
 Ordinary research merges, fixtures, plans, and implementation changes do not
 create a contract version by themselves.
 
+## 1.2 — 2026-09-28
+
+**Lifecycle:** clarify research-line membership semantics and declare five existing research-bearing Theseus workstreams.
+
+**Summary:**
+
+- defines a research line as an explicitly declared durable, research-bearing workstream rather than requiring laboratory form;
+- keeps execution form in the existing localized \`role\` field instead of introducing a new schema axis;
+- declares \`theseus-1f916-client\`, \`theseus-hermes-debug\`, \`theseus-sonar-skill\`, \`theseus-transmission-ecology-lab\`, and \`theseus-typed-decision-lab\` as active public research lines;
+- preserves repository-local roles, release policies, and authority boundaries;
+- keeps candidate discovery advisory: repository naming or ownership still cannot establish Theseus membership automatically.
+
+**Reason:** the registry doctor surfaced five undeclared candidates, and explicit maintainer classification established that all five are continuing research-bearing Theseus workstreams even though three primarily take infrastructure/client/skill forms.
+
+**Review status:** Codex P2 on PR #84 correctly identified that the public contract definition changed without an atomic version revision. This 1.2 update addresses that finding in the same PR.
+
+**Version rationale:** MINOR. This is a compatible clarification and membership extension; it does not remove or weaken any accepted invariant or authority boundary.
+
+**Acceptance rule:** this changelog entry, the EN/RU contract revision records, registry membership update, and bilingual projections become accepted together only through explicit maintainer merge and exact remote readback.
+
 ## 1.1 — 2026-09-18
 
 **Lifecycle:** accept the versioned research-line registry as program infrastructure without changing scientific or execution authority.

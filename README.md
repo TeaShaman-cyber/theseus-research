@@ -6,7 +6,7 @@ Its tools and experiments may change; the principles below are the stable part t
 
 ## Public Research Program Contract
 
-**Version:** `1.1`
+**Version:** `1.2`
 
 **Status:** `ACTIVE RESEARCH`
 
@@ -49,6 +49,14 @@ This contract is versioned, not timeless. Changes follow a reviewable path:
 - **MINOR** adds compatible principles, areas, or clarifications. A MINOR change must preserve every existing invariant: it cannot remove, weaken, or silently narrow consent, least-privilege, provenance, reversibility, sponsor independence, or public-status commitments;
 - **MAJOR** changes the mission, an invariant, a security, privacy, or authorization boundary, the autonomy boundary, sponsor independence, or public status. When compatibility is uncertain, use the higher version.
 Every accepted change records its version, date, summary, reason, and review status.
+
+### Revision record: `1.2` — 2026-09-28
+
+- **Lifecycle:** clarifies that an explicitly declared Theseus research line is a durable research-bearing workstream and does not have to take the form of a research laboratory.
+- **Scope:** declares `theseus-1f916-client`, `theseus-hermes-debug`, `theseus-sonar-skill`, `theseus-transmission-ecology-lab`, and `theseus-typed-decision-lab` as active public research lines while keeping their client, infrastructure, skill, or lab execution form in the existing localized `role` field.
+- **Compatibility:** MINOR; this extends compatible registry membership semantics without weakening mission, consent, provenance, reversibility, sponsor-independence, public-interest, human-responsibility, or repository-local authority boundaries.
+- **Review status:** Codex review on PR #84 identified that the public contract definition had changed without an atomic version revision; the finding was accepted and corrected in the same PR.
+- **Acceptance record:** this revision becomes authoritative only through explicit maintainer merge together with the changelog, registry membership update, and bilingual projections, followed by exact remote readback.
 
 ### Revision record: `1.1` — 2026-09-18
 
