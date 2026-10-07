@@ -62,6 +62,11 @@ class MemoryCorrectionExperimentTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'canonical order'):
             parse_correction(invalid)
 
+    def test_parser_rejects_whitespace_only_clause(self) -> None:
+        invalid = '''CORRECTION PREFERENCE\nTARGET "   "\nMUST "strong persistent negative preference"\nSCOPE "durable user preference"\n'''
+        with self.assertRaisesRegex(ValueError, 'must not be empty'):
+            parse_correction(invalid)
+
     def test_parser_rejects_unknown_clause(self) -> None:
         invalid = '''CORRECTION PREFERENCE\nTARGET "OpenAI engineering and reliability"\nMUST "strong persistent negative preference"\nMAGIC "hidden backend"\n'''
         with self.assertRaisesRegex(ValueError, 'unsupported clause'):

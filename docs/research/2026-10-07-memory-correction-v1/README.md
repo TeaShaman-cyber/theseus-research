@@ -27,9 +27,9 @@ The initial Lark differential witness was run against Lark 1.3.1 from the
 existing Sonar QA environment:
 
 ```text
-CASES=29
+CASES=30
 VALID=24
-INVALID=5
+INVALID=6
 MISMATCH=0
 LARK_DIFFERENTIAL_PASS
 ```

@@ -10,6 +10,6 @@ must_not_line: "MUST_NOT" SP QUOTED NL
 scope_line: "SCOPE" SP QUOTED NL
 
 KIND: "PREFERENCE" | "FACT" | "PRIORITY" | "ROLE"
-QUOTED: /"[^"\r\n]{1,240}"/
+QUOTED: /"(?=[^"\r\n]{1,240}")(?=[^"\r\n]*[^\s"\r\n])[^"\r\n]{1,240}"/
 SP: " "
 NL: /\r?\n/
