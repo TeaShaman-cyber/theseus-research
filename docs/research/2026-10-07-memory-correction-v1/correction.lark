@@ -1,0 +1,15 @@
+start: correction
+correction: correction_line target_line must_block must_not_block? scope_line
+must_block: must_line must_line?
+must_not_block: must_not_line must_not_line?
+
+correction_line: "CORRECTION" SP KIND NL
+target_line: "TARGET" SP QUOTED NL
+must_line: "MUST" SP QUOTED NL
+must_not_line: "MUST_NOT" SP QUOTED NL
+scope_line: "SCOPE" SP QUOTED NL
+
+KIND: "PREFERENCE" | "FACT" | "PRIORITY" | "ROLE"
+QUOTED: /"(?=[^"\r\n]{1,240}")(?=[^"\r\n]*[^\s"\r\n])[^"\r\n]{1,240}"/
+SP: " "
+NL: /\r?\n/
