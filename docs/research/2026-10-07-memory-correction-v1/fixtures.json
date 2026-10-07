@@ -1,0 +1,17 @@
+{
+  "semantic_contract": {
+    "kind": "PREFERENCE",
+    "target": "OpenAI engineering and reliability",
+    "must": [
+      "strong persistent negative preference",
+      "criticism concerns engineering and product reliability"
+    ],
+    "must_not": [
+      "neutral or generally positive attitude"
+    ],
+    "scope": "durable user preference"
+  },
+  "A_free_form": "Please treat this as a durable correction: I have a strong, persistent negative preference regarding OpenAI engineering and reliability. My criticism concerns engineering and product reliability. Do not characterize my attitude as neutral or generally positive.",
+  "B_raw_structured": "CORRECTION PREFERENCE\nTARGET \"OpenAI engineering and reliability\"\nMUST \"strong persistent negative preference\"\nMUST \"criticism concerns engineering and product reliability\"\nMUST_NOT \"neutral or generally positive attitude\"\nSCOPE \"durable user preference\"\n",
+  "C_controlled_prose": "Correction type: preference. Target: OpenAI engineering and reliability. Required: strong persistent negative preference. Required: criticism concerns engineering and product reliability. Do not characterize this as neutral or generally positive attitude. Scope: durable user preference."
+}
