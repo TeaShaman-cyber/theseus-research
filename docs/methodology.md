@@ -109,6 +109,14 @@ Green indicators are not the only useful results. `UNKNOWN`, `NOT CLAIMED`, `404
 
 Issues, blog entries, checkpoints, and signatures turn a private failure into material for the next cycle. Sharing should preserve the decision, evidence boundary, and applicability—not publish raw logs or private memory by default.
 
+### Reciprocal upstream/downstream learning
+
+Upstream projects and downstream consumers form a reciprocal evidence loop, not a one-way dependency chain. When a material upstream change moves the implementation or runtime boundary, downstream assumptions that depend on the older boundary become `STALE` or `REPROBE_REQUIRED` until the smallest sufficient current-state check is repeated.
+
+The reverse direction matters too. Reproducible downstream failures, compatibility gaps, negative results, and hardened fixes should be returned upstream when they can reduce repeated ecosystem failure. Material feedback should identify the exact upstream and downstream revisions, fixtures or data boundary, realized runtime/configuration, artifacts, and verification receipts needed to reproduce the observation. Prefer a small canary and actionable receipt over speculative blame or bulk synchronization.
+
+Evidence exchange does not transfer authority. Upstream feedback may narrow the causal interpretation of a valid historical downstream result without erasing the measurement that was actually observed. Likewise, a downstream observation does not become an upstream bug claim merely because it is plausible. Acceptance, promotion, permission, and ownership remain explicit in their own authority domains.
+
 ## The working loop
 
 Theseus uses a small loop that can be applied to a tool call, a repository change, or a public research step:
