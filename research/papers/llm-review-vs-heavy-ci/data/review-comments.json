@@ -1,0 +1,919 @@
+{
+  "comments": [
+    {
+      "claim_excerpt": "When a registry edit introduces a nonempty status typo such as `activ`, `validate_registry` returns no error, so `check_registry.py validate` incorrectly reports `PASS`; the subsequent render and doctor paths then raise an uncaught `ValueError` because `render_table` accepts only the fixed status vocabulary. Validate statuses against `act",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3939739198,
+      "created_at": "2026-09-05T06:32:38Z",
+      "evidence_level": "REPRODUCED_VALIDATOR_GAP_PLUS_HEAD_TEST",
+      "original_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+      "path": "tools/registry_contract.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed in afa3a4888d09. The registry validator now rejects statuses outside active-root/active/private-incubation; regression coverage proves a typo returns a contract error.",
+        "created_at": "2026-09-05T07:00:29Z",
+        "id": 3939799711,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939799711"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "before_sha": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-validation-reproducers.json",
+        "path": "tests/test_registry_contract.py",
+        "semantic_limit": "validator rejected formerly accepted invalid input; no evidence of actual disclosure or external system effect",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_invalid_status_is_rejected"
+      },
+      "title": "Reject unsupported projection statuses during validation",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939739198"
+    },
+    {
+      "claim_excerpt": "If the second projection cannot be generated—for example, `README.ru.md` has a missing or duplicated marker—the loop has already overwritten `README.md` before catching the `ValueError` and returning `INVALID`. This leaves the bilingual projections partially updated despite the failed command; read and render both outputs successfully bef",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3939739203,
+      "created_at": "2026-09-05T06:32:38Z",
+      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "original_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+      "path": "tools/check_registry.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed in afa3a4888d09. render --write now reads and renders both projections successfully before the first file write; regression coverage verifies an invalid RU marker leaves both files byte-identical.",
+        "created_at": "2026-09-05T07:00:30Z",
+        "id": 3939799736,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939799736"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "path": "tests/test_registry_cli.py",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_render_write_validates_both_projections_before_writing_either"
+      },
+      "title": "Validate both projections before writing either file",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939739203"
+    },
+    {
+      "claim_excerpt": "When the repository has more than 100 combined open issues and pull requests, an existing exact-title drift issue can fall beyond this first page. The subsequent scan then treats it as absent and creates a duplicate, violating the create-once behavior; paginate the endpoint or use an exact repository-scoped search before issuing the POST.",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+      "comment_id": 3939739209,
+      "created_at": "2026-09-05T06:32:38Z",
+      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "original_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+      "path": "tools/registry_doctor.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed in afa3a4888d09. Drift-issue deduplication now paginates open issues until the final short page; regression coverage places the canonical issue on page 2 and verifies it is commented instead of duplicated.",
+        "created_at": "2026-09-05T07:00:31Z",
+        "id": 3939799776,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939799776"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "path": "tests/test_registry_issue.py",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_existing_issue_on_second_page_is_reused_not_duplicated"
+      },
+      "title": "Paginate open issues before creating the drift issue",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939739209"
+    },
+    {
+      "claim_excerpt": "A public repository value such as `TeaShaman-cyber/` or `/theseus-research` contains exactly one slash and therefore passes validation, even though it is not the required `OWNER/REPO` identity. The renderer then emits a malformed GitHub link and the doctor queries a malformed REST path, turning a registry contract error into drift or `UNR",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+      "comment_id": 3939807477,
+      "created_at": "2026-09-05T07:04:24Z",
+      "evidence_level": "REPRODUCED_VALIDATOR_GAP_PLUS_HEAD_TEST",
+      "original_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+      "path": "tools/registry_contract.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Verified on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. Public repository identities now require exactly two non-empty `OWNER/REPO` components; regression `test_public_repository_requires_nonempty_owner_and_repo` covers both empty-owner and empty-repo cases. Full registry suite: 45/45 PASS.",
+        "created_at": "2026-09-05T17:11:36Z",
+        "id": 3941380306,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941380306"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "before_sha": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-validation-reproducers.json",
+        "path": "tests/test_registry_contract.py",
+        "semantic_limit": "validator rejected formerly accepted invalid input; no evidence of actual disclosure or external system effect",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_public_repository_requires_nonempty_owner_and_repo"
+      },
+      "title": "Reject repository names with empty path components",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939807477"
+    },
+    {
+      "claim_excerpt": "When `doctor --drift-issue write` creates an issue, this returns `action: created` directly from the POST response without independently fetching and verifying the remote issue; the comment-existing branch behaves the same way. This violates the explicit global constraint in `docs/superpowers/plans/2026-09-05-github-metadata-registry-sync",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+      "comment_id": 3939807479,
+      "created_at": "2026-09-05T07:04:24Z",
+      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "original_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+      "path": "tools/registry_doctor.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Verified on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. Drift-issue create and comment paths independently GET the persisted issue/comment and validate identity/body before reporting success. Four readback regressions cover successful and mismatched create/comment cases; full suite 45/45 PASS.",
+        "created_at": "2026-09-05T17:11:52Z",
+        "id": 3941382270,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941382270"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "path": "tests/test_registry_issue.py",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_created_issue_requires_verified_remote_readback"
+      },
+      "title": "Read back drift-issue writes before reporting success",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939807479"
+    },
+    {
+      "claim_excerpt": "When a private-incubation entry supplies a string `repository`, this branch accepts it, while `render_table` turns every string repository into a public GitHub link. A registry edit such as adding Sonar's private repository identifier therefore passes validation and `render --write` publishes that identifier in both READMEs, contrary to t",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "comment_id": 3939993038,
+      "created_at": "2026-09-05T08:22:35Z",
+      "evidence_level": "REPRODUCED_VALIDATOR_GAP_PLUS_HEAD_TEST",
+      "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "path": "tools/registry_contract.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed with TDD on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. `private-incubation` entries must now omit `repository`; a regression proves adding a private repository identity is rejected before any README projection can expose it. Full registry suite: 45/45 PASS.",
+        "created_at": "2026-09-05T17:12:11Z",
+        "id": 3941384187,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941384187"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-validation-reproducers.json",
+        "path": "tests/test_registry_contract.py",
+        "semantic_limit": "validator rejected formerly accepted invalid input; no evidence of actual disclosure or external system effect",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_private_incubation_line_must_not_publish_repository_identity"
+      },
+      "title": "Reject repositories on private-incubation entries",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939993038"
+    },
+    {
+      "claim_excerpt": "The validator checks only that `status` belongs to the vocabulary, so contradictory combinations such as `visibility: public` with `status: private-incubation`, or a private-incubation line with `status: active`, pass validation. The doctor selects repositories using `visibility`, but the README visibility/status column is rendered solely",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3939993043,
+      "created_at": "2026-09-05T08:22:35Z",
+      "evidence_level": "REPRODUCED_VALIDATOR_GAP_PLUS_HEAD_TEST",
+      "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "path": "tools/registry_contract.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed with TDD on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. Validation now enforces supported visibility/status pairs: public may be `active-root`/`active`, while `private-incubation` visibility requires `private-incubation` status. Regression covers both contradictory directions.",
+        "created_at": "2026-09-05T17:12:25Z",
+        "id": 3941385118,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941385118"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-validation-reproducers.json",
+        "path": "tests/test_registry_contract.py",
+        "semantic_limit": "validator rejected formerly accepted invalid input; no evidence of actual disclosure or external system effect",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_visibility_and_status_must_form_a_supported_pair"
+      },
+      "title": "Enforce visibility and status consistency",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939993043"
+    },
+    {
+      "claim_excerpt": "When `--json-output` points into a directory that does not yet exist and the registry is invalid, this early write occurs before the `mkdir` at the successful-path output block, so the command raises `FileNotFoundError` instead of producing the promised `INVALID` report and exit code 4. The projection-mismatch return has the same problem;",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3939993047,
+      "created_at": "2026-09-05T08:22:35Z",
+      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "path": "tools/check_registry.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed with TDD on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. `cmd_doctor` now creates the JSON-output parent before any validation/projection early return and reuses that output path throughout. Regression proves an invalid registry returns code 4 and writes structured `INVALID` into a previously missing nested directory.",
+        "created_at": "2026-09-05T17:12:41Z",
+        "id": 3941386215,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941386215"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "path": "tests/test_registry_cli.py",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_doctor_creates_json_output_parent_before_invalid_early_return"
+      },
+      "title": "Create the JSON output parent before early returns",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939993047"
+    },
+    {
+      "claim_excerpt": "For a declared repository with more than 100 labels, this request observes only the first page. If any of the five managed labels is on a later page, the doctor incorrectly reports it as missing and returns `DECLARED_DRIFT`; fetch subsequent label pages until the final short page before computing `missing_labels`.\n\nUseful? React with 👍 / ",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "comment_id": 3939993050,
+      "created_at": "2026-09-05T08:22:35Z",
+      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+      "path": "tools/registry_doctor.py",
+      "pr": 5,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed with TDD on exact head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`. Managed labels are now accumulated page-by-page until a short page before missing-label drift is computed. Regression places 100 unrelated labels on page 1 and all managed labels on page 2 and verifies the repository remains `PASS`.",
+        "created_at": "2026-09-05T17:12:57Z",
+        "id": 3941387124,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941387124"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "path": "tests/test_registry_doctor.py",
+        "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+        "source_file_modified_after_reviewed_commit": true,
+        "test": "test_managed_labels_are_collected_across_all_pages_before_drift"
+      },
+      "title": "Paginate repository labels before reporting drift",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939993050"
+    },
+    {
+      "claim_excerpt": "When the CLI uses a token that can search the owner's private repositories, a private repository matching the `theseus` query passes this filter and its `full_name` is serialized into the report; with `--drift-issue write`, that identity is also posted to the canonical public issue. This violates the private-repository non-disclosure boun",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3941398477,
+      "created_at": "2026-09-05T17:17:18Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "path": "tools/registry_doctor.py",
+      "pr": 5,
+      "reply": null,
+      "source_witness": null,
+      "title": "Exclude private repositories from candidate discovery",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398477"
+    },
+    {
+      "claim_excerpt": "GitHub repository search can return a valid `items` list with `incomplete_results: true`; this shape passes the current check. If that partial list contains no undeclared candidate, an otherwise healthy run reports `PASS` even though candidate discovery was incomplete, contrary to the fail-closed rule that API uncertainty is `UNREACHABLE`",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3941398481,
+      "created_at": "2026-09-05T17:17:18Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "path": "tools/registry_doctor.py",
+      "pr": 5,
+      "reply": null,
+      "source_witness": null,
+      "title": "Treat incomplete repository searches as unreachable",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398481"
+    },
+    {
+      "claim_excerpt": "With explicit `--drift-issue write`, any issue-list, POST, or remote-readback failure raises `GitHubUnavailable` here before the report is written. The CLI consequently exits with an uncaught traceback—potentially leaving a stale output file—instead of recording `UNREACHABLE` JSON and returning exit code 3. Catch writer/readback failures,",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3941398485,
+      "created_at": "2026-09-05T17:17:18Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "path": "tools/check_registry.py",
+      "pr": 5,
+      "reply": null,
+      "source_witness": null,
+      "title": "Preserve the JSON report when drift-issue writes fail",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398485"
+    },
+    {
+      "claim_excerpt": "Although both projections are now rendered before writing, the writes remain sequential. If writing `README.md` succeeds but writing `README.ru.md` fails—for example because the second file is unwritable or the filesystem errors—the exception path reports `INVALID` while leaving only the English projection updated. Stage replacements and ",
+      "claim_type": "CODE_REVIEW_CANDIDATE",
+      "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "comment_id": 3941398487,
+      "created_at": "2026-09-05T17:17:18Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+      "path": "tools/check_registry.py",
+      "pr": 5,
+      "reply": null,
+      "source_witness": null,
+      "title": "Keep bilingual projections atomic across write failures",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398487"
+    },
+    {
+      "claim_excerpt": "When an agent is reviewing a contributor branch or operating in a dirty worktree, mere filesystem presence lets newly added or modified cookbook content become `COOKBOOK_ACTIVE` before the explicit approval and accepted-change stages below have occurred. This lets unreviewed repository text bypass both the missing-cookbook gate and the pr",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "de25a8e6089227e6a181c5c1d56f2977f460a109",
+      "comment_id": 3941151109,
+      "created_at": "2026-09-05T15:52:13Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed. Discovery now distinguishes accepted canonical cookbook guidance from dirty/unmerged candidate content and requires authoritative remote provenance before `COOKBOOK_ACTIVE`; candidate guidance remains review-only unless explicitly evaluated. Preserved on current head `80b7b957f2`.",
+        "created_at": "2026-09-05T16:21:58Z",
+        "id": 3941235775,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941235775"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "candidate overlays"
+      },
+      "title": "Require trusted provenance before activating cookbooks",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151109"
+    },
+    {
+      "claim_excerpt": "When reproducing or checking a historical lesson against the current repository/runtime is impractical, this qualification permits that check to be skipped even though the later `VERIFIED` definition can be satisfied by an unspecified independent check. An old issue plus repository review could therefore promote stale behavior while still",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "de25a8e6089227e6a181c5c1d56f2977f460a109",
+      "comment_id": 3941151112,
+      "created_at": "2026-09-05T15:52:13Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed. Current applicability is now mandatory for promotion: unresolved currentness forces `UNKNOWN` and makes the lesson non-promotable as active guidance. Preserved on current head `80b7b957f2`.",
+        "created_at": "2026-09-05T16:22:06Z",
+        "id": 3941236134,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941236134"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "currentness cannot be established"
+      },
+      "title": "Keep unresolved currentness out of promoted rules",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151112"
+    },
+    {
+      "claim_excerpt": "When a provider, workflow, or repository contract changes after a lesson was verified, this lifecycle leaves the lesson permanently promoted: `DEPRECATED` is named later, but no transition, revalidation trigger, applicability boundary, or expiry takes a promoted rule back out of active guidance. Define how dependency changes or failed rep",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "comment_id": 3941151116,
+      "created_at": "2026-09-05T15:52:13Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed. The lifecycle now includes evidence/contract-triggered invalidation to `REPROBE_REQUIRED / UNKNOWN`, with `DEPRECATED` for confirmed obsolescence and an explicit applicability boundary for revalidation. Current head `80b7b957f2`.",
+        "created_at": "2026-09-05T16:22:14Z",
+        "id": 3941236531,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941236531"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": true,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "REPROBE_REQUIRED"
+      },
+      "title": "Add invalidation to the promoted-rule lifecycle",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151116"
+    },
+    {
+      "claim_excerpt": "When runtime and repository cookbooks give incompatible instructions and neither violates the higher-level project contract, the `+` composition operator provides no precedence, merge rule, or stopping condition. Two conforming implementations can consequently take opposite actions while both claim to satisfy this design, so the contract ",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "de25a8e6089227e6a181c5c1d56f2977f460a109",
+      "comment_id": 3941151120,
+      "created_at": "2026-09-05T15:52:13Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed. Runtime and repository cookbooks now compose by concern; incompatible claims about the same concern return `BLOCKED` unless higher-level contract, current authoritative evidence, or explicit human decision resolves the conflict. Current head `80b7b957f2`.",
+        "created_at": "2026-09-05T16:22:20Z",
+        "id": 3941236811,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941236811"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "same concern"
+      },
+      "title": "Define conflict handling for composed cookbooks",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151120"
+    },
+    {
+      "claim_excerpt": "When a version label is reused, the registry and `SKILL.md` metadata drift, or an installed copy is locally altered, the proposed mandatory metadata cannot establish that the installed bytes are the canonical artifact because both a digest and immutable release tags are optional. Make an immutable commit or content digest part of the requ",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "comment_id": 3941151123,
+      "created_at": "2026-09-05T15:52:14Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on `80b7b957f2`. Canonical skill identity now requires `path + source_commit + sha256`; registry/version/update-mode consistency and release-tag-to-commit checks are mandatory. A matching version string alone cannot prove installed byte identity.",
+        "created_at": "2026-09-05T16:22:28Z",
+        "id": 3941237189,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941237189"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "path + source_commit + sha256"
+      },
+      "title": "Make canonical skill identity immutable",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151123"
+    },
+    {
+      "claim_excerpt": "When a skill is manually invoked, it can be active without being auto-selected; conversely, a runtime can report an auto-selection decision even if loading or execution fails. Collapsing these into `ACTIVE/AUTO_SELECTED` also leaves no identity for the active copy, so after a manual update a cached older body could still run while the mod",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "comment_id": 3941151126,
+      "created_at": "2026-09-05T15:52:14Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "959cdce92790f2f2ff6e95f83157655bd95adf51",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on `80b7b957f2`. Canonical artifact, installed artifact, selection mode, active artifact, and execution evidence are now independent state dimensions; manual selection, auto-selection, load, and execution are no longer collapsed.",
+        "created_at": "2026-09-05T16:22:34Z",
+        "id": 3941237453,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941237453"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "SELECTION_MODE"
+      },
+      "title": "Track active and auto-selected as independent state",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941151126"
+    },
+    {
+      "claim_excerpt": "When this entry is validated and rendered, the `theseus-research-line` topic places the cross-project skill distribution repository in the generated “Theseus research lines” tables even though the authority model defines it as canonical operational infrastructure rather than a research line. That makes the public projection semantically i",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "comment_id": 3941215685,
+      "created_at": "2026-09-05T16:14:07Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "de25a8e6089227e6a181c5c1d56f2977f460a109",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on `80b7b957f2`. The design no longer labels `theseus-skills` as a research line. It requires the project registry to represent explicit project kind (`program-root`, `research-line`, `shared-infrastructure`) before active registration; README projections must preserve that distinction.",
+        "created_at": "2026-09-05T16:22:40Z",
+        "id": 3941237723,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941237723"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "shared-infrastructure"
+      },
+      "title": "Resolve the registry scope before labeling skills a research line",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941215685"
+    },
+    {
+      "claim_excerpt": "In the proposed implementation sequence, `theseus-skills` is registered and projected into both READMEs before its canonical `skills/registry.json` and skill files are added. If these steps land separately or implementation stops after step 2, the authoritative project registry advertises an active repository whose promised canonical sour",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "comment_id": 3941215690,
+      "created_at": "2026-09-05T16:14:07Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "de25a8e6089227e6a181c5c1d56f2977f460a109",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on `80b7b957f2`. Publication order is now fail-closed: create/populate/validate canonical skill artifacts first; only after that passes may `theseus-skills` be registered as public shared infrastructure / `active` and projected into READMEs.",
+        "created_at": "2026-09-05T16:22:47Z",
+        "id": 3941238047,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941238047"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "only then register theseus-skills"
+      },
+      "title": "Populate canonical skills before publishing the repository as active",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941215690"
+    },
+    {
+      "claim_excerpt": "When a cookbook change is opened because a promoted command has just failed or current provider behavior contradicts it, this sentence keeps the accepted baseline operational throughout review. The newly added invalidation path at lines 175–192 is fresh evidence that the affected rule should instead leave active guidance immediately; othe",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941227276,
+      "created_at": "2026-09-05T16:18:50Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Fresh invalidating evidence now removes the affected accepted baseline rule from active guidance immediately (`REPROBE_REQUIRED`/`UNKNOWN`) while any candidate replacement remains non-authoritative. Review latency can no longer keep a known-invalid rule active.",
+        "created_at": "2026-09-05T16:58:39Z",
+        "id": 3941334957,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941334957"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "stops using the affected rule immediately"
+      },
+      "title": "Withdraw invalidated baseline rules before merge",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941227276"
+    },
+    {
+      "claim_excerpt": "When work targets a release branch or historical SHA, validating the cookbook against the current default branch proves its provenance but not its applicability: that cookbook may describe workflows or repository behavior introduced after the target revision. Require discovery to bind accepted guidance to the code revision being operated ",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941227279,
+      "created_at": "2026-09-05T16:18:50Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "d3e0643e3d680f8dd872661d43f55f2485040128",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Active cookbook guidance must now be bound to the target code revision or an explicitly demonstrated compatible revision range; default-branch provenance alone is insufficient for release-branch or historical-SHA work. Missing applicability yields `REPROBE_REQUIRED`.",
+        "created_at": "2026-09-05T16:58:47Z",
+        "id": 3941335258,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941335258"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "target code revision being operated on"
+      },
+      "title": "Bind cookbook guidance to the target revision",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941227279"
+    },
+    {
+      "claim_excerpt": "When an accepted cookbook has an unmerged modification, this route exposes only `COOKBOOK_CANDIDATE` and prohibits using it as authority, while §6.1 says the accepted baseline remains operational. Because the states are modeled as mutually exclusive branches, an implementation must either stop using valid baseline guidance or risk loading",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941250009,
+      "created_at": "2026-09-05T16:27:20Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "80b7b957f250ea0f982f2e3189ef75d794132adc",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Discovery now models `ACCEPTED_BASELINE` and `CANDIDATE_OVERLAY` independently. Ordinary work uses the accepted bytes when valid; candidate bytes remain review/evaluation-only unless explicitly authorized.",
+        "created_at": "2026-09-05T16:59:05Z",
+        "id": 3941335906,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941335906"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "candidate overlay"
+      },
+      "title": "Preserve the active baseline alongside a candidate",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941250009"
+    },
+    {
+      "claim_excerpt": "When a release omits the tag permitted to be optional here, it cannot satisfy the required acceptance check in §9.2 that `release_tag` point to `source_commit`; the registry example likewise supplies no tag-free validation path. Two implementations can therefore disagree on whether an otherwise valid immutable artifact is releasable. Eith",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941250011,
+      "created_at": "2026-09-05T16:27:20Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "80b7b957f250ea0f982f2e3189ef75d794132adc",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Canonical skill releases now require immutable namespaced Git tags; candidate/unreleased work has no release tag. This makes the existing `release_tag -> source_commit` acceptance check unconditional for releases.",
+        "created_at": "2026-09-05T16:59:17Z",
+        "id": 3941336397,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941336397"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "immutable namespaced Git tags"
+      },
+      "title": "Make release tags consistently mandatory or optional",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941250011"
+    },
+    {
+      "claim_excerpt": "When a runtime reports that a skill loaded but provides no evidence that it was invoked, the `load/execution` union allows `EXECUTION_EVIDENCE` to be marked observed even though execution remains unproven. This recreates the state collapse the surrounding contract is intended to prevent; loading should be represented separately (or by `AC",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941250014,
+      "created_at": "2026-09-05T16:27:20Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "80b7b957f250ea0f982f2e3189ef75d794132adc",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. `LOAD_EVIDENCE` and `EXECUTION_EVIDENCE` are now separate dimensions; a successful load never proves invocation, so execution remains `NOT_OBSERVED`/`UNKNOWN` until actually observed.",
+        "created_at": "2026-09-05T16:59:34Z",
+        "id": 3941337087,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941337087"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "LOAD_EVIDENCE"
+      },
+      "title": "Keep load observations out of execution evidence",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941250014"
+    },
+    {
+      "claim_excerpt": "When an operational lesson repeats across tasks or projects but does not change the routing contract, this transition still sends it to a candidate skill. That contradicts the thin-router boundary defined in §§8.1–8.2 and §12, where procedures remain in cookbooks and only routing-contract changes version a skill; implementing this loop wo",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941273758,
+      "created_at": "2026-09-05T16:36:28Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Repeated procedural lessons remain in cookbooks or higher-level methodology unless the evidence demonstrates an actual cross-project routing-contract change; only then can a thin-skill change be proposed.",
+        "created_at": "2026-09-05T16:59:48Z",
+        "id": 3941337698,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941337698"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "repeated procedural lessons"
+      },
+      "title": "Keep generalized procedures out of thin routing skills",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941273758"
+    },
+    {
+      "claim_excerpt": "In a repository where checks, bot review, or automated merge can accept a change, these bullets make tests and reviewers decide promotability while reserving explicit human control only for installing the resulting skill. That no longer guarantees the document's rule that humans approve both promotion and runtime updates: cookbook activat",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941273762,
+      "created_at": "2026-09-05T16:36:28Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. Promotion now requires an explicit authorized human acceptance event after tests/review, and that promotion gate is explicitly separate from the later manual runtime-install/update gate. Bot review or automated merge alone cannot promote authority.",
+        "created_at": "2026-09-05T17:00:04Z",
+        "id": 3941338279,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941338279"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "explicit authorized human acceptance"
+      },
+      "title": "Preserve a separate human promotion gate",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941273762"
+    },
+    {
+      "claim_excerpt": "Because this document explicitly remains design-only and reports no implementation or long-horizon evaluation, calling the architecture an “engineering realization” overstates what has been demonstrated. The repository's published AutoMem study evaluates semantic-memory resources and helper enrichment, not experience-to-skill distillation",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "comment_id": 3941273765,
+      "created_at": "2026-09-05T16:36:28Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "2f95ad77abfb74f62e9de87ed46cad1621909aa7",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `f55c02dc2649096028d87d01e8930213df13b1ca`. The AutoMem relationship is now explicitly a proposed, testable synthesis, not an engineering realization or implementation result. The text states that long-horizon adaptation remains unproven until implementation and evaluation.",
+        "created_at": "2026-09-05T17:00:18Z",
+        "id": 3941338883,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941338883"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "proposed, testable synthesis"
+      },
+      "title": "Describe the architecture as a hypothesis, not a realization",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941273765"
+    },
+    {
+      "claim_excerpt": "If a dirty worktree deletes `docs/cookbook/README.md` while the accepted target revision still contains an active cookbook, this filesystem-only condition enters `NO_COOKBOOK` and proposes bootstrapping, contradicting the independent baseline/overlay model above and discarding the accepted guidance that ordinary work should continue using",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "comment_id": 3941340527,
+      "created_at": "2026-09-05T17:00:56Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`. Cookbook existence/absence is now derived only from the accepted canonical revision applicable to the target; a dirty/unmerged deletion is explicitly a candidate deletion/tombstone and cannot trigger NO_COOKBOOK.",
+        "created_at": "2026-09-05T21:33:02Z",
+        "id": 3942122790,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942122790"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "existence or absence is derived only from the accepted canonical revision"
+      },
+      "title": "Derive cookbook absence from the accepted baseline",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941340527"
+    },
+    {
+      "claim_excerpt": "When one cookbook rule is invalidated while other rules remain applicable, this single-valued baseline state cannot represent the condition required by lines 118 and 193: marking the baseline `REPROBE_REQUIRED` withdraws valid guidance, while leaving it `ACTIVE` keeps the invalid rule available. Track status and target-revision applicabil",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "comment_id": 3941350005,
+      "created_at": "2026-09-05T17:03:47Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`. Accepted cookbook state is now rule-scoped: each stable rule_id carries independent ACTIVE / REPROBE_REQUIRED / UNKNOWN / DEPRECATED state plus digest and applicability boundary, so one invalid rule does not withdraw neighboring valid guidance.",
+        "created_at": "2026-09-05T21:33:04Z",
+        "id": 3942122849,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942122849"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "rule_id -> ACTIVE"
+      },
+      "title": "Model accepted-baseline status per rule",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941350005"
+    },
+    {
+      "claim_excerpt": "When the purported fresh evidence exists only in a dirty worktree, contributor PR, or one agent's transient observation, this rule does not define who may revoke accepted guidance or where that revocation survives for subsequent discovery. Implementations can therefore either let untrusted candidate material disable accepted rules or reac",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "comment_id": 3941350007,
+      "created_at": "2026-09-05T17:03:47Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`. Immediate invalidation now distinguishes per-execution fail-closed behavior from durable cross-session revocation. Durable withdrawal requires trusted provenance-bound evidence plus a rule-scoped receipt bound to the accepted-rule digest and explicit authorized human acceptan",
+        "created_at": "2026-09-05T21:33:05Z",
+        "id": 3942122890,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942122890"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "trusted, durable, rule-scoped invalidation receipt"
+      },
+      "title": "Authenticate and persist immediate invalidations",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941350007"
+    },
+    {
+      "claim_excerpt": "When a PR is updated after approval or a release commit/tag is produced after the acceptance event, this chronological gate can still be satisfied even though the authorized human never accepted the final cookbook bytes or canonical skill identity. Record acceptance against an immutable commit, tree, or digest and require the merged/relea",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "comment_id": 3941350011,
+      "created_at": "2026-09-05T17:03:47Z",
+      "evidence_level": "AUTHOR_DESIGN_CORRECTION_CLAIM_PLUS_HEAD_TEXT_ANCHOR",
+      "original_commit": "f55c02dc2649096028d87d01e8930213df13b1ca",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": {
+        "claimed_correction_excerpt": "Fixed on exact head `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`. Human promotion acceptance is now bound to an immutable promoted-artifact identity (tree/content digest or canonical skill commit+SHA-256+release tag); any material artifact change makes prior acceptance stale and requires explicit re-acceptance.",
+        "created_at": "2026-09-05T21:33:06Z",
+        "id": 3942122948,
+        "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942122948"
+      },
+      "source_witness": {
+        "anchor_present_at_reviewed_commit": false,
+        "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+        "scope": "design document text, NOT runtime implementation or independent functional test",
+        "sha": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+        "source_file_modified_after_reviewed_commit": true,
+        "source_text_anchor": "human acceptance record must bind the exact artifact"
+      },
+      "title": "Bind human acceptance to the exact promoted artifact",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3941350011"
+    },
+    {
+      "claim_excerpt": "When an accepted canonical cookbook exists but none of its rules covers a historical target revision, deriving cookbook existence from a revision that is itself “applicable to the target” can classify the cookbook as `ABSENT` and enter the bootstrap path. That conflicts with the per-rule applicability model: discovery should report the ac",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "comment_id": 3942132718,
+      "created_at": "2026-09-05T21:37:46Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": null,
+      "source_witness": null,
+      "title": "Keep cookbook existence independent of target applicability",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132718"
+    },
+    {
+      "claim_excerpt": "When directly verified contradictory evidence is found but an authorized human cannot accept the durable receipt before the execution ends, this permits only a transient `INVALIDATION_PENDING_PERSISTENCE`; the next session can reread the unchanged baseline and activate the known-bad rule again. Persist a non-authoritative quarantine/evide",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "comment_id": 3942132722,
+      "created_at": "2026-09-05T21:37:46Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": null,
+      "source_witness": null,
+      "title": "Persist pending invalidations across execution boundaries",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132722"
+    },
+    {
+      "claim_excerpt": "When an automated merge or direct push places cookbook bytes on the authoritative remote without the required human gate, this discovery predicate can still treat their rules as `ACTIVE` because it verifies remote provenance and applicability but does not require a durable acceptance record bound to the exact rule/revision digest. Fresh e",
+      "claim_type": "DESIGN_CONTRACT_CANDIDATE",
+      "comment_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "comment_id": 3942132724,
+      "created_at": "2026-09-05T21:37:46Z",
+      "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
+      "original_commit": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056",
+      "path": "docs/superpowers/specs/2026-09-05-versioned-skills-repository-cookbooks-design.md",
+      "pr": 8,
+      "reply": null,
+      "source_witness": null,
+      "title": "Verify exact human acceptance during cookbook discovery",
+      "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132724"
+    }
+  ],
+  "definition": "36 review comment threads (not 36 independent defects); 29 have author correction claims and seven have no inline author reply",
+  "limitations": [
+    "Reply is not independent validation of claimed repair",
+    "PR8 is design-only; text anchor does not establish implementation",
+    "All findings are candidates until reproduced/verified at claim level",
+    "No reply does not prove no fix elsewhere",
+    "Review threads can cover correlated/duplicate underlying causes"
+  ],
+  "retrieved_at": "2026-10-29",
+  "reviewed_heads": {
+    "5": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "8": "4ebaae08fa15c4c7e77b1db7879186b7d3d78056"
+  },
+  "schema": "theseus.paper.review-comment-audit.v1",
+  "source": "GitHub PR review comment REST collection, complete paginated replies"
+}
