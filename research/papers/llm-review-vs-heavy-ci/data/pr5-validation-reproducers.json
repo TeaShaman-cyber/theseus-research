@@ -1,0 +1,50 @@
+[
+  {
+    "case": "status_typo",
+    "review_comment_id": 3939739198,
+    "before_sha": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+    "after_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "before_validation_errors": [],
+    "after_validation_errors": [
+      "invalid status for theseus-needle-lab: activ"
+    ],
+    "result": "RED_BEFORE_GREEN_AFTER_VALIDATION",
+    "scope": "pure registry validator, synthetic in-memory invalid entry; not an end-to-end GitHub write"
+  },
+  {
+    "case": "empty_component",
+    "review_comment_id": 3939807477,
+    "before_sha": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+    "after_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "before_validation_errors": [],
+    "after_validation_errors": [
+      "public line theseus-needle-lab requires repository"
+    ],
+    "result": "RED_BEFORE_GREEN_AFTER_VALIDATION",
+    "scope": "pure registry validator, synthetic in-memory invalid entry; not an end-to-end GitHub write"
+  },
+  {
+    "case": "private_identity",
+    "review_comment_id": 3939993038,
+    "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+    "after_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "before_validation_errors": [],
+    "after_validation_errors": [
+      "private-incubation line sonar must omit repository"
+    ],
+    "result": "RED_BEFORE_GREEN_AFTER_VALIDATION",
+    "scope": "pure registry validator, synthetic in-memory invalid entry; not an end-to-end GitHub write"
+  },
+  {
+    "case": "visibility_mismatch",
+    "review_comment_id": 3939993043,
+    "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+    "after_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "before_validation_errors": [],
+    "after_validation_errors": [
+      "visibility/status mismatch for theseus-needle-lab: public/private-incubation"
+    ],
+    "result": "RED_BEFORE_GREEN_AFTER_VALIDATION",
+    "scope": "pure registry validator, synthetic in-memory invalid entry; not an end-to-end GitHub write"
+  }
+]

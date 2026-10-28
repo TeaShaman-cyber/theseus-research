@@ -68,6 +68,28 @@ before converting preliminary observations into final results.
 
 These are archival review traces, not accepted/merged study interventions.
 
+A [source-level audit](data/2026-10-29-codex-review-audit.md) of
+the GitHub inline REST comments found **36 distinct bot-authored review
+remarks** (13 on #5 and 23 on #8), plus 29 author replies. These are
+**not 36 unique defects**. Four PR #5 validation failures were
+independently reproduced with the same synthetic invalid inputs on
+original and later exact source commits: unrecognized status, malformed
+repository identity, private-incubation repository identity and
+visibility/status mismatch. In all four cases the older validator
+accepted invalid input and the later validator rejected it; **this
+does not establish a real-world data leak or an accepted production
+deployment**. Another five comments had corresponding exact-head
+regression tests (the full historical 45/45 suite passed) but no
+independent pre-fix reproducer in this audit. Twenty #8 threads had
+author replies and related revised design text only; no code behavior
+was verified. Seven comments (four #5, three #8) had no inline
+author reply, with correction status outside the thread UNKNOWN.
+
+This stratification prevents conflating review suggestions, developer
+fix claims, source tests, and independently reproduced behavior.
+The exact [36-row comment inventory](data/review-comments.json) links
+each comment and correction reply to its original SHA and evidence level.
+
 ### 2.2 Test-focused trace B
 
 The [client mutation issue #22](https://github.com/TeaShaman-cyber/theseus-1f916-client/issues/22)
@@ -98,12 +120,14 @@ production defects, nor evidence that the methods were experimentally
 matched. The `ackable_cursor` triage is a negative control: seven survivors,
 zero classified `REAL_TEST_GAP`, and no score-chasing PR.
 
-## 3. Claim coding and analysis plan (NOT YET EXECUTED)
+## 3. Claim coding and analysis plan (PARTIALLY EXECUTED)
 
 For every candidate claim record: repository, PR/issue, exact source SHA,
 timestamp, originating instrument, original claim, independently observed
-reproducer, accepted regression, evidence URL, and disposition. Classification
-must precede any computed comparison.
+reproducer, accepted regression, evidence URL, and disposition. The first retrospective claim classification is recorded in the review
+comment inventory; independent red-before/green-after verification remains
+partial. A prospective comparison still requires frozen coding rules
+**before** execution.
 
 - `QUESTION_ONLY`: plausible question, no confirmed failure.
 - `CONFIRMED_GAP`: reproducible missing behavior or violated invariant.
@@ -114,14 +138,18 @@ must precede any computed comparison.
 **Cheap baseline:** independently confirmed gaps and regression tests, not
 reviewer verbosity or raw mutation score. Quantitative defect rates,
 statistical tests, reviewer costs and time-to-disposition are **NOT MEASURED**.
-A source-index manifest now records the five historical runs and the seven
-test names; it is an audit of archived evidence, **not** a new test execution
-or a controlled experimental dataset. Review-claim coding is still pending.
+A source-index manifest now records the five historical mutation runs and
+seven test names. A separate historical review-comment manifest records
+36 Codex comments, response evidence, four independently probed validation
+gaps, and explicit UNKNOWN dispositions. Both are **archival audits**,
+not a matched cross-method dataset or a prospective experiment.
 
 ## 4. Preliminary observations (archival, non-causal)
 
-The source note documents review requests extending beyond the currently
-encoded test contract into architecture, privacy and authority boundaries.
+The new review audit documents directly observed validation gaps and
+a larger set of design-review questions spanning architecture, privacy,
+currentness and authority boundaries. Only four specific validator
+behaviors have independent red-before/green-after proof so far.
 In the bounded client sequence, added regression tests correspond to 33
 fewer surviving mutants across the archived snapshots. The counts may
 include multiple mutants per invariant; neither method's general efficacy,
@@ -134,8 +162,10 @@ metric optimization when no actual test gap is identified.
 
 1. **Selection and confounding:** the two modes concern different repos,
    tasks, maturity and calendar times. No causal A/B inference is possible.
-2. **Measurement units:** review requests, verified findings, mutants,
-   underlying defects and accepted tests are not interchangeable.
+2. **Measurement units:** 36 Codex inline remarks include correlated
+   design questions, 29 separate maintainer replies, and only four
+   independently reproduced validator gaps. None of these quantities
+   is interchangeable with 597 mutants, distinct defects or accepted tests.
 3. **Mutation comparability:** exact baseline SHA, source Git blob, profile
    files and constant 597-mutant denominator are now source-verified; no new
    cross-host reproduction of the generated mutation set was performed.
@@ -162,8 +192,10 @@ outcomes. Such an experiment has **not been approved or run** under #97.
 
 ## 7. Provisional conclusion
 
-The existing evidence warrants a transparent observational case study
-and a hypothesis about complementary QA roles. It does not demonstrate
+The archived evidence now includes independently confirmed validation
+errors, nine head regression-test witnesses, and a separate design-only
+review set. These justify a transparent observational case study and a
+hypothesis about complementary QA roles. It does not demonstrate
 causal superiority, replacement of independent review, or one defect for
 every killed mutation. The mutation-track source audit is complete
 within its stated historical-log scope; review-claim coding and related
