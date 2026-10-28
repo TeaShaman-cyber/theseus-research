@@ -11,7 +11,7 @@ silently changing the source report or promoting new research conclusions.
 
 - [manuscript](manuscript.md): paper skeleton, empirical claims and unknowns.
 - [references](references.bib): verified first-party artifacts only.
-- [source inventory](data/README.md): immutable pointers and extraction gaps.
+- [source inventory](data/README.md): primary GitHub receipts, audit and remaining gaps.
 
 ## Research contract
 
