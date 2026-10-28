@@ -76,17 +76,27 @@ in those rounds. Historical mutation witness snapshots:
 
 | Step | Exact source head of PR | Added behavioral tests | Killed | Survived |
 | --- | --- | ---: | ---: | ---: |
-| pre-#36 baseline | **exact baseline SHA to reverify** | — | 391 | 206 |
+| [pre-#36 baseline](https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35518827962), `2a8cd41a194c00841e367919ce8449f9e0814119` | 0 | 391 | 206 |
 | [#36](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/36), `8707bfb4cecaafbb337603bcafa5c586c92b92db` | 2 | 397 | 200 |
 | [#37](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/37), `e0811d8e3667e9f0f98a82b67183e4294b4cb542` | 2 | 403 | 194 |
 | [#39](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/39), `f4401c67ac75967118355d7b9039bf846f6eda2c` | 2 | 408 | 189 |
 | [#40](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/40), `a669a1c8500c02c86bfb3aef6f77579e15c1c0b7` | 1 | 424 | 173 |
 
-The original note reports **seven added tests** and **no production-code
-changes** across this slice. Source hashes and mutation configuration need
-to be audited before a publication-grade longitudinal inference.
-The `ackable_cursor` triage was a negative control: seven surviving
-mutants, zero classified `REAL_TEST_GAP`, and no score-chasing PR.
+The five [original hosted mutation logs](data/2026-10-29-mutation-source-audit.md)
+have now been read, and their exact source commits independently matched to
+GitHub Actions. All five runs share the exact `forum_state.py` Git blob,
+mutation configuration, pinned dependency lock, runner script and workflow;
+each reports `597` total mutants, `mutmut 3.8.0`, and zero incomplete
+categories. GitHub diffs confirm each PR adds **only tests**, specifically
+2 + 2 + 2 + 1 named test functions. Canonical QA and property runs are
+`success` at the same five exact heads. Mutation workflows deliberately
+report `failure` for remaining mutants (`SURVIVORS_PRESENT`).
+
+Thus the +33 killed-mutant change is a **source/profile-held-constant
+historical observation**. It is not a count of independently confirmed
+production defects, nor evidence that the methods were experimentally
+matched. The `ackable_cursor` triage is a negative control: seven survivors,
+zero classified `REAL_TEST_GAP`, and no score-chasing PR.
 
 ## 3. Claim coding and analysis plan (NOT YET EXECUTED)
 
@@ -104,7 +114,9 @@ must precede any computed comparison.
 **Cheap baseline:** independently confirmed gaps and regression tests, not
 reviewer verbosity or raw mutation score. Quantitative defect rates,
 statistical tests, reviewer costs and time-to-disposition are **NOT MEASURED**.
-No new event dataset is claimed.
+A source-index manifest now records the five historical runs and the seven
+test names; it is an audit of archived evidence, **not** a new test execution
+or a controlled experimental dataset. Review-claim coding is still pending.
 
 ## 4. Preliminary observations (archival, non-causal)
 
@@ -124,8 +136,10 @@ metric optimization when no actual test gap is identified.
    tasks, maturity and calendar times. No causal A/B inference is possible.
 2. **Measurement units:** review requests, verified findings, mutants,
    underlying defects and accepted tests are not interchangeable.
-3. **Mutation comparability:** baseline SHA, config/profile, generator
-   population and numerator/denominator require independent confirmation.
+3. **Mutation comparability:** exact baseline SHA, source Git blob, profile
+   files and constant 597-mutant denominator are now source-verified; no new
+   cross-host reproduction of the generated mutation set was performed.
+   Mutants remain correlated and their kill-count is not a unique-bug count.
 4. **Missingness:** archival review iterations, rate-limit events,
    negative findings and labor costs may be incompletely preserved.
 5. **External validity:** a bounded single-ecosystem comparison cannot
@@ -151,7 +165,9 @@ outcomes. Such an experiment has **not been approved or run** under #97.
 The existing evidence warrants a transparent observational case study
 and a hypothesis about complementary QA roles. It does not demonstrate
 causal superiority, replacement of independent review, or one defect for
-every killed mutation. Publication claims await the source audit.
+every killed mutation. The mutation-track source audit is complete
+within its stated historical-log scope; review-claim coding and related
+scholarly literature assessment remain incomplete.
 
 ## Availability and status
 

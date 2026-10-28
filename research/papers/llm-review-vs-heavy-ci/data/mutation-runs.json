@@ -1,0 +1,134 @@
+{
+  "engine": {
+    "name": "mutmut",
+    "version": "3.8.0"
+  },
+  "evidence": "GitHub-hosted mutation workflow log receipts and exact PR file changes (read 2026-10-29)",
+  "purpose": "Source-bound historical measurements, NOT a new experiment or independent rerun",
+  "schema": "theseus.paper.mutation-log-audit.v1",
+  "scope": {
+    "mutant_population": 597,
+    "only_mutate": "forum_state.py",
+    "tests": "tests/test_durable_state.py"
+  },
+  "snapshots": [
+    {
+      "added_behavioral_tests": [],
+      "mutation_ci_conclusion": "failure",
+      "mutation_receipt_status": "SURVIVORS_PRESENT",
+      "mutation_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35518827962",
+      "property_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35518827883",
+      "qa_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35518827882",
+      "source_sha": "2a8cd41a194c00841e367919ce8449f9e0814119",
+      "stage": "baseline",
+      "stats": {
+        "killed": 391,
+        "no_tests": 0,
+        "segfault": 0,
+        "survived": 206,
+        "suspicious": 0,
+        "timeout": 0,
+        "total": 597
+      },
+      "test_change_file": null
+    },
+    {
+      "added_behavioral_tests": [
+        "test_commit_verified_ack_refuses_recovery_state_directly",
+        "test_commit_verified_ack_updates_timestamp_from_supplied_clock"
+      ],
+      "mutation_ci_conclusion": "failure",
+      "mutation_receipt_status": "SURVIVORS_PRESENT",
+      "mutation_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525307620",
+      "property_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525307633",
+      "qa_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525307624",
+      "source_sha": "8707bfb4cecaafbb337603bcafa5c586c92b92db",
+      "stage": "PR-36",
+      "stats": {
+        "killed": 397,
+        "no_tests": 0,
+        "segfault": 0,
+        "survived": 200,
+        "suspicious": 0,
+        "timeout": 0,
+        "total": 597
+      },
+      "test_change_file": "tests/test_durable_state.py"
+    },
+    {
+      "added_behavioral_tests": [
+        "test_bank_without_explicit_clock_uses_now_for_new_page_and_updated_at",
+        "test_fresh_bank_recovery_reset_starts_new_state_at_bank_time"
+      ],
+      "mutation_ci_conclusion": "failure",
+      "mutation_receipt_status": "SURVIVORS_PRESENT",
+      "mutation_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525986665",
+      "property_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525986660",
+      "qa_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35525986717",
+      "source_sha": "e0811d8e3667e9f0f98a82b67183e4294b4cb542",
+      "stage": "PR-37",
+      "stats": {
+        "killed": 403,
+        "no_tests": 0,
+        "segfault": 0,
+        "survived": 194,
+        "suspicious": 0,
+        "timeout": 0,
+        "total": 597
+      },
+      "test_change_file": "tests/test_durable_state.py"
+    },
+    {
+      "added_behavioral_tests": [
+        "test_canonical_state_missing_required_field_fails_as_state_error",
+        "test_canonical_state_rejects_unsupported_recovery_kind"
+      ],
+      "mutation_ci_conclusion": "failure",
+      "mutation_receipt_status": "SURVIVORS_PRESENT",
+      "mutation_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35526782335",
+      "property_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35526782343",
+      "qa_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35526782346",
+      "source_sha": "f4401c67ac75967118355d7b9039bf846f6eda2c",
+      "stage": "PR-39",
+      "stats": {
+        "killed": 408,
+        "no_tests": 0,
+        "segfault": 0,
+        "survived": 189,
+        "suspicious": 0,
+        "timeout": 0,
+        "total": 597
+      },
+      "test_change_file": "tests/test_durable_state.py"
+    },
+    {
+      "added_behavioral_tests": [
+        "test_canonical_recovery_state_loads_and_reports_recovery_required"
+      ],
+      "mutation_ci_conclusion": "failure",
+      "mutation_receipt_status": "SURVIVORS_PRESENT",
+      "mutation_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35527004335",
+      "property_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35527004292",
+      "qa_run": "https://github.com/TeaShaman-cyber/theseus-1f916-client/actions/runs/35527004299",
+      "source_sha": "a669a1c8500c02c86bfb3aef6f77579e15c1c0b7",
+      "stage": "PR-40",
+      "stats": {
+        "killed": 424,
+        "no_tests": 0,
+        "segfault": 0,
+        "survived": 173,
+        "suspicious": 0,
+        "timeout": 0,
+        "total": 597
+      },
+      "test_change_file": "tests/test_durable_state.py"
+    }
+  ],
+  "stable_git_blobs": {
+    ".github/workflows/mutation-test.yml": "2bc813ba3faa80d64b1951ea7da415a25f8220be",
+    "forum_state.py": "eed04f7c5a82ea9e074069519eaa9c0eeb41ebd5",
+    "requirements/ci-mutation.txt": "4768092045795a7925b84bf3b84d85cfc79cea2f",
+    "setup.cfg": "b219ea667955b9f3534699e8636948198f51d137",
+    "tools/ci/mutation-test": "6126df39907914f99a47ce9c9a1ea8aacdcf9663"
+  }
+}
