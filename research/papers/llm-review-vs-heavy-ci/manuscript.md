@@ -118,10 +118,12 @@ real-bug detection, synthetic mutants, industrial test acceptance,
 and agent action coverage. Our retrospective comparison currently
 offers *source-linked evidence levels* rather than a unified defect
 oracle: nine independently reproduced **source-scoped** behavioral
-gaps in historical PR #5 code (four validation guards and five other
-behaviors), twenty design-text correction claims in PR #8, seven
-unresponded inline review threads, and a separate constant-source
-597-mutant historical test series. These counts
+gaps repaired within the closed PR #5 candidate head, four further
+source-scoped behavior corrections traced to later merged PR #46 (one
+with divergent status/exit-code semantics), twenty design-text
+correction claims in PR #8, and three PR #8 threads with no reply.
+The separate test-only trace has a constant-source 597-mutant
+historical series. These counts
 must not be pooled into a single performance score.
 
 The potential contribution is the provenance-bound observation
@@ -173,7 +175,13 @@ persistence were probed. No real GitHub writes, real-world data
 disclosure or production deployment are implied. Twenty #8 threads had
 author replies and related revised design text only; no code behavior
 was verified. Seven comments (four #5, three #8) had no inline
-author reply, with correction status outside the thread UNKNOWN.
+author reply. Cross-PR tracing now connects the four unanswered
+PR #5 comments to later merged PR #46 source: all four demonstrate
+bounded behavior transitions, but the JSON-publication-failure case
+preserves the report using nested `drift_issue.status=UNREACHABLE`
+and exit 2, not the reviewer's requested global `UNREACHABLE`
+and exit 3. The three PR #8 unanswered threads still lack
+source-level implementation/disposition evidence.
 
 This stratification prevents conflating review suggestions, developer
 fix claims, source tests, and independently reproduced behavior.
@@ -182,6 +190,12 @@ each comment and correction reply to its original SHA and evidence level.
 The [five additional independent historical reproductions](data/2026-10-29-pr5-five-redgreen-audit.md)
 and [read-only reproduction script](analysis/reproduce_pr5_remaining.py)
 document the added five cases; the earlier four are unchanged.
+The separate [cross-PR continuity audit](data/2026-10-29-pr5-cross-pr-continuity.md)
+and [four three-version reproductions](data/pr5-unanswered-continuity-results.json)
+trace the remaining PR #5 comments from the unmerged candidate
+through individual fixes and accepted PR #46 to current main.
+Missing original inline replies remain a fact; accepted-source
+behavioral correction is a separate evidence dimension.
 
 ### 3.2 Test-focused trace B
 
@@ -234,17 +248,21 @@ statistical tests, reviewer costs and time-to-disposition are **NOT MEASURED**.
 A source-index manifest now records the five historical mutation runs and
 seven test names. A separate historical review-comment manifest records
 36 Codex comments, response evidence, nine independently reproduced
-historical PR #5 behaviors, and explicit UNKNOWN dispositions. Both are **archival audits**,
+historical PR #5 behaviors, four separately reproduced later
+accepted-source transitions, and three PR #8 unanswered questions. Both are **archival audits**,
 not a matched cross-method dataset or a prospective experiment.
 
 ## 5. Preliminary observations (archival, non-causal)
 
 The new review audit documents directly observed validation gaps and
 a larger set of design-review questions spanning architecture, privacy,
-currentness and authority boundaries. All nine replied-to PR #5
-findings now have independent red-before/green-after historical
-source-level witnesses; the four unanswered PR #5 remarks remain
-uncertain outside their threads.
+currentness and authority boundaries. Nine replied-to PR #5 findings
+have historical candidate-level source witnesses; four no-reply PR #5
+comments were separately traced to accepted source through PR #46.
+One accepted repair intentionally leaves the overall drift status and
+exit code unchanged while recording publication failure in a nested
+field. The three unanswered PR #8 design comments remain unverified
+as implemented code.
 In the bounded client sequence, added regression tests correspond to 33
 fewer surviving mutants across the archived snapshots. The counts may
 include multiple mutants per invariant; neither method's general efficacy,
@@ -258,9 +276,10 @@ metric optimization when no actual test gap is identified.
 1. **Selection and confounding:** the two modes concern different repos,
    tasks, maturity and calendar times. No causal A/B inference is possible.
 2. **Measurement units:** 36 Codex inline remarks include correlated
-   design questions, 29 separate maintainer replies, and nine
-   independently reproduced historical source-level behavior gaps. None of these quantities
-   is interchangeable with 597 mutants, distinct defects or accepted tests.
+   design questions, 29 separate maintainer replies, nine candidate-head
+   behavior witnesses and four later accepted-source corrections (with
+   a semantic divergence in one). Neither the 13 source-scoped behavior
+   transitions nor the 597 mutants are necessarily distinct real defects.
 3. **Mutation comparability:** exact baseline SHA, source Git blob, profile
    files and constant 597-mutant denominator are now source-verified; no new
    cross-host reproduction of the generated mutation set was performed.
@@ -287,9 +306,10 @@ outcomes. Such an experiment has **not been approved or run** under #97.
 
 ## 8. Provisional conclusion
 
-The archived evidence now includes nine independently reproduced
-historical PR #5 behavior differences, nine head regression-test
-witnesses, and a separate design-only PR #8 review set. These justify a transparent observational case study and a
+The archive now includes nine independently reproduced historical
+PR #5 candidate-head behavior changes, four verified later cross-PR
+transitions in accepted code, nine candidate-head regression tests,
+and a separate design-only PR #8 review set. These justify a transparent observational case study and a
 hypothesis about complementary QA roles. It does not demonstrate
 causal superiority, replacement of independent review, or one defect for
 every killed mutation. The mutation-track source audit is complete

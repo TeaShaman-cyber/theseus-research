@@ -1,0 +1,128 @@
+[
+  {
+    "after": {
+      "calls": [
+        "/search/repositories?q=user%3ATeaShaman-cyber+theseus+in%3Aname%2Cdescription+is%3Apublic&per_page=100"
+      ],
+      "count": 0,
+      "private_candidate_included": false
+    },
+    "assertion_status": "PASS",
+    "before": {
+      "calls": [
+        "/search/repositories?q=user%3ATeaShaman-cyber+theseus+in%3Aname%2Cdescription&per_page=100"
+      ],
+      "count": 1,
+      "private_candidate_included": true
+    },
+    "canonical_merge_pr": 46,
+    "canonical_merge_sha": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+    "case": "private_discovery",
+    "comment_id": 3941398477,
+    "comment_url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398477",
+    "current_main_sha": "362ef9caebc775f09e75bccc408823849a493984",
+    "first_fix": {
+      "calls": [
+        "/search/repositories?q=user%3ATeaShaman-cyber+theseus+in%3Aname%2Cdescription+is%3Apublic&per_page=100"
+      ],
+      "count": 0,
+      "private_candidate_included": false
+    },
+    "first_fix_sha": "1fc4416da7754208f7e913f2ef584ddd269eef29",
+    "historical_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "source_scope": "isolated historical Git source, synthetic inputs; no real GitHub writes"
+  },
+  {
+    "after": {
+      "error": "incomplete repository search results",
+      "exception": "GitHubUnavailable",
+      "fail_closed": true
+    },
+    "assertion_status": "PASS",
+    "before": {
+      "candidate_count": 0,
+      "exception": null,
+      "fail_closed": false
+    },
+    "canonical_merge_pr": 46,
+    "canonical_merge_sha": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+    "case": "incomplete_search",
+    "comment_id": 3941398481,
+    "comment_url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398481",
+    "current_main_sha": "362ef9caebc775f09e75bccc408823849a493984",
+    "first_fix": {
+      "error": "incomplete repository search results",
+      "exception": "GitHubUnavailable",
+      "fail_closed": true
+    },
+    "first_fix_sha": "1fc4416da7754208f7e913f2ef584ddd269eef29",
+    "historical_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "source_scope": "isolated historical Git source, synthetic inputs; no real GitHub writes"
+  },
+  {
+    "after": {
+      "exception": null,
+      "exit_code": 2,
+      "main_status": "DECLARED_DRIFT",
+      "output_exists": true,
+      "publication_status": "UNREACHABLE"
+    },
+    "assertion_status": "PASS",
+    "before": {
+      "exception": "GitHubUnavailable",
+      "exit_code": null,
+      "main_status": null,
+      "output_exists": false,
+      "publication_status": null
+    },
+    "canonical_merge_pr": 46,
+    "canonical_merge_sha": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+    "case": "publication_failure",
+    "comment_id": 3941398485,
+    "comment_url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398485",
+    "current_main_sha": "362ef9caebc775f09e75bccc408823849a493984",
+    "first_fix": {
+      "exception": null,
+      "exit_code": 2,
+      "main_status": "DECLARED_DRIFT",
+      "output_exists": true,
+      "publication_status": "UNREACHABLE"
+    },
+    "first_fix_sha": "12d158d46fa4e2e22b1047563a4662a11ed4cf90",
+    "historical_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "source_scope": "isolated historical Git source, synthetic inputs; no real GitHub writes"
+  },
+  {
+    "after": {
+      "english_changed": false,
+      "exit_code": 4,
+      "injected_failure": true,
+      "russian_changed": false,
+      "status": "INVALID"
+    },
+    "assertion_status": "PASS",
+    "before": {
+      "english_changed": true,
+      "exit_code": 4,
+      "injected_failure": true,
+      "russian_changed": false,
+      "status": "INVALID"
+    },
+    "canonical_merge_pr": 46,
+    "canonical_merge_sha": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+    "case": "projection_rollback",
+    "comment_id": 3941398487,
+    "comment_url": "https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398487",
+    "current_main_sha": "362ef9caebc775f09e75bccc408823849a493984",
+    "first_fix": {
+      "english_changed": false,
+      "exit_code": 4,
+      "injected_failure": true,
+      "russian_changed": false,
+      "status": "INVALID"
+    },
+    "first_fix_sha": "64a01a45cccfe157c0a3ea3cdb49d0b3c1cf53d9",
+    "historical_sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
+    "source_scope": "isolated historical Git source, synthetic inputs; no real GitHub writes"
+  }
+]

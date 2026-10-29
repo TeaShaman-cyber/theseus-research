@@ -14,7 +14,7 @@ The GitHub review-comment REST collection has 65 entries: 36 Codex inline commen
 | Independent historical red-before/green-after behavior and passed head tests | 9 | 0 | **9** | Four validator guards and five more documented behaviors differ at exact source heads |
 | Test-only correction claims not independently reproduced | 0 | 0 | **0** | All nine replied-to PR #5 comments have isolated source-level behavior witnesses |
 | Author reports design correction, relevant text found in final draft | 0 | 20 | **20** | Revised design text; NOT implemented or runtime-verified |
-| No author reply in thread | 4 | 3 | **7** | No thread-level correction evidence; fix elsewhere UNKNOWN |
+| No author reply in thread | 4 | 3 | **7** | Thread fact only: PR #5's four later traced through PR #46; three PR #8 remain without code-level resolution |
 | **Distinct Codex comments** | **13** | **23** | **36** | Review observations, **not** defect counts |
 
 [PR #5](https://github.com/TeaShaman-cyber/theseus-research/pull/5) is CLOSED without merge; [PR #8](https://github.com/TeaShaman-cyber/theseus-research/pull/8) remains OPEN. Neither candidate head is accepted Theseus `main`.
@@ -64,7 +64,17 @@ Four final PR #5 comments have no inline author reply:
 [incomplete GitHub search](https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398481),
 [error-report preservation](https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398485),
 and [bilingual write atomicity](https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398487).
-This does not establish their resolution or non-resolution elsewhere.
+**Follow-up beyond the original PR thread is now verified:** all four
+historical PR #5 no-reply comments were traced to accepted source
+on [merged PR #46](https://github.com/TeaShaman-cyber/theseus-research/pull/46),
+with [four old -> first-fix -> main source-level reproductions](2026-10-29-pr5-cross-pr-continuity.md)
+and [exact results](pr5-unanswered-continuity-results.json).
+Three have bounded behavior corrections; the JSON-report case preserves
+the report but retains top-level `DECLARED_DRIFT` and exit 2 instead
+of the Codex-requested top-level `UNREACHABLE` and exit 3.
+These cross-PR facts do **not** create missing historical inline replies.
+The bilingual rollback covers recoverable `OSError` only, not crash
+atomicity.
 
 ## PR #8: design-level evidence only
 
@@ -93,6 +103,9 @@ demonstrated runtime defects.
 - This coding is **retrospective and not blinded or preregistered**.
 - The two review PRs and the client mutation PRs cover different projects,
   tasks and maturity. No causal A/B conclusion is justified.
-- All nine replied-to PR #5 comments have independent historical source
-  reproductions; four unanswered PR #5 threads remain UNKNOWN. A future
-  matched-sample study still needs a frozen, common cross-method oracle.
+- All thirteen PR #5 Codex comments now have source-level behavior
+  transitions: nine verified within the closed candidate head, four
+  independently traced to later accepted PR #46 source. One of the four
+  was only partially aligned with the reviewer-requested semantics.
+  Three PR #8 unanswered threads remain without code-level disposition.
+  A future matched study still needs a common, frozen defect oracle.
