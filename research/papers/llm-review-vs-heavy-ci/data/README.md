@@ -2,6 +2,7 @@
 
 **Status:** historical mutation CI audit VERIFIED; Codex review comment census and four validation reproducers VERIFIED. Broader review dispositions, runtime implementation, and prospective matched study remain OPEN.
 
+- [Related-work primary-source evidence matrix](2026-10-29-related-work-evidence.md)
 - [Original CI log source audit](2026-10-29-mutation-source-audit.md)
 - [Five-run machine-readable evidence manifest](mutation-runs.json)
 - [Codex review source audit](2026-10-29-codex-review-audit.md)

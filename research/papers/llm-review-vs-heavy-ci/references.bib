@@ -1,5 +1,6 @@
-% First-party historical references only; academic related work is TBD.
-% These are engineering artifacts, NOT peer-reviewed scholarship.
+% First-party historical evidence below is NOT peer-reviewed scholarship.
+% Scholarly works below are verified against DOI/Crossref and primary text.
+% See data/2026-10-29-related-work-evidence.md for limits and Notion leads.
 @misc{theseus2026comparison,
   title = {Codex review vs heavy CI: an observational comparison},
   year = {2026},
@@ -19,4 +20,76 @@
   year = {2026},
   howpublished = {Theseus client issue 22 and linked pull requests},
   url = {https://github.com/TeaShaman-cyber/theseus-1f916-client/issues/22}
+}
+
+% Peer-reviewed ISSTA 2026; DOI metadata verified from Crossref.
+@article{zheng2026mcrbench,
+  author = {Zheng, Dewu and Wang, Yanlin and Wang, Xiwen and Duan, Kefeng and Zhang, Hongyu and Liu, Xilin and Ma, Yuchi and Zheng, Zibin},
+  title = {From Static to Dynamic: Benchmarking Real-World Code Review with {MCR-Bench}},
+  journal = {Proceedings of the ACM on Software Engineering},
+  year = {2026},
+  volume = {3},
+  number = {ISSTA},
+  pages = {2928--2951},
+  doi = {10.1145/3832219},
+  url = {https://doi.org/10.1145/3832219},
+  eprint = {2608.27442},
+  archivePrefix = {arXiv}
+}
+
+% Peer-reviewed ISSTA 2026; LLM-generated suites, NOT the Theseus test suite.
+@article{zhao2026mutationscore,
+  author = {Zhao, Junda and Zhou, Shurui and Cohen, Eldan},
+  title = {Do Coverage and Mutation Scores of {LLM}-Generated Test Suites Correlate with Their Effectiveness? (Replicability Study)},
+  journal = {Proceedings of the ACM on Software Engineering},
+  year = {2026},
+  volume = {3},
+  number = {ISSTA},
+  pages = {30--53},
+  doi = {10.1145/3832093},
+  url = {https://doi.org/10.1145/3832093},
+  eprint = {2607.22880},
+  archivePrefix = {arXiv}
+}
+
+% Actual FSE 2025 publisher DOI, verified by Crossref:
+% 10.1145/3663529.3663839 belongs to a DIFFERENT Meta 2024 paper.
+@inproceedings{harman2025ach,
+  author = {Harman, Mark and Ritchey, Jillian and Harper, Inna and Sengupta, Shubho and Mao, Ke and Gulati, Abhishek and Foster, Christopher and Robert, Herv{\'e}},
+  title = {Mutation-Guided {LLM}-based Test Generation at {Meta}},
+  booktitle = {Proceedings of the 33rd ACM International Conference on the Foundations of Software Engineering},
+  year = {2025},
+  pages = {180--191},
+  publisher = {ACM},
+  doi = {10.1145/3696630.3728544},
+  url = {https://doi.org/10.1145/3696630.3728544},
+  eprint = {2501.12862},
+  archivePrefix = {arXiv}
+}
+
+% arXiv v3 preprint, 22 September 2026; no peer-reviewed venue confirmed.
+@misc{smyth2026overclaim,
+  author = {Smyth, Nolan and Mantilla-Ramos, Yorguin-Jose and Tikeng Notsawo, Pascal Jr and Helbling, Saskia and Tosato, Alberto and Merzouk, Mohamed Amine and Dziri, Nouha and Gidel, Gauthier and Tosato, Tommaso},
+  title = {Quantifying Overclaiming Propensity in Frontier {LLM} Agents},
+  year = {2026},
+  eprint = {2609.20812},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.SE},
+  howpublished = {arXiv preprint, version 3 (2026-09-22)},
+  doi = {10.48550/arXiv.2609.20812},
+  url = {https://arxiv.org/abs/2609.20812}
+}
+
+% Peer-reviewed mutation-testing systematic review, Wiley STVR 2018.
+@article{zhu2018mutationreview,
+  author = {Zhu, Qianqian and Panichella, Annibale and Zaidman, Andy},
+  title = {A systematic literature review of how mutation testing supports quality assurance processes},
+  journal = {Software Testing, Verification and Reliability},
+  year = {2018},
+  volume = {28},
+  number = {6},
+  pages = {e1675},
+  publisher = {Wiley},
+  doi = {10.1002/stvr.1675},
+  url = {https://doi.org/10.1002/stvr.1675}
 }
