@@ -160,14 +160,15 @@ The design pins a small local FastEmbed/ONNX model and defines a non-blocking
 receipt that maps changed chunks to known failure classes without an LLM API.
 Similarity remains evidence for review routing, not correctness or authority.
 
-### Candidate manuscript — LLM review vs mutation-guided CI (unpublished)
+### Editorially complete working manuscript — LLM review vs mutation-guided CI
 
 - [Paper workspace](../../research/papers/llm-review-vs-heavy-ci/README.md)
 - [Coordination issue #97](https://github.com/TeaShaman-cyber/theseus-research/issues/97)
 
-Type: **unpublished working manuscript**, not a peer-reviewed paper, accepted
-research finding or external release. The source evidence remains the accepted
-observational comparison described below. The paper workspace has an independent review and acceptance lifecycle.
+Type: **editorially complete internal working manuscript (2026-10-29)**,
+not a peer-reviewed paper, accepted scientific finding or external release.
+Its source evidence remains the accepted observational comparison below;
+the manuscript editing and scientific acceptance lifecycles are distinct.
 
 ### Codex review vs heavy CI — 2026-09-20
 
