@@ -304,6 +304,38 @@ reviewers and CI **the same exact candidate and a common defect oracle**,
 log false positives, finding cost, provider availability and all no-finding
 outcomes. Such an experiment has **not been approved or run** under #97.
 
+### 7.1 Existing cross-repository learning: a larger unit than PRs
+
+A necessary scope correction is that Theseus already practiced
+**cross-repository causal-class inspection and regression transfer**
+before this paper was drafted. The [September five-product synthesis](data/2026-10-29-cross-repository-learning.md)
+compared Repository Search, Session Search, Needle, Cookbook and
+Memory Provider Lab, grouping review findings by lost identity/coverage
+at boundaries, invalid producer-consumer phases, and unjustified promotion
+of instrument success into stronger claims. These categories are
+historically documented, **not discovered for the first time here**.
+The counts of review remarks are not defect or occurrence rates.
+
+Cross-system learning also has verifiable implementation examples.
+The reciprocal [1F916 QA experiment](https://github.com/TeaShaman-cyber/theseus-1f916-client/issues/67)
+transferred concrete contract tests in both directions between independent
+clients; [Cookbook's shared QA profile](https://github.com/TeaShaman-cyber/marcopolo-cookbook/issues/64)
+has actual downstream consumers in two distinct repos. Other findings
+may be only analogous, not reproducible repetitions of the same cause.
+
+Thus the stronger **candidate** analysis unit is a reproducible
+`failure class / prevention invariant`, with an explicit evidence path
+from repository A to independently checked repository B, a domain-fitted
+regression, exact-head adoption, and any observed negative/non-transfer
+cases. A PR is a source event; an LLM comment is a hypothesis; a
+mutation witness is a different measurement. This manuscript has **not**
+yet executed a complete, precommitted ecosystem-level transfer study.
+It must not claim a new method from an already recorded project audit,
+nor pretend that analogy alone proves a shared root cause. This
+candidate framing should be compared with existing empirical
+cross-project defect research before deciding whether to extend the
+present observational case study or write a separately scoped paper.
+
 ## 8. Provisional conclusion
 
 The archive now includes nine independently reproduced historical
