@@ -1,6 +1,6 @@
 # Evidence inventory — primary source audit
 
-**Status:** historical mutation CI evidence verified; nine candidate-head and four later accepted-source Codex review behavior transitions independently reproduced. PR #8 implementation, complete review disposition, and prospective matched study remain OPEN.
+**Status:** historical evidence audited; manuscript editorial work complete. Nine candidate-head and four later accepted-source PR #5 behavior transitions reproduced; PR #8 implementation and prospective experimental questions remain outside this study.
 
 - [Related-work primary-source evidence matrix](2026-10-29-related-work-evidence.md)
 - [Cross-repository learning and verified QA transfer (existing Theseus evidence)](2026-10-29-cross-repository-learning.md)
@@ -16,7 +16,7 @@
 - [Read-only local reproduction script](https://github.com/TeaShaman-cyber/theseus-research/blob/main/research/papers/llm-review-vs-heavy-ci/analysis/reproduce_pr5_validation.py)
 **Tracking:** [theseus-research #97](https://github.com/TeaShaman-cyber/theseus-research/issues/97)
 
-| Source | Role | Observed identity/status (2026-10-29) | Needed before publication |
+| Source | Role | Observed identity/status (2026-10-29) | Evidence boundary |
 | --- | --- | --- | --- |
 | [Accepted comparison](https://github.com/TeaShaman-cyber/theseus-research/blob/main/docs/research/2026-09-20-codex-review-vs-heavy-ci.md) | Historical synthesis | accepted in main | Link each inference to raw event |
 | [Research #55](https://github.com/TeaShaman-cyber/theseus-research/issues/55) | Original study coordination | closed | Not independent from its source note |
@@ -28,7 +28,7 @@
 | [Client PR #39](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/39) | Regression tests | `f4401c67ac75967118355d7b9039bf846f6eda2c`, MERGED | Hosted log receipt verified; no new rerun |
 | [Client PR #40](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/40) | Regression tests | `a669a1c8500c02c86bfb3aef6f77579e15c1c0b7`, MERGED | Hosted log receipt verified; no new rerun |
 
-## Missing, not assumed
+## Evidence completed and explicit limits
 
 1. **DONE for archived GitHub CI logs:** source SHA, mutmut profile, exact Git
    blobs, five run receipts and stable 597-mutant denominator independently
@@ -45,10 +45,12 @@
    both PRs had no original inline reply: historical thread fact, not
    equivalent to absence of later correction. Underlying root-cause
    independence and production incidence remain UNKNOWN.
-4. **OPEN:** defensible treatment of absent review events, quota failures,
-   equivalent mutants and editorial selection effects.
-5. **OPEN:** freeze cross-method coding rules and create a scholarly related-
-   work section before quantitative or generalized scientific claims.
+4. **LIMITATION, NOT A TASK:** absence-of-finding events, cost, provider
+   availability and editorial selection are not fully observable. Avoid
+   generalizing or inferring unrecorded outcomes.
+5. **DONE for this manuscript:** source-verified Related Work and the
+   retrospective classification are included. A prospective frozen
+   coding protocol is outside the completed observational study.
 
 A source URL alone is not an experimental result. Do not store project tokens,
 non-public correspondence, private traces or unreviewed personal information.
