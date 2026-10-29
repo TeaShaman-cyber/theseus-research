@@ -36,7 +36,7 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3939739203,
       "created_at": "2026-09-05T06:32:38Z",
-      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "evidence_level": "REPRODUCED_BEHAVIOR_GAP_PLUS_HEAD_TEST",
       "original_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
       "path": "tools/check_registry.py",
       "pr": 5,
@@ -48,8 +48,13 @@
       },
       "source_witness": {
         "anchor_present_at_reviewed_commit": false,
+        "before_sha": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+        "behavioral_probe": "projection_atomicity",
         "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-remaining-validation-reproducers.json",
         "path": "tests/test_registry_cli.py",
+        "reproduction_script": "analysis/reproduce_pr5_remaining.py",
+        "semantic_limit": "historical test code with local fake GitHub transport; no actual remote API writes or deployed production behavior",
         "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
         "source_file_modified_after_reviewed_commit": true,
         "test": "test_render_write_validates_both_projections_before_writing_either"
@@ -63,7 +68,7 @@
       "comment_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
       "comment_id": 3939739209,
       "created_at": "2026-09-05T06:32:38Z",
-      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "evidence_level": "REPRODUCED_BEHAVIOR_GAP_PLUS_HEAD_TEST",
       "original_commit": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
       "path": "tools/registry_doctor.py",
       "pr": 5,
@@ -75,8 +80,13 @@
       },
       "source_witness": {
         "anchor_present_at_reviewed_commit": false,
+        "before_sha": "c3282c1a6eeb79985fd60ad8060ccca104e911d5",
+        "behavioral_probe": "issue_pagination",
         "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-remaining-validation-reproducers.json",
         "path": "tests/test_registry_issue.py",
+        "reproduction_script": "analysis/reproduce_pr5_remaining.py",
+        "semantic_limit": "historical test code with local fake GitHub transport; no actual remote API writes or deployed production behavior",
         "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
         "source_file_modified_after_reviewed_commit": true,
         "test": "test_existing_issue_on_second_page_is_reused_not_duplicated"
@@ -120,7 +130,7 @@
       "comment_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
       "comment_id": 3939807479,
       "created_at": "2026-09-05T07:04:24Z",
-      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "evidence_level": "REPRODUCED_BEHAVIOR_GAP_PLUS_HEAD_TEST",
       "original_commit": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
       "path": "tools/registry_doctor.py",
       "pr": 5,
@@ -132,8 +142,13 @@
       },
       "source_witness": {
         "anchor_present_at_reviewed_commit": false,
+        "before_sha": "afa3a4888d09cb9aaba50c166b9e8c1ef6da4f01",
+        "behavioral_probe": "issue_readback",
         "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-remaining-validation-reproducers.json",
         "path": "tests/test_registry_issue.py",
+        "reproduction_script": "analysis/reproduce_pr5_remaining.py",
+        "semantic_limit": "historical test code with local fake GitHub transport; no actual remote API writes or deployed production behavior",
         "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
         "source_file_modified_after_reviewed_commit": true,
         "test": "test_created_issue_requires_verified_remote_readback"
@@ -207,7 +222,7 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3939993047,
       "created_at": "2026-09-05T08:22:35Z",
-      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "evidence_level": "REPRODUCED_BEHAVIOR_GAP_PLUS_HEAD_TEST",
       "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
       "path": "tools/check_registry.py",
       "pr": 5,
@@ -219,8 +234,13 @@
       },
       "source_witness": {
         "anchor_present_at_reviewed_commit": false,
+        "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+        "behavioral_probe": "json_parent",
         "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-remaining-validation-reproducers.json",
         "path": "tests/test_registry_cli.py",
+        "reproduction_script": "analysis/reproduce_pr5_remaining.py",
+        "semantic_limit": "historical test code with local fake GitHub transport; no actual remote API writes or deployed production behavior",
         "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
         "source_file_modified_after_reviewed_commit": true,
         "test": "test_doctor_creates_json_output_parent_before_invalid_early_return"
@@ -234,7 +254,7 @@
       "comment_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
       "comment_id": 3939993050,
       "created_at": "2026-09-05T08:22:35Z",
-      "evidence_level": "AUTHOR_CORRECTION_CLAIM_PLUS_EXECUTED_HEAD_TEST",
+      "evidence_level": "REPRODUCED_BEHAVIOR_GAP_PLUS_HEAD_TEST",
       "original_commit": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
       "path": "tools/registry_doctor.py",
       "pr": 5,
@@ -246,8 +266,13 @@
       },
       "source_witness": {
         "anchor_present_at_reviewed_commit": false,
+        "before_sha": "755c68f625582a450b69826fc51b7c7ed5c44eaa",
+        "behavioral_probe": "label_pagination",
         "execution": "45/45 unittest PASS on detached exact head, 2026-10-29",
+        "isolated_red_green_reproducer": "data/pr5-remaining-validation-reproducers.json",
         "path": "tests/test_registry_doctor.py",
+        "reproduction_script": "analysis/reproduce_pr5_remaining.py",
+        "semantic_limit": "historical test code with local fake GitHub transport; no actual remote API writes or deployed production behavior",
         "sha": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
         "source_file_modified_after_reviewed_commit": true,
         "test": "test_managed_labels_are_collected_across_all_pages_before_drift"
@@ -901,13 +926,14 @@
       "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132724"
     }
   ],
-  "definition": "36 review comment threads (not 36 independent defects); 29 have author correction claims and seven have no inline author reply",
+  "definition": "36 Codex review threads; 9 independently reproduced historical PR5 behavior gaps, 20 PR8 design-text-only claims, 7 threads without author reply. Neither 9 nor 36 means confirmed production defects.",
   "limitations": [
     "Reply is not independent validation of claimed repair",
     "PR8 is design-only; text anchor does not establish implementation",
     "All findings are candidates until reproduced/verified at claim level",
     "No reply does not prove no fix elsewhere",
-    "Review threads can cover correlated/duplicate underlying causes"
+    "Review threads can cover correlated/duplicate underlying causes",
+    "Historical red-green cases use synthetic input, local files and fake GitHub transports; they demonstrate source-scoped behavior only"
   ],
   "retrieved_at": "2026-10-29",
   "reviewed_heads": {

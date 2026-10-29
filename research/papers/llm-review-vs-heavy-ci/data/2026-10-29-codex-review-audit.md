@@ -1,6 +1,6 @@
 # Codex review source audit — PR #5 and PR #8 (2026-10-29)
 
-**Status:** historical GitHub review-thread inventory verified; four narrow validator behaviors independently reproduced before/after.
+**Status:** historical GitHub review-thread inventory verified; nine PR #5 behaviors independently reproduced before/after (four validation guards and five additional cases).
 **Scope:** two historical candidate PRs. This is neither a controlled comparison nor a claim of accepted runtime remediation.
 
 Machine-readable evidence: [36 reviewed comments](review-comments.json), each linked to original GitHub comment ID, source commit, file, author reply where present, and source-level witness. The unit is the **review thread**, not an independently confirmed bug.
@@ -11,8 +11,8 @@ The GitHub review-comment REST collection has 65 entries: 36 Codex inline commen
 
 | Category | PR #5 | PR #8 | Total | Evidence meaning |
 | --- | ---: | ---: | ---: | --- |
-| Independent red-before/green-after validation probe and passing head test | 4 | 0 | **4** | Specific invalid input accepted at old SHA but rejected at correction SHA |
-| Author reports fix, corresponding regression test exists and passes at head | 5 | 0 | **5** | Executable head witness; no before/after behavior independently established |
+| Independent historical red-before/green-after behavior and passed head tests | 9 | 0 | **9** | Four validator guards and five more documented behaviors differ at exact source heads |
+| Test-only correction claims not independently reproduced | 0 | 0 | **0** | All nine replied-to PR #5 comments have isolated source-level behavior witnesses |
 | Author reports design correction, relevant text found in final draft | 0 | 20 | **20** | Revised design text; NOT implemented or runtime-verified |
 | No author reply in thread | 4 | 3 | **7** | No thread-level correction evidence; fix elsewhere UNKNOWN |
 | **Distinct Codex comments** | **13** | **23** | **36** | Review observations, **not** defect counts |
@@ -36,8 +36,8 @@ The third case demonstrates **a missing validation guard**, not an observed leak
 
 ## Other PR #5 correction claims
 
-Five further Codex comments have author replies and exact-head test witnesses,
-but no independent red-before/green-after reproduction in this audit:
+Five further Codex comments have author replies, exact-head tests and now
+independent historical before/after reproductions:
 
 - [Bilingual prevalidation](https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3939739203):
   `test_render_write_validates_both_projections_before_writing_either`.
@@ -54,8 +54,10 @@ All nine relevant regression-test method names (including the four reproduced
 cases) were absent at their reviewed source commits and present at PR #5's
 later exact head. The full historical 45-test suite was independently executed
 in a detached worktree at `40b572554b...`: **45/45 PASS**.
-These are source-level test witnesses, not evidence of deployment or nine
-independent bug repairs.
+These now also have [five independent before/after source reproductions](2026-10-29-pr5-five-redgreen-audit.md)
+and [machine-readable outcomes](pr5-remaining-validation-reproducers.json).
+These source-level tests do not establish deployment or nine independent
+real-world failure incidents.
 
 Four final PR #5 comments have no inline author reply:
 [private repository candidate discovery](https://github.com/TeaShaman-cyber/theseus-research/pull/5#discussion_r3941398477),
@@ -91,6 +93,6 @@ demonstrated runtime defects.
 - This coding is **retrospective and not blinded or preregistered**.
 - The two review PRs and the client mutation PRs cover different projects,
   tasks and maturity. No causal A/B conclusion is justified.
-- Independent reproductions of the remaining five PR #5 claims would
-  strengthen the case; a prospective same-candidate study needs a frozen
-  cross-method coding contract before quantitative comparison.
+- All nine replied-to PR #5 comments have independent historical source
+  reproductions; four unanswered PR #5 threads remain UNKNOWN. A future
+  matched-sample study still needs a frozen, common cross-method oracle.

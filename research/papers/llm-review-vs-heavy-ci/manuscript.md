@@ -117,10 +117,11 @@ The literature studies **different units**: defect-state transitions,
 real-bug detection, synthetic mutants, industrial test acceptance,
 and agent action coverage. Our retrospective comparison currently
 offers *source-linked evidence levels* rather than a unified defect
-oracle: four narrow reproducible validator gaps, five further
-passing regression-test witnesses, twenty design-text correction
-claims, seven unresponded inline review threads, and a separate
-constant-source 597-mutant historical test series. These counts
+oracle: nine independently reproduced **source-scoped** behavioral
+gaps in historical PR #5 code (four validation guards and five other
+behaviors), twenty design-text correction claims in PR #8, seven
+unresponded inline review threads, and a separate constant-source
+597-mutant historical test series. These counts
 must not be pooled into a single performance score.
 
 The potential contribution is the provenance-bound observation
@@ -160,16 +161,16 @@ These are archival review traces, not accepted/merged study interventions.
 A [source-level audit](data/2026-10-29-codex-review-audit.md) of
 the GitHub inline REST comments found **36 distinct bot-authored review
 remarks** (13 on #5 and 23 on #8), plus 29 author replies. These are
-**not 36 unique defects**. Four PR #5 validation failures were
-independently reproduced with the same synthetic invalid inputs on
-original and later exact source commits: unrecognized status, malformed
-repository identity, private-incubation repository identity and
-visibility/status mismatch. In all four cases the older validator
-accepted invalid input and the later validator rejected it; **this
-does not establish a real-world data leak or an accepted production
-deployment**. Another five comments had corresponding exact-head
-regression tests (the full historical 45/45 suite passed) but no
-independent pre-fix reproducer in this audit. Twenty #8 threads had
+**not 36 unique defects**. All nine replied-to PR #5 comments now
+have independent source-level before/after reproduction witnesses:
+four missing validator guards plus partial bilingual projection writes,
+issue pagination, remote issue/comment readback, early JSON output
+parent creation, and repository label pagination. Original reviewed
+SHA and corrected head are separately pinned for each case; all nine
+associated test methods pass on the historical 45/45-test candidate
+suite. For readback, both fake issue creation and fake comment
+persistence were probed. No real GitHub writes, real-world data
+disclosure or production deployment are implied. Twenty #8 threads had
 author replies and related revised design text only; no code behavior
 was verified. Seven comments (four #5, three #8) had no inline
 author reply, with correction status outside the thread UNKNOWN.
@@ -178,6 +179,9 @@ This stratification prevents conflating review suggestions, developer
 fix claims, source tests, and independently reproduced behavior.
 The exact [36-row comment inventory](data/review-comments.json) links
 each comment and correction reply to its original SHA and evidence level.
+The [five additional independent historical reproductions](data/2026-10-29-pr5-five-redgreen-audit.md)
+and [read-only reproduction script](analysis/reproduce_pr5_remaining.py)
+document the added five cases; the earlier four are unchanged.
 
 ### 3.2 Test-focused trace B
 
@@ -229,16 +233,18 @@ reviewer verbosity or raw mutation score. Quantitative defect rates,
 statistical tests, reviewer costs and time-to-disposition are **NOT MEASURED**.
 A source-index manifest now records the five historical mutation runs and
 seven test names. A separate historical review-comment manifest records
-36 Codex comments, response evidence, four independently probed validation
-gaps, and explicit UNKNOWN dispositions. Both are **archival audits**,
+36 Codex comments, response evidence, nine independently reproduced
+historical PR #5 behaviors, and explicit UNKNOWN dispositions. Both are **archival audits**,
 not a matched cross-method dataset or a prospective experiment.
 
 ## 5. Preliminary observations (archival, non-causal)
 
 The new review audit documents directly observed validation gaps and
 a larger set of design-review questions spanning architecture, privacy,
-currentness and authority boundaries. Only four specific validator
-behaviors have independent red-before/green-after proof so far.
+currentness and authority boundaries. All nine replied-to PR #5
+findings now have independent red-before/green-after historical
+source-level witnesses; the four unanswered PR #5 remarks remain
+uncertain outside their threads.
 In the bounded client sequence, added regression tests correspond to 33
 fewer surviving mutants across the archived snapshots. The counts may
 include multiple mutants per invariant; neither method's general efficacy,
@@ -252,8 +258,8 @@ metric optimization when no actual test gap is identified.
 1. **Selection and confounding:** the two modes concern different repos,
    tasks, maturity and calendar times. No causal A/B inference is possible.
 2. **Measurement units:** 36 Codex inline remarks include correlated
-   design questions, 29 separate maintainer replies, and only four
-   independently reproduced validator gaps. None of these quantities
+   design questions, 29 separate maintainer replies, and nine
+   independently reproduced historical source-level behavior gaps. None of these quantities
    is interchangeable with 597 mutants, distinct defects or accepted tests.
 3. **Mutation comparability:** exact baseline SHA, source Git blob, profile
    files and constant 597-mutant denominator are now source-verified; no new
@@ -281,9 +287,9 @@ outcomes. Such an experiment has **not been approved or run** under #97.
 
 ## 8. Provisional conclusion
 
-The archived evidence now includes independently confirmed validation
-errors, nine head regression-test witnesses, and a separate design-only
-review set. These justify a transparent observational case study and a
+The archived evidence now includes nine independently reproduced
+historical PR #5 behavior differences, nine head regression-test
+witnesses, and a separate design-only PR #8 review set. These justify a transparent observational case study and a
 hypothesis about complementary QA roles. It does not demonstrate
 causal superiority, replacement of independent review, or one defect for
 every killed mutation. The mutation-track source audit is complete
