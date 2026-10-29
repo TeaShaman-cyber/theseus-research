@@ -42,7 +42,96 @@ were converted into durable repeatable tests.
 We do **not** claim that the cases represent a population, or that review and
 CI were randomly assigned to comparable tasks.
 
-## 2. Retrospective design
+## 2. Related work (source-verified, initial selection)
+
+This section is a **targeted, non-exhaustive** literature synthesis,
+not a systematic review. We distinguish multi-round review, mutation
+adequacy, industrial regression hardening, and execution-claim verification.
+The evidence-selection and origin ledger is preserved in
+[the related-work matrix](data/2026-10-29-related-work-evidence.md).
+Notion technical reviews supplied two discovery leads, subsequently
+checked against the original papers; Notion summaries are **not**
+independent experimental evidence.
+
+### 2.1 Longitudinal review and defect disposition
+
+[Zheng et al. (2026), MCR-Bench](https://doi.org/10.1145/3832219)
+study 2,269 annotated multi-round code-review tasks, including defect
+lifecycle transitions across rounds. Their results suggest that models can
+lose track of a defect's status as review history grows. This directly
+motivates treating review finding, developer reply, revised source and
+verified resolution as **separate events**. The Theseus inventory records
+36 bot-authored comments and 29 developer replies, but has only four
+independent before/after behavior reproductions; this is **not** an
+evaluation of MCR-Bench or an estimate of its reported failure rates.
+
+### 2.2 Test adequacy and mutation as a proxy
+
+[Zhao, Zhou and Cohen (2026)](https://doi.org/10.1145/3832093)
+replicate work on coverage, mutation score and actual fault detection
+using *LLM-generated test suites*. The usefulness of these proxies
+depends on the evaluation context, including whether the code supplied
+for test generation is already faulty. This supports interpreting the
+Theseus 391/206-to-424/173 mutation sequence as increased sensitivity
+of a fixed mutation profile, **not 33 independent real bugs**.
+Because the Theseus seven-test slice was not established as a matched
+sample of LLM-generated tests, this paper is methodological guidance
+rather than a directly comparable effectiveness baseline.
+
+[Zhu, Panichella and Zaidman (2018)](https://doi.org/10.1002/stvr.1675)
+systematically review the uses of mutation testing in quality assurance
+and the reporting of empirical studies. Their taxonomy includes testing
+strategy, tools/operators, equivalent mutants, cost reduction and
+availability of subject programs. The Theseus audit records exact
+commits and Git blobs, the mutmut version, the 597-mutant denominator,
+test-only PR diffs and an explicit equivalent/diagnostic survivor
+classification. No independent rerun on a new host is claimed.
+
+### 2.3 From an issue-specific concern to a regression witness
+
+[Harman et al. (2025), Meta's ACH](https://doi.org/10.1145/3696630.3728544)
+describe mutation-guided, issue-specific LLM test generation,
+including checking whether tests build, pass on original code and
+distinguish untested mutant behaviors. Human acceptance and
+equivalent-mutant assessment remain additional judgments. The
+relevant analogy is the **concern -> test oracle -> repeatable witness**
+transition, not an assertion that Theseus reproduces Meta's pipeline,
+employs the same population or measures equal effectiveness.
+
+### 2.4 Coverage of the review itself
+
+[Smyth et al. (2026), OverclaimBench](https://arxiv.org/abs/2609.20812)
+is an **arXiv preprint**, not a confirmed peer-reviewed journal or
+conference article. It contrasts agents' file-review completion claims
+with the files actually inspected in tool transcripts and with
+planted-defect detections. Its methodological lesson is to distinguish
+*claimed review coverage* from independently observable execution.
+The historical Theseus review corpus preserves GitHub comments and
+commits, but **does not provide transcript-level proof of every file
+the review agent read**; consequently, we do not classify these
+reviews as complete or incomplete using OverclaimBench criteria.
+
+### 2.5 Positioning and unresolved questions
+
+The literature studies **different units**: defect-state transitions,
+real-bug detection, synthetic mutants, industrial test acceptance,
+and agent action coverage. Our retrospective comparison currently
+offers *source-linked evidence levels* rather than a unified defect
+oracle: four narrow reproducible validator gaps, five further
+passing regression-test witnesses, twenty design-text correction
+claims, seven unresponded inline review threads, and a separate
+constant-source 597-mutant historical test series. These counts
+must not be pooled into a single performance score.
+
+The potential contribution is the provenance-bound observation
+protocol and the explicitly separated **question -> validated
+behavior -> encoded invariant -> repeatable verification** chain.
+A causal claim about complementarity would require the same
+candidate source, equivalent review budgets, a precommitted defect
+oracle, blinded finding classification, and accounting for negatives.
+This study has **not** performed such a controlled experiment.
+
+## 3. Retrospective design
 
 Cases were selected from completed
 [Theseus issue #55](https://github.com/TeaShaman-cyber/theseus-research/issues/55)
@@ -51,7 +140,7 @@ PR/claim/test event, not the mutant or the model response taken uncritically.
 Use the source inventory to recover exact event identities and CI receipts
 before converting preliminary observations into final results.
 
-### 2.1 Review-oriented trace A
+### 3.1 Review-oriented trace A
 
 - [Research PR #5](https://github.com/TeaShaman-cyber/theseus-research/pull/5),
   historical head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`:
@@ -90,7 +179,7 @@ fix claims, source tests, and independently reproduced behavior.
 The exact [36-row comment inventory](data/review-comments.json) links
 each comment and correction reply to its original SHA and evidence level.
 
-### 2.2 Test-focused trace B
+### 3.2 Test-focused trace B
 
 The [client mutation issue #22](https://github.com/TeaShaman-cyber/theseus-1f916-client/issues/22)
 and research note record four merged PRs, with no completed Codex review
@@ -120,7 +209,7 @@ production defects, nor evidence that the methods were experimentally
 matched. The `ackable_cursor` triage is a negative control: seven survivors,
 zero classified `REAL_TEST_GAP`, and no score-chasing PR.
 
-## 3. Claim coding and analysis plan (PARTIALLY EXECUTED)
+## 4. Claim coding and analysis plan (PARTIALLY EXECUTED)
 
 For every candidate claim record: repository, PR/issue, exact source SHA,
 timestamp, originating instrument, original claim, independently observed
@@ -144,7 +233,7 @@ seven test names. A separate historical review-comment manifest records
 gaps, and explicit UNKNOWN dispositions. Both are **archival audits**,
 not a matched cross-method dataset or a prospective experiment.
 
-## 4. Preliminary observations (archival, non-causal)
+## 5. Preliminary observations (archival, non-causal)
 
 The new review audit documents directly observed validation gaps and
 a larger set of design-review questions spanning architecture, privacy,
@@ -158,7 +247,7 @@ nor a difference in defect-discovery *rates*, follows from these data.
 The `ackable_cursor` non-action is evidence that triage can reject
 metric optimization when no actual test gap is identified.
 
-## 5. Threats to validity
+## 6. Threats to validity
 
 1. **Selection and confounding:** the two modes concern different repos,
    tasks, maturity and calendar times. No causal A/B inference is possible.
@@ -177,7 +266,7 @@ metric optimization when no actual test gap is identified.
 6. **Rights and disclosure:** use public artifacts only. Paper authorship,
    rights and eventual third-party publication require distinct review.
 
-## 6. Discussion and possible prospective work
+## 7. Discussion and possible prospective work
 
 A falsifiable working pattern is:
 
@@ -190,7 +279,7 @@ reviewers and CI **the same exact candidate and a common defect oracle**,
 log false positives, finding cost, provider availability and all no-finding
 outcomes. Such an experiment has **not been approved or run** under #97.
 
-## 7. Provisional conclusion
+## 8. Provisional conclusion
 
 The archived evidence now includes independently confirmed validation
 errors, nine head regression-test witnesses, and a separate design-only
@@ -198,8 +287,8 @@ review set. These justify a transparent observational case study and a
 hypothesis about complementary QA roles. It does not demonstrate
 causal superiority, replacement of independent review, or one defect for
 every killed mutation. The mutation-track source audit is complete
-within its stated historical-log scope; review-claim coding and related
-scholarly literature assessment remain incomplete.
+within its stated historical-log scope; review-claim coding remains partial, and the initial source-verified
+related-work selection is not an exhaustive literature review.
 
 ## Availability and status
 

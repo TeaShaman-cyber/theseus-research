@@ -10,7 +10,8 @@ Turn the accepted observational comparison into a bounded manuscript without
 silently changing the source report or promoting new research conclusions.
 
 - [manuscript](manuscript.md): paper skeleton, empirical claims and unknowns.
-- [references](references.bib): verified first-party artifacts only.
+- [references](references.bib): first-party artifacts plus five independently checked research sources.
+- [related-work evidence ledger](data/2026-10-29-related-work-evidence.md): primary source links, Notion discovery lineage, DOI correction and limits.
 - [source inventory](data/README.md): primary GitHub receipts, reviewer comment evidence, and remaining gaps.
 
 ## Research contract
