@@ -1,11 +1,13 @@
 # Evidence inventory — primary source audit
 
-**Status:** historical mutation CI audit VERIFIED; Codex review comment census and nine historical red-green source reproductions VERIFIED. Broader review dispositions, runtime implementation, and prospective matched study remain OPEN.
+**Status:** historical mutation CI evidence verified; nine candidate-head and four later accepted-source Codex review behavior transitions independently reproduced. PR #8 implementation, complete review disposition, and prospective matched study remain OPEN.
 
 - [Related-work primary-source evidence matrix](2026-10-29-related-work-evidence.md)
 - [Original CI log source audit](2026-10-29-mutation-source-audit.md)
 - [Five-run machine-readable evidence manifest](mutation-runs.json)
 - [Codex review source audit](2026-10-29-codex-review-audit.md)
+- [Cross-PR disposition audit: four unanswered PR #5 threads](2026-10-29-pr5-cross-pr-continuity.md)
+- [Four original / first-fix / main observations](pr5-unanswered-continuity-results.json) and [read-only reproducer](https://github.com/TeaShaman-cyber/theseus-research/blob/main/research/papers/llm-review-vs-heavy-ci/analysis/reproduce_pr5_unanswered.py)
 - [All 36 bot-authored review comments with source links](review-comments.json)
 - [Four historical before/after validator reproducers](pr5-validation-reproducers.json)
 - [Five additional historical red-green reproductions](2026-10-29-pr5-five-redgreen-audit.md)
@@ -17,7 +19,7 @@
 | --- | --- | --- | --- |
 | [Accepted comparison](https://github.com/TeaShaman-cyber/theseus-research/blob/main/docs/research/2026-09-20-codex-review-vs-heavy-ci.md) | Historical synthesis | accepted in main | Link each inference to raw event |
 | [Research #55](https://github.com/TeaShaman-cyber/theseus-research/issues/55) | Original study coordination | closed | Not independent from its source note |
-| [Research PR #5](https://github.com/TeaShaman-cyber/theseus-research/pull/5) | Review questions | historical head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`, CLOSED | 9 behaviors independently reproduced; 4 no thread reply |
+| [Research PR #5](https://github.com/TeaShaman-cyber/theseus-research/pull/5) | Review questions | historical head `40b572554b8711dc6fb06de6cdc7e02e99f6dfdb`, CLOSED | 9 fixed in candidate head; 4 no-reply threads independently traced to later accepted source (one partial contract divergence) |
 | [Research PR #8](https://github.com/TeaShaman-cyber/theseus-research/pull/8) | Design review | head `4ebaae08fa15c4c7e77b1db7879186b7d3d78056`, OPEN | 20 revised-design claims with text anchors, 3 no thread reply; no runtime proof |
 | [Client issue #22](https://github.com/TeaShaman-cyber/theseus-1f916-client/issues/22) | Mutation classification | historical witness | Verified in GitHub logs; reviewer coding still open |
 | [Client PR #36](https://github.com/TeaShaman-cyber/theseus-1f916-client/pull/36) | Regression tests | `8707bfb4cecaafbb337603bcafa5c586c92b92db`, MERGED | Hosted log receipt verified; no new rerun |
@@ -33,10 +35,15 @@
 2. **DONE:** GitHub PR diffs independently verify only
    `tests/test_durable_state.py` changed across the four PRs; all seven named
    tests are recorded in `mutation-runs.json`.
-3. **PARTIAL:** all 36 Codex comments classified by source evidence; nine
-   PR #5 behavior gaps independently reproduced, twenty PR #8 design-text
-   claims, seven without inline author reply.
-   Remaining claim-level root-cause analysis is OPEN.
+3. **PARTIAL:** all 36 Codex comments classified by thread evidence. Nine
+   PR #5 replied-to findings independently reproduced at its historical head,
+   four no-reply PR #5 findings independently traced through merged PR #46
+   to current code (one does not match the original global exit/status
+   recommendation); twenty PR #8 design-text replies and three unanswered
+   PR #8 questions still lack runtime verification. Seven comments across
+   both PRs had no original inline reply: historical thread fact, not
+   equivalent to absence of later correction. Underlying root-cause
+   independence and production incidence remain UNKNOWN.
 4. **OPEN:** defensible treatment of absent review events, quota failures,
    equivalent mutants and editorial selection effects.
 5. **OPEN:** freeze cross-method coding rules and create a scholarly related-

@@ -286,6 +286,17 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3941398477,
       "created_at": "2026-09-05T17:17:18Z",
+      "cross_pr_followup": {
+        "accepted_via_pr": 46,
+        "behavioral_evidence": "data/pr5-unanswered-continuity-results.json",
+        "first_verified_fix_sha": "1fc4416da7754208f7e913f2ef584ddd269eef29",
+        "independently_replayed": true,
+        "merge_commit": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+        "no_inline_author_reply": true,
+        "reproducer": "analysis/reproduce_pr5_unanswered.py",
+        "result": "BOUNDED_SOURCE_FIX_VERIFIED",
+        "verified_main_sha": "362ef9caebc775f09e75bccc408823849a493984"
+      },
       "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
       "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "path": "tools/registry_doctor.py",
@@ -301,6 +312,17 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3941398481,
       "created_at": "2026-09-05T17:17:18Z",
+      "cross_pr_followup": {
+        "accepted_via_pr": 46,
+        "behavioral_evidence": "data/pr5-unanswered-continuity-results.json",
+        "first_verified_fix_sha": "1fc4416da7754208f7e913f2ef584ddd269eef29",
+        "independently_replayed": true,
+        "merge_commit": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+        "no_inline_author_reply": true,
+        "reproducer": "analysis/reproduce_pr5_unanswered.py",
+        "result": "BOUNDED_SOURCE_FIX_VERIFIED",
+        "verified_main_sha": "362ef9caebc775f09e75bccc408823849a493984"
+      },
       "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
       "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "path": "tools/registry_doctor.py",
@@ -316,6 +338,17 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3941398485,
       "created_at": "2026-09-05T17:17:18Z",
+      "cross_pr_followup": {
+        "accepted_via_pr": 46,
+        "behavioral_evidence": "data/pr5-unanswered-continuity-results.json",
+        "first_verified_fix_sha": "12d158d46fa4e2e22b1047563a4662a11ed4cf90",
+        "independently_replayed": true,
+        "merge_commit": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+        "no_inline_author_reply": true,
+        "reproducer": "analysis/reproduce_pr5_unanswered.py",
+        "result": "REPORT_PRESERVED_WITH_GLOBAL_STATUS_DIVERGENCE",
+        "verified_main_sha": "362ef9caebc775f09e75bccc408823849a493984"
+      },
       "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
       "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "path": "tools/check_registry.py",
@@ -331,6 +364,17 @@
       "comment_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "comment_id": 3941398487,
       "created_at": "2026-09-05T17:17:18Z",
+      "cross_pr_followup": {
+        "accepted_via_pr": 46,
+        "behavioral_evidence": "data/pr5-unanswered-continuity-results.json",
+        "first_verified_fix_sha": "64a01a45cccfe157c0a3ea3cdb49d0b3c1cf53d9",
+        "independently_replayed": true,
+        "merge_commit": "94b012d04024131efd572ea4a5b7a96d56d2c255",
+        "no_inline_author_reply": true,
+        "reproducer": "analysis/reproduce_pr5_unanswered.py",
+        "result": "RECOVERABLE_ROLLBACK_VERIFIED_NOT_CRASH_ATOMIC",
+        "verified_main_sha": "362ef9caebc775f09e75bccc408823849a493984"
+      },
       "evidence_level": "NO_AUTHOR_REPLY_IN_THREAD",
       "original_commit": "40b572554b8711dc6fb06de6cdc7e02e99f6dfdb",
       "path": "tools/check_registry.py",
@@ -926,14 +970,15 @@
       "url": "https://github.com/TeaShaman-cyber/theseus-research/pull/8#discussion_r3942132724"
     }
   ],
-  "definition": "36 Codex review threads; 9 independently reproduced historical PR5 behavior gaps, 20 PR8 design-text-only claims, 7 threads without author reply. Neither 9 nor 36 means confirmed production defects.",
+  "definition": "36 distinct Codex review comments: 9 PR5 replied-to historical source reproducers, 4 PR5 no-reply threads with later accepted-source remediation, 20 PR8 design-text replies, and 3 PR8 no-reply threads. These are not independent production bug counts.",
   "limitations": [
     "Reply is not independent validation of claimed repair",
     "PR8 is design-only; text anchor does not establish implementation",
     "All findings are candidates until reproduced/verified at claim level",
     "No reply does not prove no fix elsewhere",
     "Review threads can cover correlated/duplicate underlying causes",
-    "Historical red-green cases use synthetic input, local files and fake GitHub transports; they demonstrate source-scoped behavior only"
+    "Historical red-green cases use synthetic input, local files and fake GitHub transports; they demonstrate source-scoped behavior only",
+    "NO_AUTHOR_REPLY_IN_THREAD describes the original PR thread only: all four PR5 no-reply cases have separately pinned cross-PR accepted-source follow-up, one with a status/exit-code divergence."
   ],
   "retrieved_at": "2026-10-29",
   "reviewed_heads": {
