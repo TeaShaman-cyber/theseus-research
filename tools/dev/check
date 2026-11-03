@@ -61,6 +61,7 @@ python3 tools/check_registry.py render --check
 echo '== ChatGPT Project Contract =='
 yamllint governance/chatgpt-project-contract.yaml
 python3 tools/project_contract.py validate
+python3 tools/project_contract_formal.py
 
 echo '== unit tests =='
 python3 -m unittest discover -s tests -v
