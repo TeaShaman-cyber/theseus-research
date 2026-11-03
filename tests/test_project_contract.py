@@ -1,3 +1,4 @@
+import copy
 import json
 import tempfile
 import subprocess
@@ -25,6 +26,8 @@ class ProjectContractV11Tests(unittest.TestCase):
         self.assertIn("session-search-usage", source["Continuity"])
         self.assertIn("sprites-core-router", source["OperationalBootstrap"])
         self.assertNotIn("prefer MarcoPolo", source["OperationalBootstrap"])
+        self.assertIn("finite task-specific set of candidate routes", source["Fallback"])
+        self.assertIn("previously untried route", source["Fallback"])
 
     def test_projection_roundtrips_and_fits_project_settings(self):
         source = pc.load_source()
@@ -81,6 +84,32 @@ class ProjectContractV11Tests(unittest.TestCase):
         receipt = formal.verify_model(data)
         self.assertEqual(receipt["status"], "PASS")
         self.assertEqual(receipt["revision"], "2026-11-skill-router-v11")
+
+    def test_formal_rejects_non_decreasing_fallback_progress(self):
+        data = json.loads(formal.MODEL.read_text(encoding="utf-8"))
+        bad = copy.deepcopy(data)
+        progress = bad["fallback_progress"]
+        progress["return_delta"] = 0
+        ret = progress["return_edge"]
+        for edge in bad["transitions"]:
+            if edge["from"] == ret["from"] and edge["to"] == ret["to"]:
+                edge["progress_delta"] = 0
+        with self.assertRaises(formal.FormalError):
+            formal.verify_model(bad)
+
+    def test_formal_rejects_missing_fallback_exhaustion_exit(self):
+        data = json.loads(formal.MODEL.read_text(encoding="utf-8"))
+        bad = copy.deepcopy(data)
+        exhausted = bad["fallback_progress"]["exhausted_edge"]
+        bad["transitions"] = [
+            edge for edge in bad["transitions"]
+            if not (
+                edge["from"] == exhausted["from"]
+                and edge["to"] == exhausted["to"]
+            )
+        ]
+        with self.assertRaises(formal.FormalError):
+            formal.verify_model(bad)
 
     def test_cli_validate(self):
         result = subprocess.run(

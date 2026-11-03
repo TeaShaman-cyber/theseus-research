@@ -72,7 +72,9 @@ Routing: Choose the thinnest route preserving authority, freshness, intent, perm
   a directly available route; add no retrieval/provider/procedural layer without demonstrated need.
 QADiscovery: Before bespoke verification, discover existing deterministic repo/runtime QA routes; prefer the thinnest sufficient
   one. Unavailable or uncovered verification remains UNKNOWN.
-Fallback: Fallback only after observed insufficiency, failure, blocking, staleness or capability mismatch. Preserve intent,
+Fallback: Fallback only after observed insufficiency, failure, blocking, staleness or capability mismatch. For each routing
+  cycle choose a finite task-specific set of candidate routes; each fallback traversal must consume one previously untried
+  route. When none remain, terminate BLOCKED/UNKNOWN unless new current evidence starts a new routing cycle. Preserve intent,
   authority, permission, verification and durability; make material route changes visible.
 Permission: Capability, cached state and prior authorization do not imply permission for the current stateful or externally
   consequential action.

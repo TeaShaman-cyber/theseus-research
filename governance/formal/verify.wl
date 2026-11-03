@@ -19,13 +19,78 @@ successRequires = AssociationMap[
   required
 ];
 
-fallback = model["fallback_return_edge"];
-fallbackEdge = DirectedEdge[fallback["from"], fallback["to"]];
-fallbackCycleOnly = Not[AcyclicGraphQ[graph]] && AcyclicGraphQ[EdgeDelete[graph, fallbackEdge]];
+progress = model["fallback_progress"];
+returnSpec = progress["return_edge"];
+exhaustedSpec = progress["exhausted_edge"];
+returnEdge = DirectedEdge[returnSpec["from"], returnSpec["to"]];
+
+fallbackCycleOnly =
+  Not[AcyclicGraphQ[graph]] &&
+  AcyclicGraphQ[EdgeDelete[graph, returnEdge]];
+
+returnTransitions = Select[
+  transitions,
+  #["from"] === returnSpec["from"] && #["to"] === returnSpec["to"] &
+];
+exhaustedTransitions = Select[
+  transitions,
+  #["from"] === exhaustedSpec["from"] && #["to"] === exhaustedSpec["to"] &
+];
+fallbackOutgoing = Select[transitions, #["from"] === returnSpec["from"] &];
+
+returnTransitionValid =
+  Length[returnTransitions] === 1 &&
+  First[returnTransitions]["guard"] === returnSpec["guard"] &&
+  First[returnTransitions]["progress_delta"] === progress["return_delta"];
+
+exhaustedTransitionValid =
+  Length[exhaustedTransitions] === 1 &&
+  First[exhaustedTransitions]["guard"] === exhaustedSpec["guard"] &&
+  First[exhaustedTransitions]["progress_delta"] === progress["other_edge_delta"];
+
+fallbackOutgoingExact =
+  Length[fallbackOutgoing] === 2 &&
+  returnTransitionValid &&
+  exhaustedTransitionValid;
+
+otherTransitions = Select[
+  transitions,
+  Not[#["from"] === returnSpec["from"] && #["to"] === returnSpec["to"]] &
+];
+
+otherDeltasValid = AllTrue[
+  otherTransitions,
+  IntegerQ[#["progress_delta"]] &&
+    #["progress_delta"] === progress["other_edge_delta"] &
+];
+
+progressMeasureWellFounded =
+  progress["measure"] === "remaining_untried_routes" &&
+  progress["domain"] === "finite_nonnegative_integer" &&
+  IntegerQ[progress["return_delta"]] &&
+  progress["return_delta"] < 0 &&
+  progress["other_edge_delta"] === 0 &&
+  progress["return_enabled_when"] === "positive" &&
+  progress["exhausted_enabled_when"] === "zero" &&
+  returnTransitionValid &&
+  exhaustedTransitionValid &&
+  otherDeltasValid;
 
 allowedFallbackGuards = model["allowed_fallback_entry_guards"];
-incomingFallback = Select[transitions, #["to"] === fallback["from"] && #["from"] =!= fallback["from"] &];
-fallbackGuardsValid = AllTrue[incomingFallback, MemberQ[allowedFallbackGuards, #["guard"]] &];
+incomingFallback = Select[
+  transitions,
+  #["to"] === returnSpec["from"] && #["from"] =!= returnSpec["from"] &
+];
+fallbackGuardsValid = AllTrue[
+  incomingFallback,
+  MemberQ[allowedFallbackGuards, #["guard"]] &
+];
+
+boundedFallback =
+  fallbackCycleOnly &&
+  fallbackOutgoingExact &&
+  progressMeasureWellFounded &&
+  fallbackGuardsValid;
 
 receipt = <|
   "Revision" -> model["revision"],
@@ -33,15 +98,19 @@ receipt = <|
   "NoDeadlockedNonterminals" -> noDeadlockedNonterminals,
   "SuccessRequires" -> successRequires,
   "FallbackCycleOnly" -> fallbackCycleOnly,
-  "FallbackGuardsValid" -> fallbackGuardsValid
+  "FallbackOutgoingExact" -> fallbackOutgoingExact,
+  "FallbackProgressMeasure" -> progress["measure"],
+  "FallbackReturnDelta" -> progress["return_delta"],
+  "ProgressMeasureWellFounded" -> progressMeasureWellFounded,
+  "FallbackGuardsValid" -> fallbackGuardsValid,
+  "BoundedFallback" -> boundedFallback
 |>;
 
 pass = And[
   allNonterminalsReachTerminal,
   noDeadlockedNonterminals,
   And @@ Values[successRequires],
-  fallbackCycleOnly,
-  fallbackGuardsValid
+  boundedFallback
 ];
 
 Print[ExportString[Append[receipt, "Result" -> If[pass, "PASS", "FAIL"]], "RawJSON"]];
