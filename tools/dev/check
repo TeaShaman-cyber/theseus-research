@@ -58,6 +58,10 @@ python3 tools/check_registry.py validate
 echo '== registry projections =='
 python3 tools/check_registry.py render --check
 
+echo '== ChatGPT Project Contract =='
+yamllint governance/chatgpt-project-contract.yaml
+python3 tools/project_contract.py validate
+
 echo '== unit tests =='
 python3 -m unittest discover -s tests -v
 
