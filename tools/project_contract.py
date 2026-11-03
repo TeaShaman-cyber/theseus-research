@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import yaml
@@ -13,6 +14,8 @@ SOURCE = ROOT / "governance" / "chatgpt-project-contract.yaml"
 LEGACY = ROOT / "governance" / "legacy" / "project-contract-v10.wl"
 PROJECTION = ROOT / "governance" / "project-settings.txt"
 MAX_PROJECT_SETTINGS_CHARS = 8000
+ACCEPTED_V10_REVISION = "2026-11-skill-router-v10"
+ACCEPTED_V10_LEGACY_GIT_BLOB = "614fee41c7dc16816e0cdbd35441466bd9bb7904"
 
 _REQUIRED_TOP = {
     "Scope",
@@ -70,7 +73,8 @@ _UniqueKeyLoader.add_constructor(
 )
 
 
-def load_source(path: Path = SOURCE) -> dict[str, Any]:
+def load_source(path: Path | None = None) -> dict[str, Any]:
+    path = SOURCE if path is None else path
     try:
         data = yaml.load(path.read_text(encoding="utf-8"), Loader=_UniqueKeyLoader)
     except yaml.YAMLError as exc:
@@ -192,6 +196,23 @@ def parse_wl(text: str) -> dict[str, Any]:
     return _WLParser(text).parse()
 
 
+def _git_blob_sha(raw: bytes) -> str:
+    header = f"blob {len(raw)}\0".encode("ascii")
+    return hashlib.sha1(header + raw).hexdigest()
+
+
+def load_pinned_legacy(path: Path | None = None) -> dict[str, Any]:
+    path = LEGACY if path is None else path
+    raw = path.read_bytes()
+    actual = _git_blob_sha(raw)
+    if actual != ACCEPTED_V10_LEGACY_GIT_BLOB:
+        raise ContractError(
+            "accepted v10 WL migration fixture drift: "
+            f"expected Git blob {ACCEPTED_V10_LEGACY_GIT_BLOB}, got {actual}"
+        )
+    return parse_wl(raw.decode("utf-8"))
+
+
 def _render(value: Any) -> str:
     if isinstance(value, str):
         return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
@@ -275,19 +296,18 @@ def validate_contract(data: dict[str, Any]) -> None:
         raise ContractError("Persistence key drift")
 
 
-def validate_all() -> dict[str, Any]:
-    source = load_source()
-    validate_contract(source)
+def build_validated_projection(data: dict[str, Any]) -> str:
+    validate_contract(data)
 
-    legacy = parse_wl(LEGACY.read_text(encoding="utf-8"))
-    if legacy != source:
+    legacy = load_pinned_legacy()
+    if data["Revision"] == ACCEPTED_V10_REVISION and legacy != data:
         raise ContractError(
             "structured source is not semantically identical to accepted v10 WL baseline"
         )
 
-    rendered = render_projection(source)
+    rendered = render_projection(data)
     roundtrip = parse_wl(rendered)
-    if roundtrip != source:
+    if roundtrip != data:
         raise ContractError(
             "generated projection does not round-trip to canonical structure"
         )
@@ -297,6 +317,13 @@ def validate_all() -> dict[str, Any]:
             f"generated Project Settings projection is {len(rendered)} chars; "
             f"limit is {MAX_PROJECT_SETTINGS_CHARS}"
         )
+
+    return rendered
+
+
+def validate_all() -> dict[str, Any]:
+    source = load_source()
+    rendered = build_validated_projection(source)
 
     committed = PROJECTION.read_text(encoding="utf-8")
     if committed != rendered:
@@ -312,17 +339,21 @@ def validate_all() -> dict[str, Any]:
 
 
 def migrate_from_legacy() -> None:
-    data = parse_wl(LEGACY.read_text(encoding="utf-8"))
+    data = load_pinned_legacy()
     SOURCE.write_text(
         yaml.dump(data, Dumper=_IndentedSafeDumper, sort_keys=False, allow_unicode=True, width=120),
         encoding="utf-8",
     )
 
 
-def render_file() -> None:
-    data = load_source()
-    validate_contract(data)
-    PROJECTION.write_text(render_projection(data), encoding="utf-8")
+def render_file(
+    source_path: Path | None = None,
+    projection_path: Path | None = None,
+) -> None:
+    data = load_source(source_path)
+    rendered = build_validated_projection(data)
+    target = PROJECTION if projection_path is None else projection_path
+    target.write_text(rendered, encoding="utf-8")
 
 
 def main() -> int:
