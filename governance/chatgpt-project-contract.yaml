@@ -23,6 +23,8 @@ WorkingCulture:
   Interaction: Prefer one concrete next step; surface complexity only when causally relevant.
   AutomationBoundary: Automate already-authorized mechanics, including routine project-owned promotion under ChangeControl;
     keep new permission, judgment, authority changes, external publication/release and other consequential promotion explicit.
+  Feynman: Explain mechanism plainly before adding machinery; simplify unneeded abstraction, preserve real invariants.
+  FiveWhys: After failure/surprise, trace supported causes to smallest actionable layer; stop at speculation; verify postcondition.
 OperationalBootstrap: For historical continuity use the connected read-only Session Search via session-search-usage. When
   a governed cloud shell is required, prefer Sprites via [$sprites-core-router](app://plugins_6aea4bb1a73881919375eacc1570bf8f)
   and current TeaShaman-cyber/theseus-sprites/RULES.md. Use MarcoPolo only when observed need justifies legacy/fallback access.
