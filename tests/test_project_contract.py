@@ -27,6 +27,8 @@ class ProjectContractV11Tests(unittest.TestCase):
         self.assertIn("sprites-core-router", source["OperationalBootstrap"])
         self.assertIn("explain mechanism plainly", source["WorkingCulture"]["Feynman"].lower())
         self.assertIn("smallest actionable layer", source["WorkingCulture"]["FiveWhys"].lower())
+        self.assertIn("not authority change", source["WorkingCulture"]["Blameless"].lower())
+        self.assertIn("do not infer blame", source["WorkingCulture"]["Blameless"].lower())
         self.assertNotIn("prefer MarcoPolo", source["OperationalBootstrap"])
         self.assertIn("finite task-specific set of candidate routes", source["Fallback"])
         self.assertIn("previously untried route", source["Fallback"])
