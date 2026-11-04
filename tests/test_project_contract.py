@@ -25,6 +25,8 @@ class ProjectContractV11Tests(unittest.TestCase):
         self.assertIn("theseus-research/governance/chatgpt-project-contract.yaml", source["CanonicalSource"])
         self.assertIn("session-search-usage", source["Continuity"])
         self.assertIn("sprites-core-router", source["OperationalBootstrap"])
+        self.assertIn("explain mechanism plainly", source["WorkingCulture"]["Feynman"].lower())
+        self.assertIn("smallest actionable layer", source["WorkingCulture"]["FiveWhys"].lower())
         self.assertNotIn("prefer MarcoPolo", source["OperationalBootstrap"])
         self.assertIn("finite task-specific set of candidate routes", source["Fallback"])
         self.assertIn("previously untried route", source["Fallback"])
