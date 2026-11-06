@@ -24,7 +24,7 @@ that the ChatGPT Project Settings projection is installed or active.
 
 ## Formal and semantic gates (v11 historical, v12 active)
 
-- `formal/project-contract-v11-model.json` is an explicit control-flow model, separate from the runtime projection.
+- `formal/project-contract-v12-model.json` is the active explicit control-flow model, separate from the runtime projection; v11 remains as historical evidence.
 - Fallback termination is modeled with the well-founded rank `remaining_untried_routes`: the only cycle edge strictly decreases a finite nonnegative measure and the zero case exits to a terminal state.
 - `tools/project_contract_formal.py` performs deterministic graph/invariant checks in ordinary repo QA.
 - `formal/verify.wl` independently evaluates the same invariant family in Wolfram Language.
