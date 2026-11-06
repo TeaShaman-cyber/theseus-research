@@ -12,19 +12,21 @@ import project_contract as pc
 import project_contract_formal as formal
 
 
-class ProjectContractV11Tests(unittest.TestCase):
+class ProjectContractV12Tests(unittest.TestCase):
     def test_legacy_v10_fixture_remains_pinned(self):
         legacy = pc.load_pinned_legacy()
         self.assertEqual(legacy["Revision"], pc.ACCEPTED_V10_REVISION)
         self.assertEqual(legacy["Probe"]["Reply"], "PC_OK_V10")
 
-    def test_v11_source_names_verified_routes(self):
+    def test_v12_source_names_verified_routes(self):
         source = pc.load_source()
-        self.assertEqual(source["Revision"], "2026-11-skill-router-v11")
-        self.assertEqual(source["Probe"]["Reply"], "PC_OK_V11")
+        self.assertEqual(source["Revision"], "2026-11-skill-router-v12")
+        self.assertEqual(source["Probe"]["Reply"], "PC_OK_V12")
         self.assertIn("theseus-research/governance/chatgpt-project-contract.yaml", source["CanonicalSource"])
         self.assertIn("session-search-usage", source["Continuity"])
-        self.assertIn("sprites-core-router", source["OperationalBootstrap"])
+        self.assertIn("exe-dev-core-router", source["OperationalBootstrap"])
+        self.assertIn("theseus-cloud-shell", source["OperationalBootstrap"])
+        self.assertIn("Sprites", source["OperationalBootstrap"])
         self.assertIn("explain mechanism plainly", source["WorkingCulture"]["Feynman"].lower())
         self.assertIn("smallest actionable layer", source["WorkingCulture"]["FiveWhys"].lower())
         self.assertIn("not authority change", source["WorkingCulture"]["Blameless"].lower())
@@ -87,7 +89,7 @@ class ProjectContractV11Tests(unittest.TestCase):
         data = json.loads(formal.MODEL.read_text(encoding="utf-8"))
         receipt = formal.verify_model(data)
         self.assertEqual(receipt["status"], "PASS")
-        self.assertEqual(receipt["revision"], "2026-11-skill-router-v11")
+        self.assertEqual(receipt["revision"], "2026-11-skill-router-v12")
 
     def test_formal_rejects_non_decreasing_fallback_progress(self):
         data = json.loads(formal.MODEL.read_text(encoding="utf-8"))
@@ -124,8 +126,8 @@ class ProjectContractV11Tests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         receipt = json.loads(result.stdout)
-        self.assertEqual(receipt["revision"], "2026-11-skill-router-v11")
-        self.assertEqual(receipt["probe"], "PC_OK_V11")
+        self.assertEqual(receipt["revision"], "2026-11-skill-router-v12")
+        self.assertEqual(receipt["probe"], "PC_OK_V12")
         self.assertLessEqual(receipt["projection_chars"], 8000)
 
 

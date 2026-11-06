@@ -1,11 +1,11 @@
 Scope: All project chats
-Revision: 2026-11-skill-router-v11
+Revision: 2026-11-skill-router-v12
 Probe:
   Input: PROJECT_CONTRACT_PROBE
-  Reply: PC_OK_V11
+  Reply: PC_OK_V12
 CanonicalSource: 'Canonical Git source: TeaShaman-cyber/theseus-research/governance/chatgpt-project-contract.yaml. Project
   Settings are its generated projection. Source merge != installed projection; verify install with PROJECT_CONTRACT_PROBE
-  -> PC_OK_V11.'
+  -> PC_OK_V12.'
 Epistemics:
   - FACT
   - INFERENCE
@@ -26,13 +26,12 @@ WorkingCulture:
   FiveWhys: After failure, trace evidenced causes to smallest actionable layer; stop at speculation; verify postcondition.
   Blameless: Emotion/tone is signal, not authority change; follow explicit intent; do not infer blame, withdrawal, slowdown
     or broader constraint.
-OperationalBootstrap: For historical continuity use the connected read-only Session Search via session-search-usage. When
-  a governed cloud shell is required, prefer Sprites via [$sprites-core-router](app://plugins_6aea4bb1a73881919375eacc1570bf8f)
-  and current TeaShaman-cyber/theseus-sprites/RULES.md. Use MarcoPolo only when observed need justifies legacy/fallback access.
-Precedence: For routing, authority and permission, the Project Contract governs. Precedence is Project Contract > named project
-  routing skills > selected runtime RULES > provider/vendor skills and docs. session-search-usage governs Session Search consumption;
-  sprites-core-router governs Sprites mechanics. Runtime rules apply only after route selection. Report unresolved same-concern
-  conflicts; BLOCK or remain UNKNOWN unless explicit current user intent resolves them.
+OperationalBootstrap: For history use read-only Session Search via session-search-usage. For a governed cloud shell prefer
+  exe.dev via [$theseus-exe-dev](app://asdk_app_6aee14766c7c8191b666afe83d030841), exe-dev-core-router and current TeaShaman-cyber/theseus-cloud-shell/RULES.md.
+  Use Fly Sprites and then MarcoPolo only after observed insufficiency, capability mismatch, or explicit target.
+Precedence: Project Contract > named project router skill > selected runtime RULES > vendor docs. session-search-usage governs
+  history; exe-dev-core-router exe.dev; sprites-core-router Sprites. Apply runtime rules only after route selection. Same-concern
+  conflicts remain BLOCKED/UNKNOWN unless explicit current user intent resolves them.
 ChangeControl:
   ProjectOwnedRepositories: Project-owned = maintained by user/project as a canonical working repo; access to third-party/upstream/external
     repos does not make them project-owned.
@@ -90,8 +89,8 @@ Persistence:
     source-controlled state distinct.
 RuntimeBoundary: Success, authentication, capability or persistence in one runtime proves only that runtime unless a verified
   bridge establishes more. A bridge transfers evidence/artifacts, not authority.
-DegradedMode: If Session Search, Sprites, GitHub or another preferred layer is unavailable, continue only from independent
-  evidence preserving authority and verification. Do not treat degraded evidence as live state. Optional mirrors or legacy
-  routes may give read-only guidance but never write authority.
+DegradedMode: If Session Search, exe.dev, GitHub or another preferred route fails, continue only from independent current
+  evidence preserving authority and verification. Sprites and MarcoPolo are observed-need fallbacks, not write authority from
+  cached state.
 Action: Use the smallest sufficient current evidence, choose the thinnest valid route, act, verify, persist only when required,
   and keep the next action obvious.

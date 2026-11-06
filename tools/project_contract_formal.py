@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MODEL = ROOT / "governance" / "formal" / "project-contract-v11-model.json"
+MODEL = ROOT / "governance" / "formal" / "project-contract-v12-model.json"
 
 
 class FormalError(ValueError):
