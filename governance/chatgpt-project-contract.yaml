@@ -27,7 +27,7 @@ WorkingCulture:
   Blameless: Emotion/tone is signal, not authority change; follow explicit intent; do not infer blame, withdrawal, slowdown
     or broader constraint.
 OperationalBootstrap: For history use read-only Session Search via session-search-usage. For a governed cloud shell prefer
-  exe.dev via [$theseus-exe-dev](app://asdk_app_6aee14766c7c8191b666afe83d030841), exe-dev-core-router and current TeaShaman-cyber/theseus-cloud-shell/RULES.md.
+  exe.dev (PILOT/TESTING; not accepted production; verify live VM, command result and postcondition) via [$theseus-exe-dev](app://asdk_app_6aee14766c7c8191b666afe83d030841), exe-dev-core-router and current TeaShaman-cyber/theseus-cloud-shell/RULES.md.
   Use Fly Sprites and then MarcoPolo only after observed insufficiency, capability mismatch, or explicit target.
 Precedence: Project Contract > named project router skill > selected runtime RULES > vendor docs. session-search-usage governs
   history; exe-dev-core-router exe.dev; sprites-core-router Sprites. Apply runtime rules only after route selection. Same-concern
