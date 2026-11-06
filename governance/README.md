@@ -2,32 +2,27 @@
 
 Coordination: [issue #107](https://github.com/TeaShaman-cyber/theseus-research/issues/107).
 
-This directory is the candidate neutral Git home for the ChatGPT Project
-Contract. The current accepted runtime contract is still v10 in
-`TeaShaman-cyber/marcopolo-cookbook/project/project-contract.wl`; the files here
-do **not** become project-wide authority merely by existing or merging.
+This directory is the **canonical Git source** for the ChatGPT Project Contract.
+The currently installed project-runtime projection is v11 (`PC_OK_V11`); an
+accepted Git v12 update does **not** by itself install new Project Settings.
 
-Stage A imported the accepted v10 semantics without changing routing or authority. Stage B defines v11 routing while keeping runtime installation/probe separate:
+- `legacy/project-contract-v10.wl` is the pinned accepted historical migration fixture.
+- `chatgpt-project-contract.yaml` is the current canonical source.
+- `project-settings.txt` is its deterministic generated ChatGPT Settings projection.
+- `tools/project_contract.py` validates unique fields, structure, source/projection
+  round-trip and the 8,000-character ceiling. The v10 migration equivalence
+  check applies to the historical v10 source, not arbitrarily to later revisions.
 
-- `legacy/project-contract-v10.wl` is the exact accepted v10 migration fixture;
-- `chatgpt-project-contract.yaml` is a compact structured, LLM-reviewable canonical-source candidate;
-- `project-settings.txt` is the deterministic compact projection generated from it;
-- `tools/project_contract.py` proves semantic equality with the accepted v10
-  fixture, rejects duplicate or malformed source structure, round-trips the
-  generated projection, and enforces the current 8000-character Project Settings
-  ceiling.
+The v12 change prefers the directly verified exe.dev shell and
+`exe-dev-core-router` from `theseus-cloud-shell`, with Fly Sprites and MarcoPolo
+only as observed-need alternatives. Authority and user permission do not migrate
+to the runtime. See [#114](https://github.com/TeaShaman-cyber/theseus-research/issues/114).
+The project-installed state must still be independently probed with `PC_OK_V12`.
 
-The `.wl` extension is historical, not an invariant. Early Project Contract work
-used Wolfram as a formal verifier over a symbolic routing model. Future v11 work
-should preserve that **formal verification role** for routing, gate and fallback
-graph properties while also requiring adversarial LLM/Codex semantic review.
-Formal model validity is not runtime acceptance.
+The Wolfram `.wl` model verifier remains an independent formal check, not proof
+that the ChatGPT Project Settings projection is installed or active.
 
-Promotion to v11, canonical-source handoff, Session Search/Sprites routing changes,
-and actual ChatGPT Project Settings installation are separate protected steps.
-
-
-## v11 formal and semantic gates
+## Formal and semantic gates (v11 historical, v12 active)
 
 - `formal/project-contract-v11-model.json` is an explicit control-flow model, separate from the runtime projection.
 - Fallback termination is modeled with the well-founded rank `remaining_untried_routes`: the only cycle edge strictly decreases a finite nonnegative measure and the zero case exits to a terminal state.
@@ -35,4 +30,4 @@ and actual ChatGPT Project Settings installation are separate protected steps.
 - `formal/verify.wl` independently evaluates the same invariant family in Wolfram Language.
 - Wolfram proves properties of the formal model, not semantic completeness or runtime behavior.
 - Adversarial LLM/Codex review remains a separate required gate.
-- Git merge does not install Project Settings; runtime acceptance still requires `PC_OK_V11`.
+- Git merge does not install Project Settings; v12 runtime acceptance requires `PC_OK_V12`.

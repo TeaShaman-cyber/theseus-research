@@ -1,0 +1,155 @@
+{
+  "allowed_fallback_entry_guards": [
+    "stale_unavailable_or_capability_mismatch",
+    "observed_execution_failure",
+    "verification_failed"
+  ],
+  "fallback_progress": {
+    "domain": "finite_nonnegative_integer",
+    "exhausted_edge": {
+      "from": "TRY_FALLBACK",
+      "guard": "no_untried_route",
+      "to": "UNKNOWN"
+    },
+    "exhausted_enabled_when": "zero",
+    "measure": "remaining_untried_routes",
+    "other_edge_delta": 0,
+    "return_delta": -1,
+    "return_edge": {
+      "from": "TRY_FALLBACK",
+      "guard": "untried_route_available",
+      "to": "SELECT_ROUTE"
+    },
+    "return_enabled_when": "positive"
+  },
+  "revision": "2026-11-skill-router-v12",
+  "start": "START",
+  "states": [
+    "START",
+    "SELECT_AUTHORITY",
+    "SELECT_ROUTE",
+    "CHECK_CURRENTNESS",
+    "CHECK_PERMISSION",
+    "EXECUTE",
+    "VERIFY",
+    "PERSIST_IF_REQUIRED",
+    "TRY_FALLBACK",
+    "SUCCESS",
+    "BLOCKED",
+    "UNKNOWN"
+  ],
+  "success_requires": [
+    "CHECK_PERMISSION",
+    "VERIFY"
+  ],
+  "success_terminal": "SUCCESS",
+  "terminals": [
+    "SUCCESS",
+    "BLOCKED",
+    "UNKNOWN"
+  ],
+  "transitions": [
+    {
+      "from": "START",
+      "guard": "always",
+      "progress_delta": 0,
+      "to": "SELECT_AUTHORITY"
+    },
+    {
+      "from": "SELECT_AUTHORITY",
+      "guard": "authority_resolved",
+      "progress_delta": 0,
+      "to": "SELECT_ROUTE"
+    },
+    {
+      "from": "SELECT_AUTHORITY",
+      "guard": "authority_unresolved",
+      "progress_delta": 0,
+      "to": "UNKNOWN"
+    },
+    {
+      "from": "SELECT_ROUTE",
+      "guard": "route_selected",
+      "progress_delta": 0,
+      "to": "CHECK_CURRENTNESS"
+    },
+    {
+      "from": "SELECT_ROUTE",
+      "guard": "no_valid_route",
+      "progress_delta": 0,
+      "to": "UNKNOWN"
+    },
+    {
+      "from": "CHECK_CURRENTNESS",
+      "guard": "current_enough",
+      "progress_delta": 0,
+      "to": "CHECK_PERMISSION"
+    },
+    {
+      "from": "CHECK_CURRENTNESS",
+      "guard": "stale_unavailable_or_capability_mismatch",
+      "progress_delta": 0,
+      "to": "TRY_FALLBACK"
+    },
+    {
+      "from": "CHECK_PERMISSION",
+      "guard": "permitted",
+      "progress_delta": 0,
+      "to": "EXECUTE"
+    },
+    {
+      "from": "CHECK_PERMISSION",
+      "guard": "permission_missing",
+      "progress_delta": 0,
+      "to": "BLOCKED"
+    },
+    {
+      "from": "EXECUTE",
+      "guard": "execution_completed",
+      "progress_delta": 0,
+      "to": "VERIFY"
+    },
+    {
+      "from": "EXECUTE",
+      "guard": "observed_execution_failure",
+      "progress_delta": 0,
+      "to": "TRY_FALLBACK"
+    },
+    {
+      "from": "VERIFY",
+      "guard": "verified",
+      "progress_delta": 0,
+      "to": "PERSIST_IF_REQUIRED"
+    },
+    {
+      "from": "VERIFY",
+      "guard": "verification_failed",
+      "progress_delta": 0,
+      "to": "TRY_FALLBACK"
+    },
+    {
+      "from": "PERSIST_IF_REQUIRED",
+      "guard": "persisted_or_not_required",
+      "progress_delta": 0,
+      "to": "SUCCESS"
+    },
+    {
+      "from": "PERSIST_IF_REQUIRED",
+      "guard": "required_persistence_failed",
+      "progress_delta": 0,
+      "to": "BLOCKED"
+    },
+    {
+      "from": "TRY_FALLBACK",
+      "guard": "untried_route_available",
+      "progress_delta": -1,
+      "to": "SELECT_ROUTE"
+    },
+    {
+      "from": "TRY_FALLBACK",
+      "guard": "no_untried_route",
+      "progress_delta": 0,
+      "to": "UNKNOWN"
+    }
+  ]
+}

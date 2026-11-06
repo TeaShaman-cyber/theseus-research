@@ -1,4 +1,4 @@
-model = Import[FileNameJoin[{DirectoryName[$InputFileName], "project-contract-v11-model.json"}], "RawJSON"];
+model = Import[FileNameJoin[{DirectoryName[$InputFileName], "project-contract-v12-model.json"}], "RawJSON"];
 
 states = model["states"];
 terminals = model["terminals"];
