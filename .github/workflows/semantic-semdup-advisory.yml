@@ -1,6 +1,20 @@
 name: semantic semdup advisory
 
 on:
+  workflow_dispatch:
+    inputs:
+      base_sha:
+        description: Exact base commit SHA (required)
+        required: true
+        type: string
+      head_sha:
+        description: Exact candidate commit SHA (required)
+        required: true
+        type: string
+      task_id:
+        description: Unique manual trace identifier
+        required: true
+        type: string
   workflow_call:
     inputs:
       base_sha:
