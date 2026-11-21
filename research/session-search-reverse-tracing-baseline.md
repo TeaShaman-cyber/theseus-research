@@ -498,60 +498,154 @@ a few tests alone.
 
 # Historical drift corpus for the reverse-tracer
 
-These are candidate benchmark cases. They are **not all current defects**.
+These are **not automatically benchmark-ready** merely because we remember the
+incident. A fair benchmark needs an immutable defective input, a later
+correction or adjudication, and enough public evidence to reconstruct the
+original promise without showing the checker the answer.
 
-## H1 — Green CI but missing federation postconditions
+## Benchmark-ready now
 
-PR #65/#66 -> issue #69/#70:
-- stalled shard could hang the whole router;
-- invalid routing filters were under-validated;
+### H1 — Green CI but missing federation postconditions
+
+Repository: `TeaShaman-cyber/theseus-session-search-lab`.
+
+Frozen defective implementation:
+- pre-#65 base: `67faf48277602b8e747cd1dc3c938c210a0b56e7`;
+- PR #65 head: `70945aa58225c404da4096ac0be528f2638509df`;
+- PR #65 merge: `5137fdbb71d21ad50eee872a72c2a81341331d17`;
+- PR #66 head: `c9c27423eb4b87be1763ee4042a89abda64eaa34`;
+- PR #66 merge: `20d61f26bc48b39abd88257add9508be5bd2cbe8`.
+
+Hidden adjudication / correction:
+- issue #69 records the late-review findings;
+- PR #70 fixed the three confirmed serving/lifecycle defects at exact head
+  `cbae885285ba1866d69c49412085b80609861e84`;
+- PR #70 merge: `e7907962f9ce4754acf0f511f3a6ea7a6b5a5db1`.
+
+Known defects for the hidden oracle:
+- a stalled shard could hang the whole router;
+- invalid routing filters were under-validated at the router boundary;
 - READY generation mutability was not fully closed.
 
-Expected reverse-tracer behavior: detect that the implementation/test evidence
-proved weaker statements than the human requirements.
+Expected reverse-tracer behavior: from the original #61/#64 requirements plus
+the defective source/tests, detect that the implementation evidence proves
+weaker statements than the human promises.
 
-## H2 — Canonical Git and installed runtime diverged
+Do not provide #69/#70 to the checker during detection. Use them only for
+post-pass scoring.
 
-An installed cumulative-corpus/runtime fix existed while canonical source still
-described/implemented an older single-SQLite binding.
+## Candidate controls — provenance anchored, but not yet benchmark-ready
 
-Expected behavior: distinguish “runtime currently works” from “canonical
-versioned source contains the same architecture.”
+### H2 — Canonical Git and installed runtime diverged
 
-## H3 — Stable tool identity drift
+Repository: `TeaShaman-cyber/marcopolo-cookbook`.
 
-A side-by-side `session_search_v2` looked like a normal migration technique,
-but the Arcade gateway allowlist and ChatGPT selector semantics meant the new
-identity did not transparently replace the old consumer capability.
+Public correction:
+- PR #10, “Fix Session Search cumulative corpus binding”;
+- pre-fix canonical base:
+  `088b21cd45622d16d0b26fbddbeb2e9ee0b11ce0`;
+- fix head: `face5e175770c6f9bbfaba0c3c8b08f88e43b1b2`;
+- merge: `cc9456a7b8edd83b28ca2265c536d455ec04ab82`.
 
-Expected behavior: reason across the external control-plane contract, not only
-the new backend code.
+The PR records that the cumulative-corpus deployment was already working while
+canonical cookbook source still described the older binding.
 
-## H4 — Search miss / coverage overclaim
+**Why still candidate:** the exact already-working deployed wrapper artifact is
+not pinned here as an immutable public input. We can reproduce the canonical
+source correction, but not yet a clean two-sided “runtime vs Git” benchmark.
 
-A miss against an incomplete or stale corpus was at risk of being interpreted
-as evidence that the conversation/fact did not exist.
+Expected behavior once the runtime side is pinned: distinguish “the installed
+runtime currently works” from “canonical versioned source defines the same
+architecture.”
 
-Expected behavior: keep retrieval evidence, corpus coverage, and upstream source
-completeness as separate claims.
+### H3 — Stable tool identity drift
 
-## H5 — False COMPLETE from weak provenance
+Repository: `TeaShaman-cyber/theseus-session-search-lab`.
 
-Historical accepted captures included untagged pages. Treating weak page
-membership as enough to infer complete-session coverage could create false
-`COMPLETE` and therefore false absence claims.
+Public correction:
+- PR #141, “docs: preserve stable Session Search tool identity”;
+- correction base: `29f6a7a6d8771538028884e6c10d16a428b82e52`;
+- correction head: `136652b1fc146cd8b545c855d245a91217f7a5e2`;
+- merge: `c12c65a459c47cd037eee1b7f559df94606ca630`.
 
-Expected behavior: identify that the evidence is insufficient for the stronger
-coverage label rather than inventing membership from title/time/text/majority
-heuristics.
+The correction records the invariant that the production gateway keeps one
+stable `TheseusSessionSearch.session_search` identity and must not promote a
+version-suffixed sibling tool.
 
-## H6 — Ephemeral storage mistaken for durable handoff
+**Why still candidate:** the problematic side-by-side Arcade/ChatGPT
+control-plane state was an operational experiment; this baseline does not yet
+pin an immutable public readback of that defective external state.
 
-Historical operational work kept durable handoff state in `/tmp`; environment
-shutdown erased it.
+Expected behavior once that state is pinned: reason across the gateway/selector
+contract, not only the candidate backend code.
 
-Expected behavior: notice that the implementation contradicts the durability
-promise even if the happy-path handoff works before shutdown.
+### H4 — Search miss / coverage overclaim
+
+Repository: `TeaShaman-cyber/theseus-session-search-lab`.
+
+Observed failure and correction:
+- issue #275 documents the recent-history failure mode and the required
+  distinction between observed index range and source currentness;
+- PR #277 base: `6934b481b4a03d3b0f5996f3b9d83067fafa6bdf`;
+- PR #277 head: `b0a61e505a339c83d01b4e762566262c718b132f`;
+- merge: `c3f03696182e195d39af3a01d5ba5569b7ac09f7`.
+
+**Why still candidate:** this incident revealed a missing capability/semantic
+distinction rather than a simple implementation violation of an already
+machine-readable requirement. Before using it to score a reverse-tracer, freeze
+which earlier promise the checker is expected to reconstruct.
+
+Expected behavior: keep retrieval evidence, indexed coverage, and upstream
+source completeness as separate claims.
+
+### H5 — False COMPLETE from weak provenance
+
+Repository: `TeaShaman-cyber/theseus-session-search-lab`.
+
+Public provenance contract:
+- issue #16, “Recovery: provenance-aware splitting of mixed Barn Doctor capture
+  artifacts”;
+- PR #17 base: `a1c9a61de57cf2007c2f725210ffc0dc96554205`;
+- PR #17 head: `d6285b7c107d3985ff5047daa25d29434296e894`;
+- merge: `970f9b197b799383e0e61a8c357d4b41d1ef5bc5`.
+
+Issue #16 preserves the key rule: request provenance / explicit provider
+conversation identity are authoritative for membership; title, timestamp,
+filename order, text similarity, UI naming, and majority heuristics are
+forbidden shortcuts.
+
+**Why still candidate:** PR #17 is explicitly the documentation/contract slice.
+The exact defective implementation that produced the false-coverage risk must
+still be pinned before this becomes a code-level benchmark.
+
+Expected behavior once pinned: identify that weak membership evidence cannot
+justify the stronger `COMPLETE` coverage label.
+
+### H6 — Ephemeral storage mistaken for durable handoff
+
+Repository: `TeaShaman-cyber/marcopolo-cookbook`.
+
+Observed operational failure and correction:
+- issue #143 records the lost heavy Session Search benchmark corpus under
+  Codespace-local `/tmp`;
+- PR #144 base: `49f5823744def2b1cbba9a95ca1fa35082299f49`;
+- PR #144 head: `676995ca98c98563b73a2f69d638aabee8d20eaf`;
+- merge: `06f7838c2d4429c993353eef1073351c6708dc67`.
+
+The corrected rule says ephemeral executor storage may hold reproducible
+scratch, but continuation-critical or expensive derived outputs must be
+promoted to authorized durable storage before executor teardown/expiry, with
+identity/receipt information.
+
+**Why still candidate for this Session Search reverse-tracing study:** the
+failure is primarily an operational-policy case in the cookbook rather than a
+Session Search code defect. It is useful for testing architecture/policy
+reverse tracing, but should not be mixed into code-defect recall without a
+separate score.
+
+Expected behavior: notice that a happy-path handoff can still violate the
+durability promise if its continuation-critical result lives only in ephemeral
+storage.
 
 ---
 
