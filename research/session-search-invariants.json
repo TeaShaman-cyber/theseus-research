@@ -197,6 +197,24 @@
         "Promise.all",
         "TIMEOUT",
         "QUERY_FAILED"
+      ],
+      "proof_checks": [
+        {
+          "ref": "functions/router/handler.mjs",
+          "contains_all": [
+            "shardTimeoutMs",
+            "Promise.race",
+            "TIMEOUT"
+          ]
+        },
+        {
+          "ref": "functions/tests/handlers.test.mjs",
+          "contains_all": [
+            "router times out a stalled shard",
+            "new Promise(() => {})",
+            "TIMEOUT"
+          ]
+        }
       ]
     },
     {
@@ -229,6 +247,25 @@
         "from_time",
         "to_time",
         "TIME_BOUNDS_INVERTED"
+      ],
+      "proof_checks": [
+        {
+          "ref": "functions/router/core.mjs",
+          "contains_all": [
+            "SESSION_OUT_OF_BOUNDS",
+            "TIME_OUT_OF_BOUNDS",
+            "TIME_BOUNDS_INVERTED",
+            "Number.isFinite"
+          ]
+        },
+        {
+          "ref": "functions/tests/serving.test.mjs",
+          "contains_all": [
+            "session_id: 42",
+            "Number.NaN",
+            "TIME_BOUNDS_INVERTED"
+          ]
+        }
       ]
     },
     {
@@ -260,6 +297,22 @@
         "BUILDING",
         "mark_generation_ready",
         "generations"
+      ],
+      "proof_checks": [
+        {
+          "ref": "sql/neon/003_federated_generation_lifecycle.sql",
+          "contains_all": [
+            "generation insert must start BUILDING",
+            "projection generation is immutable after READY"
+          ]
+        },
+        {
+          "ref": "tests/test_neon_federated_contract.py",
+          "contains_all": [
+            "generation insert must start BUILDING",
+            "projection generation is immutable after READY"
+          ]
+        }
       ]
     },
     {

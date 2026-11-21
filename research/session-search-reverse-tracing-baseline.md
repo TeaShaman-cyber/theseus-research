@@ -496,6 +496,38 @@ a few tests alone.
 
 ---
 
+## Machine-readable companion and proof witnesses
+
+The companion file research/session-search-invariants.json makes the same
+human promises addressable by deterministic tooling.
+
+Two distinct mechanisms are intentionally kept separate:
+
+1. **impact preflight** — watch_paths plus watch_terms answer only
+   “which promises might this diff affect?”;
+2. **declared proof witnesses** — optional proof_checks answer only
+   “are the named static code/test anchors still present in this snapshot?”.
+
+Neither mechanism is a correctness verdict.
+
+For the first post-hoc slice, proof_checks are declared only for the three H1
+promises FAIL-01, ROUTE-01, and GEN-01. They were written after the
+historical defects were understood, so they are **regression guards**, not
+evidence that this deterministic mechanism would have independently discovered
+the old defects.
+
+A witness result therefore uses deliberately narrow language:
+
+- DECLARED_WITNESSES_PRESENT — the expected static anchors exist;
+- DECLARED_WITNESS_MISSING — at least one expected anchor is absent;
+- NO_DECLARED_MACHINE_WITNESS — the promise has not been reduced to this
+  kind of machine-checkable witness.
+
+Actual proof still requires the relevant executable tests/readbacks to run and
+the human promise to remain semantically aligned with those checks.
+
+---
+
 # Historical drift corpus for the reverse-tracer
 
 These are **not automatically benchmark-ready** merely because we remember the

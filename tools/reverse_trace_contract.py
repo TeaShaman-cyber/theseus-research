@@ -18,9 +18,11 @@ INVARIANT_FIELDS = frozenset(
         "evidence",
         "watch_paths",
         "watch_terms",
+        "proof_checks",
     }
 )
 EVIDENCE_FIELDS = frozenset({"kind", "ref", "supports"})
+PROOF_CHECK_FIELDS = frozenset({"ref", "contains_all"})
 VALID_STATUSES = frozenset({"STRONG", "PARTIAL", "DOCUMENTED"})
 VALID_EVIDENCE_KINDS = frozenset(
     {"code", "test", "doc", "workflow", "runtime_readback", "historical"}
@@ -156,6 +158,50 @@ def validate_contract(document: Mapping[str, object]) -> list[str]:
                     errors.append(f"{invariant_id} duplicate watch term: {term}")
                 seen_terms.add(term)
 
+        proof_checks = raw.get("proof_checks")
+        if proof_checks is not None:
+            if not isinstance(proof_checks, list) or not proof_checks:
+                errors.append(f"{invariant_id} proof_checks must be non-empty list")
+            else:
+                seen_refs: set[str] = set()
+                for index, check in enumerate(proof_checks):
+                    if not isinstance(check, Mapping):
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] must be object"
+                        )
+                        continue
+                    unexpected_check = sorted(set(check) - PROOF_CHECK_FIELDS)
+                    if unexpected_check:
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] contains unsupported fields: "
+                            + ", ".join(unexpected_check)
+                        )
+                    ref = check.get("ref")
+                    if not _nonempty_string(ref):
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] ref "
+                            "must be non-empty string"
+                        )
+                    elif isinstance(ref, str):
+                        if ref in seen_refs:
+                            errors.append(
+                                f"{invariant_id} duplicate proof check ref: {ref}"
+                            )
+                        seen_refs.add(ref)
+                    contains_all = check.get("contains_all")
+                    if not isinstance(contains_all, list) or not contains_all:
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] contains_all "
+                            "must be non-empty list"
+                        )
+                    else:
+                        for term in contains_all:
+                            if not _nonempty_string(term):
+                                errors.append(
+                                    f"{invariant_id} proof_checks[{index}] contains_all "
+                                    f"term must be non-empty string: {term!r}"
+                                )
+
     return errors
 
 
@@ -258,3 +304,76 @@ def affected_invariants_from_patches(
                 }
             )
     return affected
+
+def evaluate_proof_witnesses(
+    document: Mapping[str, object], files: Mapping[str, str]
+) -> list[dict[str, object]]:
+    """Check whether declared static witness anchors are present.
+
+    Presence is deliberately weaker than proof. The result says only whether
+    the machine-readable contract's named code/test anchors can be observed in
+    the supplied snapshot.
+    """
+
+    errors = validate_contract(document)
+    if errors:
+        raise ValueError("invalid reverse-trace contract: " + "; ".join(errors))
+
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+    results: list[dict[str, object]] = []
+
+    for raw in invariants:
+        assert isinstance(raw, Mapping)
+        checks = raw.get("proof_checks")
+        if checks is None:
+            results.append(
+                {
+                    "id": raw["id"],
+                    "witness_status": "NO_DECLARED_MACHINE_WITNESS",
+                    "missing_refs": [],
+                    "missing_terms": {},
+                }
+            )
+            continue
+
+        assert isinstance(checks, list)
+        missing_refs: list[str] = []
+        missing_terms: dict[str, list[str]] = {}
+        for check in checks:
+            assert isinstance(check, Mapping)
+            ref = check["ref"]
+            contains_all = check["contains_all"]
+            assert isinstance(ref, str)
+            assert isinstance(contains_all, list)
+
+            content = files.get(ref)
+            if content is None:
+                missing_refs.append(ref)
+                continue
+
+            absent = [
+                term
+                for term in contains_all
+                if isinstance(term, str) and term not in content
+            ]
+            if absent:
+                missing_terms[ref] = absent
+
+        status = (
+            "DECLARED_WITNESSES_PRESENT"
+            if not missing_refs and not missing_terms
+            else "DECLARED_WITNESS_MISSING"
+        )
+        results.append(
+            {
+                "id": raw["id"],
+                "witness_status": status,
+                "missing_refs": sorted(missing_refs),
+                "missing_terms": {
+                    ref: missing_terms[ref] for ref in sorted(missing_terms)
+                },
+            }
+        )
+
+    return results
