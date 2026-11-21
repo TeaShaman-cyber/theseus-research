@@ -1,0 +1,566 @@
+{
+  "schema_version": "theseus.reverse-trace-invariants.v1",
+  "target_repository": "TeaShaman-cyber/theseus-session-search-lab",
+  "invariants": [
+    {
+      "id": "EVIDENCE-01",
+      "title": "History is evidence, not present-day authority",
+      "human_promise": "Session Search may establish what was recorded in the past, but retrieved history must not silently override current Git, deployment, or other live authority.",
+      "why": "Accurate retrieval of an obsolete decision can otherwise make the assistant more confidently wrong.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "README.md",
+          "supports": "States that session history is evidence, not semantic memory or current operational authority."
+        },
+        {
+          "kind": "doc",
+          "ref": "docs/architecture.md",
+          "supports": "Separates historical evidence retrieval from current operational authority."
+        }
+      ],
+      "watch_paths": [
+        "README.md",
+        "docs/architecture.md",
+        "session_search/*",
+        "functions/router/*"
+      ],
+      "watch_terms": [
+        "NON_AUTHORITATIVE_RETRIEVAL",
+        "authority",
+        "historical evidence",
+        "semantic memory"
+      ]
+    },
+    {
+      "id": "CORPUS-01",
+      "title": "Accepted evidence defines the corpus",
+      "human_promise": "Immutable accepted artifact bytes plus accepted-ledger membership define corpus evidence; search databases and indexes remain rebuildable derived state.",
+      "why": "A mutable search projection must not be able to rewrite accepted history.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "session_search/corpus_store.py",
+          "supports": "Reads accepted-ledger membership and rebuilds derived corpus state from accepted evidence."
+        },
+        {
+          "kind": "test",
+          "ref": "tests/test_corpus_store.py",
+          "supports": "Covers accepted-ledger/projection agreement, rebuild, and reconciliation behavior."
+        }
+      ],
+      "watch_paths": [
+        "session_search/corpus_store.py",
+        "session_search/artifact*.py",
+        "tests/test_corpus_store.py",
+        "tests/test_artifact*.py",
+        "docs/capture-adapter-contract.md",
+        "README.md"
+      ],
+      "watch_terms": [
+        "accepted_ledger",
+        "accepted artifact",
+        "rebuild",
+        "corpus.sqlite3"
+      ]
+    },
+    {
+      "id": "VERIFY-01",
+      "title": "Weak verification must not be reported as strong verification",
+      "human_promise": "Projection consistency must remain distinguishable from full derivation verification against immutable accepted evidence.",
+      "why": "A projection can be internally consistent while being derived from the wrong source.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "session_search/corpus_store.py",
+          "supports": "Projection consistency and full derivation verification return different bounded claims."
+        },
+        {
+          "kind": "test",
+          "ref": "tests/test_projection_consistency_verify.py",
+          "supports": "Checks the weaker projection-consistency contract without upgrading it to full verification."
+        }
+      ],
+      "watch_paths": [
+        "session_search/corpus_store.py",
+        "session_search/corpus.py",
+        "tests/test_projection_consistency_verify.py",
+        "tests/test_corpus_store.py",
+        "docs/qa.md",
+        "README.md"
+      ],
+      "watch_terms": [
+        "PROJECTION_CONSISTENT",
+        "derivation_verified",
+        "verification_level",
+        "verify"
+      ]
+    },
+    {
+      "id": "PORT-01",
+      "title": "Session Search remains recoverable without the current serving vendor",
+      "human_promise": "Portable accepted evidence and a standalone runtime must preserve a recovery path without requiring MarcoPolo, Neon, Arcade, Google Drive transport, or a third-party Python runtime dependency.",
+      "why": "Operational convenience must not silently become vendor lock-in or a single failure domain.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "docs/portable-runtime.md",
+          "supports": "Defines a standalone standard-library runtime with no MarcoPolo or Google Drive dependency."
+        },
+        {
+          "kind": "workflow",
+          "ref": ".github/workflows/portable-runtime.yml",
+          "supports": "Builds and consumes the portable runtime in separate hosted jobs."
+        },
+        {
+          "kind": "test",
+          "ref": "tests/test_portable_runtime.py",
+          "supports": "Checks the portable runtime contract."
+        }
+      ],
+      "watch_paths": [
+        "docs/portable-runtime.md",
+        ".github/workflows/portable-runtime.yml",
+        "tests/test_portable_runtime.py",
+        "session_search/*",
+        "tools/portable*"
+      ],
+      "watch_terms": [
+        "MarcoPolo",
+        "portable runtime",
+        "standalone",
+        "Google Drive"
+      ]
+    },
+    {
+      "id": "BIND-01",
+      "title": "Runtime binding is not evidence verification",
+      "human_promise": "A runtime pointer or active deployment may prove what is being served, but it must not be promoted into proof that the served projection derives from accepted evidence.",
+      "why": "Operational state and evidence authority answer different questions.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "docs/architecture.md",
+          "supports": "Separates mutable operational binding from immutable evidence authority."
+        },
+        {
+          "kind": "doc",
+          "ref": "docs/qa.md",
+          "supports": "Separates promotion readback from full corpus verification."
+        }
+      ],
+      "watch_paths": [
+        "docs/architecture.md",
+        "docs/qa.md",
+        "README.md",
+        "session_search/*",
+        ".github/workflows/*"
+      ],
+      "watch_terms": [
+        "runtime binding",
+        "active_generation",
+        "promotion",
+        "deployment"
+      ]
+    },
+    {
+      "id": "FAIL-01",
+      "title": "One stalled shard cannot hang healthy results",
+      "human_promise": "A stalled or unavailable federated shard must not indefinitely block healthy shard results; the bounded response must preserve healthy results and report PARTIAL.",
+      "why": "Handling an explicit error is weaker than guaranteeing bounded behavior for a request that never completes.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/handler.mjs",
+          "supports": "Applies a bounded shard timeout and reports TIMEOUT."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/handlers.test.mjs",
+          "supports": "Uses a never-resolving shard body and proves healthy results survive as PARTIAL."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/tests/handlers.test.mjs",
+        "functions/tests/serving.test.mjs",
+        "docs/federated-serving-plane.md"
+      ],
+      "watch_terms": [
+        "PARTIAL",
+        "Promise.all",
+        "TIMEOUT",
+        "QUERY_FAILED"
+      ],
+      "proof_checks": [
+        {
+          "ref": "functions/router/handler.mjs",
+          "contains_all": [
+            "shardTimeoutMs",
+            "Promise.race",
+            "TIMEOUT"
+          ]
+        },
+        {
+          "ref": "functions/tests/handlers.test.mjs",
+          "contains_all": [
+            "router times out a stalled shard",
+            "new Promise(() => {})",
+            "TIMEOUT"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ROUTE-01",
+      "title": "Invalid filters fail before they distort routing",
+      "human_promise": "Session and time filters must be validated before they influence shard selection; malformed inputs must not masquerade as legitimate NO_SIGNAL or PARTIAL results.",
+      "why": "Otherwise invalid questions can be misreported as absence of historical evidence.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/core.mjs",
+          "supports": "Validates session/time input before routing."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/serving.test.mjs",
+          "supports": "Covers invalid session IDs, non-finite time values, and inverted time bounds."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/tests/serving.test.mjs",
+        "functions/tests/handlers.test.mjs",
+        "functions/shard/*"
+      ],
+      "watch_terms": [
+        "selectShards",
+        "session_id",
+        "from_time",
+        "to_time",
+        "TIME_BOUNDS_INVERTED"
+      ],
+      "proof_checks": [
+        {
+          "ref": "functions/router/core.mjs",
+          "contains_all": [
+            "SESSION_OUT_OF_BOUNDS",
+            "TIME_OUT_OF_BOUNDS",
+            "TIME_BOUNDS_INVERTED",
+            "Number.isFinite"
+          ]
+        },
+        {
+          "ref": "functions/tests/serving.test.mjs",
+          "contains_all": [
+            "session_id: 42",
+            "Number.NaN",
+            "TIME_BOUNDS_INVERTED"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GEN-01",
+      "title": "READY means immutable searchable content",
+      "human_promise": "Once a generation is READY, child searchable data under that generation identity must no longer be mutable.",
+      "why": "Provenance is meaningless if the same generation identifier can point to different content over time.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "sql/neon/003_federated_generation_lifecycle.sql",
+          "supports": "Requires BUILDING creation and rejects child mutation after READY."
+        },
+        {
+          "kind": "test",
+          "ref": "tests/test_neon_federated_contract.py",
+          "supports": "Checks the lifecycle guard is present in the migration contract."
+        }
+      ],
+      "watch_paths": [
+        "sql/neon/*",
+        "tests/test_neon_federated_contract.py",
+        "session_search/neon_materializer.py",
+        "tests/test_neon_materializer.py"
+      ],
+      "watch_terms": [
+        "READY",
+        "BUILDING",
+        "mark_generation_ready",
+        "generations"
+      ],
+      "proof_checks": [
+        {
+          "ref": "sql/neon/003_federated_generation_lifecycle.sql",
+          "contains_all": [
+            "generation insert must start BUILDING",
+            "projection generation is immutable after READY"
+          ]
+        },
+        {
+          "ref": "tests/test_neon_federated_contract.py",
+          "contains_all": [
+            "generation insert must start BUILDING",
+            "projection generation is immutable after READY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PIN-01",
+      "title": "Router searches the exact generation it claims",
+      "human_promise": "A router result attributed to generation X must come from a shard query explicitly bound to X, without silently falling back to whichever generation is ACTIVE.",
+      "why": "Otherwise provenance labels can disagree with the data that was actually queried.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/handler.mjs",
+          "supports": "Requires router_pinned_v1 witness and rejects missing or stale generation binding."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/router-pinned-stage2.test.mjs",
+          "supports": "Covers missing witnesses, stale generations, and no fallback to ACTIVE."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/shard/*",
+        "functions/tests/router-pinned-stage2.test.mjs",
+        "functions/tests/shard-pinned-compat.test.mjs",
+        "sql/neon/*"
+      ],
+      "watch_terms": [
+        "generation_binding",
+        "STALE_GENERATION",
+        "generation_id",
+        "ACTIVE"
+      ]
+    },
+    {
+      "id": "PROV-01",
+      "title": "Useful results retain their origin",
+      "human_promise": "Search results must preserve provider, shard, generation, session/message occurrence, and relevant provenance even when presentation deduplicates repeated text.",
+      "why": "Without provenance, retrieval becomes an assertion generator rather than evidence.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/core.mjs",
+          "supports": "Preserves shard/generation provenance during deterministic merge and grouping."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/serving.test.mjs",
+          "supports": "Checks merged/grouped results retain provenance."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/tests/serving.test.mjs",
+        "session_search/*",
+        "docs/exact-text-grouping-contract.md"
+      ],
+      "watch_terms": [
+        "provenance",
+        "shard_id",
+        "generation_id",
+        "message_id",
+        "provider"
+      ]
+    },
+    {
+      "id": "COVERAGE-01",
+      "title": "Latest indexed time is not proof of complete source history",
+      "human_promise": "Observed index bounds must not be upgraded into source completeness; without an authoritative watermark the system must preserve UNKNOWN_WITHOUT_SOURCE_WATERMARK.",
+      "why": "A stale or incomplete corpus must not turn a search miss into a false claim that a conversation never existed.",
+      "status": "STRONG",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/core.mjs",
+          "supports": "Carries bounded coverage/currentness semantics and the explicit unknown state."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/handlers.test.mjs",
+          "supports": "Checks index-window and source-currentness remain separate claims."
+        },
+        {
+          "kind": "code",
+          "ref": "session_search/refresh_readiness.py",
+          "supports": "Keeps local source currentness unknown without an external watermark."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/tests/handlers.test.mjs",
+        "session_search/refresh_readiness.py",
+        "session_search/corpus_store.py",
+        "tests/test_refresh_readiness.py",
+        "tests/test_corpus_store.py",
+        "README.md"
+      ],
+      "watch_terms": [
+        "UNKNOWN_WITHOUT_SOURCE_WATERMARK",
+        "source_currentness",
+        "window_fit",
+        "EMPTY_SHARD_SELECTION"
+      ]
+    },
+    {
+      "id": "TOOL-ID-01",
+      "title": "Backend upgrades preserve the consumer tool identity",
+      "human_promise": "Router/backend upgrades must preserve the stable TheseusSessionSearch.session_search consumer identity instead of promoting a version-suffixed sibling production tool.",
+      "why": "A correct backend change is ineffective if the host selector continues choosing a different tool identity.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "docs/federated-serving-plane.md",
+          "supports": "Defines stable remote-server and consumer-tool identity across router upgrades."
+        },
+        {
+          "kind": "historical",
+          "ref": "PR #141",
+          "supports": "Records the correction after a side-by-side candidate identity experiment."
+        }
+      ],
+      "watch_paths": [
+        "docs/federated-serving-plane.md",
+        "functions/router/*",
+        "plugin-overlays/*",
+        ".github/workflows/*",
+        "tools/arcade*"
+      ],
+      "watch_terms": [
+        "session_search",
+        "tools/list",
+        "Arcade",
+        "remote server",
+        "gateway"
+      ]
+    },
+    {
+      "id": "SEC-01",
+      "title": "Search fails closed at trust boundaries",
+      "human_promise": "Public endpoint reachability must not imply search authority; router and shard use separate authentication boundaries, bounded database roles, and credential-safe error handling.",
+      "why": "Functionally correct search can still be architecturally wrong if it is over-authorized or leaks secrets.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "code",
+          "ref": "functions/router/handler.mjs",
+          "supports": "Rejects unauthorized router requests before dispatch."
+        },
+        {
+          "kind": "code",
+          "ref": "functions/shard/handler.mjs",
+          "supports": "Rejects unauthorized shard requests before query execution."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/auth.test.mjs",
+          "supports": "Checks 401 fail-closed behavior."
+        },
+        {
+          "kind": "doc",
+          "ref": "docs/federated-serving-plane.md",
+          "supports": "Records least-privilege database-role readback and credential boundary."
+        }
+      ],
+      "watch_paths": [
+        "functions/router/*",
+        "functions/shard/*",
+        "functions/tests/auth.test.mjs",
+        "sql/neon/*",
+        "docs/federated-serving-plane.md"
+      ],
+      "watch_terms": [
+        "Authorization",
+        "UNAUTHORIZED",
+        "credential",
+        "session_search_reader",
+        "SECURITY DEFINER"
+      ]
+    },
+    {
+      "id": "OBS-01",
+      "title": "Observability describes behavior, not configuration authority",
+      "human_promise": "Grafana/PostHog telemetry may describe observed behavior but must not be treated as proof of canonical endpoint configuration, deployment identity, Git exact head, or accepted corpus authority.",
+      "why": "A trace showing what handled one request is not proof of what is configured as canonical now.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "grafana/README.md",
+          "supports": "Defines Grafana as a diagnostic route and preserves service ownership boundaries."
+        },
+        {
+          "kind": "test",
+          "ref": "tests/test_grafana_dashboard_contract.py",
+          "supports": "Checks versioned dashboard structure without upgrading telemetry into authority."
+        }
+      ],
+      "watch_paths": [
+        "grafana/*",
+        "tests/test_grafana_dashboard_contract.py",
+        "functions/telemetry.mjs",
+        "functions/semantic-events.mjs",
+        "README.md"
+      ],
+      "watch_terms": [
+        "Grafana",
+        "PostHog",
+        "telemetry",
+        "Tempo",
+        "Mimir"
+      ]
+    },
+    {
+      "id": "PRIV-01",
+      "title": "Public research artifacts exclude private session material and secrets",
+      "human_promise": "Real conversation text, raw captures, private URLs, provider identifiers, credentials, and account-specific metadata must stay out of the public repository.",
+      "why": "Memory and continuity systems carry unusually high accidental disclosure risk.",
+      "status": "PARTIAL",
+      "evidence": [
+        {
+          "kind": "doc",
+          "ref": "README.md",
+          "supports": "Explicitly forbids publishing real conversation text, raw captures, private URLs, IDs, and credentials."
+        },
+        {
+          "kind": "test",
+          "ref": "functions/tests/handlers.test.mjs",
+          "supports": "Includes bounded error-redaction regression coverage."
+        }
+      ],
+      "watch_paths": [
+        "README.md",
+        "receipts/*",
+        "docs/*",
+        "functions/*",
+        "tests/*",
+        "session_search/*",
+        "sql/*"
+      ],
+      "watch_terms": [
+        "credential",
+        "private URL",
+        "raw source",
+        "Google Drive identifier",
+        "redact"
+      ]
+    }
+  ]
+}

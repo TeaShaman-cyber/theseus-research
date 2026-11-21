@@ -1,0 +1,477 @@
+from __future__ import annotations
+
+import fnmatch
+import json
+import re
+from pathlib import Path
+from typing import Mapping
+
+SCHEMA_VERSION = "theseus.reverse-trace-invariants.v1"
+ROOT_FIELDS = frozenset({"schema_version", "target_repository", "invariants"})
+INVARIANT_FIELDS = frozenset(
+    {
+        "id",
+        "title",
+        "human_promise",
+        "why",
+        "status",
+        "evidence",
+        "watch_paths",
+        "watch_terms",
+        "proof_checks",
+    }
+)
+EVIDENCE_FIELDS = frozenset({"kind", "ref", "supports"})
+PROOF_CHECK_FIELDS = frozenset({"ref", "contains_all"})
+VALID_STATUSES = frozenset({"STRONG", "PARTIAL", "DOCUMENTED"})
+VALID_EVIDENCE_KINDS = frozenset(
+    {"code", "test", "doc", "workflow", "runtime_readback", "historical"}
+)
+_ID_RE = re.compile(r"[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]{2}")
+
+
+def load_contract(path: Path) -> dict[str, object]:
+    with path.open("r", encoding="utf-8") as handle:
+        document = json.load(handle)
+    if not isinstance(document, dict):
+        raise ValueError("reverse-trace contract root must be object")
+    return document
+
+
+def _nonempty_string(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _safe_watch_pattern(value: object) -> bool:
+    if not _nonempty_string(value):
+        return False
+    assert isinstance(value, str)
+    path = Path(value)
+    return not path.is_absolute() and ".." not in path.parts and "\\" not in value
+
+
+def validate_contract(document: Mapping[str, object]) -> list[str]:
+    errors: list[str] = []
+
+    unexpected_root = sorted(set(document) - ROOT_FIELDS)
+    if unexpected_root:
+        errors.append(
+            "contract root contains unsupported fields: " + ", ".join(unexpected_root)
+        )
+
+    if document.get("schema_version") != SCHEMA_VERSION:
+        errors.append(f"schema_version must be {SCHEMA_VERSION}")
+
+    if not _nonempty_string(document.get("target_repository")):
+        errors.append("target_repository must be non-empty string")
+
+    invariants = document.get("invariants")
+    if not isinstance(invariants, list):
+        return errors + ["invariants must be a list"]
+
+    seen: set[str] = set()
+    for raw in invariants:
+        if not isinstance(raw, Mapping):
+            errors.append("invariant must be an object")
+            continue
+
+        invariant_id = raw.get("id")
+        if not isinstance(invariant_id, str) or _ID_RE.fullmatch(invariant_id) is None:
+            errors.append(f"invariant id has invalid grammar: {invariant_id!r}")
+            continue
+
+        if invariant_id in seen:
+            errors.append(f"duplicate invariant id: {invariant_id}")
+        seen.add(invariant_id)
+
+        unexpected = sorted(set(raw) - INVARIANT_FIELDS)
+        if unexpected:
+            errors.append(
+                f"{invariant_id} contains unsupported fields: "
+                + ", ".join(unexpected)
+            )
+
+        for field in ("title", "human_promise", "why"):
+            if not _nonempty_string(raw.get(field)):
+                errors.append(f"{invariant_id} {field} must be non-empty string")
+
+        status = raw.get("status")
+        if status not in VALID_STATUSES:
+            errors.append(f"{invariant_id} status must be one of {sorted(VALID_STATUSES)}")
+
+        evidence = raw.get("evidence")
+        if not isinstance(evidence, list) or not evidence:
+            errors.append(f"{invariant_id} evidence must be non-empty list")
+        else:
+            for index, item in enumerate(evidence):
+                if not isinstance(item, Mapping):
+                    errors.append(f"{invariant_id} evidence[{index}] must be object")
+                    continue
+                unexpected_evidence = sorted(set(item) - EVIDENCE_FIELDS)
+                if unexpected_evidence:
+                    errors.append(
+                        f"{invariant_id} evidence[{index}] contains unsupported fields: "
+                        + ", ".join(unexpected_evidence)
+                    )
+                if item.get("kind") not in VALID_EVIDENCE_KINDS:
+                    errors.append(
+                        f"{invariant_id} evidence[{index}] has invalid kind: "
+                        f"{item.get('kind')!r}"
+                    )
+                for field in ("ref", "supports"):
+                    if not _nonempty_string(item.get(field)):
+                        errors.append(
+                            f"{invariant_id} evidence[{index}] {field} "
+                            "must be non-empty string"
+                        )
+
+        watch_paths = raw.get("watch_paths")
+        if not isinstance(watch_paths, list) or not watch_paths:
+            errors.append(f"{invariant_id} watch_paths must be non-empty list")
+        else:
+            seen_patterns: set[str] = set()
+            for pattern in watch_paths:
+                if not _safe_watch_pattern(pattern):
+                    errors.append(
+                        f"{invariant_id} watch path must be safe relative pattern: "
+                        f"{pattern!r}"
+                    )
+                    continue
+                assert isinstance(pattern, str)
+                if pattern in seen_patterns:
+                    errors.append(f"{invariant_id} duplicate watch path: {pattern}")
+                seen_patterns.add(pattern)
+
+        watch_terms = raw.get("watch_terms")
+        if not isinstance(watch_terms, list) or not watch_terms:
+            errors.append(f"{invariant_id} watch_terms must be non-empty list")
+        else:
+            seen_terms: set[str] = set()
+            for term in watch_terms:
+                if not _nonempty_string(term):
+                    errors.append(
+                        f"{invariant_id} watch term must be non-empty string: {term!r}"
+                    )
+                    continue
+                assert isinstance(term, str)
+                if term in seen_terms:
+                    errors.append(f"{invariant_id} duplicate watch term: {term}")
+                seen_terms.add(term)
+
+        proof_checks = raw.get("proof_checks")
+        if proof_checks is not None:
+            if not isinstance(proof_checks, list) or not proof_checks:
+                errors.append(f"{invariant_id} proof_checks must be non-empty list")
+            else:
+                seen_refs: set[str] = set()
+                for index, check in enumerate(proof_checks):
+                    if not isinstance(check, Mapping):
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] must be object"
+                        )
+                        continue
+                    unexpected_check = sorted(set(check) - PROOF_CHECK_FIELDS)
+                    if unexpected_check:
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] contains unsupported fields: "
+                            + ", ".join(unexpected_check)
+                        )
+                    ref = check.get("ref")
+                    if not _nonempty_string(ref):
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] ref "
+                            "must be non-empty string"
+                        )
+                    elif isinstance(ref, str):
+                        if ref in seen_refs:
+                            errors.append(
+                                f"{invariant_id} duplicate proof check ref: {ref}"
+                            )
+                        seen_refs.add(ref)
+                    contains_all = check.get("contains_all")
+                    if not isinstance(contains_all, list) or not contains_all:
+                        errors.append(
+                            f"{invariant_id} proof_checks[{index}] contains_all "
+                            "must be non-empty list"
+                        )
+                    else:
+                        for term in contains_all:
+                            if not _nonempty_string(term):
+                                errors.append(
+                                    f"{invariant_id} proof_checks[{index}] contains_all "
+                                    f"term must be non-empty string: {term!r}"
+                                )
+
+    return errors
+
+
+def affected_invariants(
+    document: Mapping[str, object], changed_paths: list[str]
+) -> list[dict[str, object]]:
+    errors = validate_contract(document)
+    if errors:
+        raise ValueError("invalid reverse-trace contract: " + "; ".join(errors))
+
+    normalized_paths = sorted(set(changed_paths))
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+
+    affected: list[dict[str, object]] = []
+    for raw in invariants:
+        assert isinstance(raw, Mapping)
+        patterns = raw["watch_paths"]
+        assert isinstance(patterns, list)
+        matched = [
+            path
+            for path in normalized_paths
+            if any(
+                isinstance(pattern, str) and fnmatch.fnmatchcase(path, pattern)
+                for pattern in patterns
+            )
+        ]
+        if matched:
+            affected.append(
+                {
+                    "id": raw["id"],
+                    "title": raw["title"],
+                    "status": raw["status"],
+                    "human_promise": raw["human_promise"],
+                    "matched_paths": matched,
+                }
+            )
+    return affected
+
+def affected_invariants_from_patches(
+    document: Mapping[str, object], patches: Mapping[str, str]
+) -> list[dict[str, object]]:
+    """Return candidate invariants whose path and semantic-term guards both match.
+
+    This is an impact preflight, not a correctness verdict. A match means
+    "review this promise"; absence means only that the declared guards did not
+    observe a relevant change.
+    """
+
+    errors = validate_contract(document)
+    if errors:
+        raise ValueError("invalid reverse-trace contract: " + "; ".join(errors))
+
+    normalized = {
+        path: patches[path]
+        for path in sorted(patches)
+    }
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+
+    affected: list[dict[str, object]] = []
+    for raw in invariants:
+        assert isinstance(raw, Mapping)
+        patterns = raw["watch_paths"]
+        terms = raw["watch_terms"]
+        assert isinstance(patterns, list)
+        assert isinstance(terms, list)
+
+        matched_paths: list[str] = []
+        matched_terms: set[str] = set()
+        for path, patch in normalized.items():
+            path_matches = any(
+                isinstance(pattern, str) and fnmatch.fnmatchcase(path, pattern)
+                for pattern in patterns
+            )
+            if not path_matches:
+                continue
+
+            patch_folded = patch.casefold()
+            local_terms = [
+                term
+                for term in terms
+                if isinstance(term, str) and term.casefold() in patch_folded
+            ]
+            if not local_terms:
+                continue
+
+            matched_paths.append(path)
+            matched_terms.update(local_terms)
+
+        if matched_paths:
+            affected.append(
+                {
+                    "id": raw["id"],
+                    "title": raw["title"],
+                    "status": raw["status"],
+                    "human_promise": raw["human_promise"],
+                    "matched_paths": matched_paths,
+                    "matched_terms": sorted(matched_terms),
+                }
+            )
+    return affected
+
+def evaluate_proof_witnesses(
+    document: Mapping[str, object], files: Mapping[str, str]
+) -> list[dict[str, object]]:
+    """Check whether declared static witness anchors are present.
+
+    Presence is deliberately weaker than proof. The result says only whether
+    the machine-readable contract's named code/test anchors can be observed in
+    the supplied snapshot.
+    """
+
+    errors = validate_contract(document)
+    if errors:
+        raise ValueError("invalid reverse-trace contract: " + "; ".join(errors))
+
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+    results: list[dict[str, object]] = []
+
+    for raw in invariants:
+        assert isinstance(raw, Mapping)
+        checks = raw.get("proof_checks")
+        if checks is None:
+            results.append(
+                {
+                    "id": raw["id"],
+                    "witness_status": "NO_DECLARED_MACHINE_WITNESS",
+                    "missing_refs": [],
+                    "missing_terms": {},
+                }
+            )
+            continue
+
+        assert isinstance(checks, list)
+        missing_refs: list[str] = []
+        missing_terms: dict[str, list[str]] = {}
+        for check in checks:
+            assert isinstance(check, Mapping)
+            ref = check["ref"]
+            contains_all = check["contains_all"]
+            assert isinstance(ref, str)
+            assert isinstance(contains_all, list)
+
+            content = files.get(ref)
+            if content is None:
+                missing_refs.append(ref)
+                continue
+
+            absent = [
+                term
+                for term in contains_all
+                if isinstance(term, str) and term not in content
+            ]
+            if absent:
+                missing_terms[ref] = absent
+
+        status = (
+            "DECLARED_WITNESSES_PRESENT"
+            if not missing_refs and not missing_terms
+            else "DECLARED_WITNESS_MISSING"
+        )
+        results.append(
+            {
+                "id": raw["id"],
+                "witness_status": status,
+                "missing_refs": sorted(missing_refs),
+                "missing_terms": {
+                    ref: missing_terms[ref] for ref in sorted(missing_terms)
+                },
+            }
+        )
+
+    return results
+
+def build_proof_matrix(
+    document: Mapping[str, object],
+    patches: Mapping[str, str],
+    files: Mapping[str, str],
+) -> list[dict[str, object]]:
+    """Join impact, declared evidence, and static witness presence.
+
+    This remains an advisory matrix. It does not claim that unchanged tests
+    still prove changed behavior, nor that present static witnesses are correct.
+    """
+
+    impacted = affected_invariants_from_patches(document, patches)
+    witnesses = {
+        item["id"]: item
+        for item in evaluate_proof_witnesses(document, files)
+    }
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+    by_id = {
+        raw["id"]: raw
+        for raw in invariants
+        if isinstance(raw, Mapping)
+    }
+    changed_paths = set(patches)
+
+    matrix: list[dict[str, object]] = []
+    for impact in impacted:
+        invariant_id = impact["id"]
+        raw = by_id[invariant_id]
+        evidence = raw["evidence"]
+        assert isinstance(evidence, list)
+
+        evidence_refs: list[str] = []
+        changed_evidence_refs: list[str] = []
+        missing_evidence_refs: list[str] = []
+        changed_test_refs: list[str] = []
+        unchanged_test_refs: list[str] = []
+        changed_implementation_refs: list[str] = []
+
+        for item in evidence:
+            assert isinstance(item, Mapping)
+            ref = item.get("ref")
+            kind = item.get("kind")
+            if not isinstance(ref, str):
+                continue
+            evidence_refs.append(ref)
+
+            is_local_file_evidence = kind in {"code", "test", "doc", "workflow"}
+            if is_local_file_evidence and ref not in files:
+                missing_evidence_refs.append(ref)
+                continue
+
+            if ref in changed_paths:
+                changed_evidence_refs.append(ref)
+                if kind == "test":
+                    changed_test_refs.append(ref)
+                elif kind in {"code", "workflow"}:
+                    changed_implementation_refs.append(ref)
+            elif kind == "test":
+                unchanged_test_refs.append(ref)
+
+        witness = witnesses[invariant_id]
+        witness_status = witness["witness_status"]
+
+        if witness_status == "DECLARED_WITNESS_MISSING":
+            review_state = "DECLARED_WITNESS_MISSING"
+        elif missing_evidence_refs:
+            review_state = "DECLARED_EVIDENCE_MISSING"
+        elif witness_status == "NO_DECLARED_MACHINE_WITNESS":
+            review_state = "SEMANTIC_REVIEW_REQUIRED"
+        elif changed_implementation_refs and unchanged_test_refs and not changed_test_refs:
+            review_state = "IMPLEMENTATION_CHANGED_TEST_EVIDENCE_UNCHANGED"
+        elif changed_evidence_refs:
+            review_state = "EVIDENCE_CHANGED_RECHECK_SEMANTICS"
+        else:
+            review_state = "IMPACT_WITHOUT_DECLARED_EVIDENCE_CHANGE"
+
+        matrix.append(
+            {
+                "id": invariant_id,
+                "title": impact["title"],
+                "human_promise": impact["human_promise"],
+                "matched_paths": impact["matched_paths"],
+                "matched_terms": impact["matched_terms"],
+                "declared_evidence_refs": sorted(evidence_refs),
+                "changed_evidence_refs": sorted(changed_evidence_refs),
+                "missing_evidence_refs": sorted(missing_evidence_refs),
+                "changed_test_evidence_refs": sorted(changed_test_refs),
+                "unchanged_test_evidence_refs": sorted(unchanged_test_refs),
+                "witness_status": witness_status,
+                "missing_witness_refs": witness["missing_refs"],
+                "missing_witness_terms": witness["missing_terms"],
+                "review_state": review_state,
+            }
+        )
+
+    return matrix
