@@ -1,0 +1,341 @@
+{
+  "base_sha": "67faf48277602b8e747cd1dc3c938c210a0b56e7",
+  "changed_path_count": 24,
+  "changed_paths": [
+    ".github/workflows/docs-check.yml",
+    ".gitignore",
+    "docs/federated-neon-serving.md",
+    "docs/federated-serving-plane.md",
+    "functions/build.mjs",
+    "functions/package-lock.json",
+    "functions/package.json",
+    "functions/router/core.mjs",
+    "functions/router/handler.mjs",
+    "functions/router/index.mjs",
+    "functions/shard/core.mjs",
+    "functions/shard/handler.mjs",
+    "functions/shard/index.mjs",
+    "functions/tests/handlers.test.mjs",
+    "functions/tests/serving.test.mjs",
+    "functions/verify-bundle.mjs",
+    "receipts/064-federated-neon-spike.public.json",
+    "receipts/064-serving-plane.public.json",
+    "session_search/federation.py",
+    "sql/neon/001_federated_shard_v1.sql",
+    "sql/neon/002_federated_shard_privileges.sql",
+    "tests/test_federated_search.py",
+    "tests/test_neon_federated_contract.py",
+    "tools/dev/check"
+  ],
+  "contract_sha256": "ec314f2ed48b9abca99000043b42c306186729d31744e0706f91d165b1fe2a70",
+  "head_sha": "c9c27423eb4b87be1763ee4042a89abda64eaa34",
+  "matrix": [
+    {
+      "changed_evidence_refs": [
+        "functions/router/handler.mjs",
+        "functions/tests/handlers.test.mjs"
+      ],
+      "changed_test_evidence_refs": [
+        "functions/tests/handlers.test.mjs"
+      ],
+      "declared_evidence_refs": [
+        "functions/router/handler.mjs",
+        "functions/tests/handlers.test.mjs"
+      ],
+      "human_promise": "A stalled or unavailable federated shard must not indefinitely block healthy shard results; the bounded response must preserve healthy results and report PARTIAL.",
+      "id": "FAIL-01",
+      "matched_paths": [
+        "docs/federated-serving-plane.md",
+        "functions/router/core.mjs",
+        "functions/router/handler.mjs",
+        "functions/tests/handlers.test.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "matched_terms": [
+        "PARTIAL",
+        "Promise.all",
+        "QUERY_FAILED"
+      ],
+      "missing_evidence_refs": [],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {
+        "functions/router/handler.mjs": [
+          "shardTimeoutMs",
+          "Promise.race",
+          "TIMEOUT"
+        ],
+        "functions/tests/handlers.test.mjs": [
+          "router times out a stalled shard",
+          "new Promise(() => {})",
+          "TIMEOUT"
+        ]
+      },
+      "review_state": "DECLARED_WITNESS_MISSING",
+      "title": "One stalled shard cannot hang healthy results",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "DECLARED_WITNESS_MISSING"
+    },
+    {
+      "changed_evidence_refs": [
+        "functions/router/core.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "changed_test_evidence_refs": [
+        "functions/tests/serving.test.mjs"
+      ],
+      "declared_evidence_refs": [
+        "functions/router/core.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "human_promise": "Session and time filters must be validated before they influence shard selection; malformed inputs must not masquerade as legitimate NO_SIGNAL or PARTIAL results.",
+      "id": "ROUTE-01",
+      "matched_paths": [
+        "functions/router/core.mjs",
+        "functions/router/handler.mjs",
+        "functions/shard/core.mjs",
+        "functions/shard/handler.mjs",
+        "functions/tests/handlers.test.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "matched_terms": [
+        "TIME_BOUNDS_INVERTED",
+        "from_time",
+        "selectShards",
+        "session_id",
+        "to_time"
+      ],
+      "missing_evidence_refs": [],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {
+        "functions/router/core.mjs": [
+          "SESSION_OUT_OF_BOUNDS",
+          "TIME_OUT_OF_BOUNDS",
+          "TIME_BOUNDS_INVERTED",
+          "Number.isFinite"
+        ],
+        "functions/tests/serving.test.mjs": [
+          "session_id: 42",
+          "Number.NaN",
+          "TIME_BOUNDS_INVERTED"
+        ]
+      },
+      "review_state": "DECLARED_WITNESS_MISSING",
+      "title": "Invalid filters fail before they distort routing",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "DECLARED_WITNESS_MISSING"
+    },
+    {
+      "changed_evidence_refs": [
+        "tests/test_neon_federated_contract.py"
+      ],
+      "changed_test_evidence_refs": [
+        "tests/test_neon_federated_contract.py"
+      ],
+      "declared_evidence_refs": [
+        "sql/neon/003_federated_generation_lifecycle.sql",
+        "tests/test_neon_federated_contract.py"
+      ],
+      "human_promise": "Once a generation is READY, child searchable data under that generation identity must no longer be mutable.",
+      "id": "GEN-01",
+      "matched_paths": [
+        "sql/neon/001_federated_shard_v1.sql",
+        "sql/neon/002_federated_shard_privileges.sql",
+        "tests/test_neon_federated_contract.py"
+      ],
+      "matched_terms": [
+        "BUILDING",
+        "READY",
+        "generations",
+        "mark_generation_ready"
+      ],
+      "missing_evidence_refs": [
+        "sql/neon/003_federated_generation_lifecycle.sql"
+      ],
+      "missing_witness_refs": [
+        "sql/neon/003_federated_generation_lifecycle.sql"
+      ],
+      "missing_witness_terms": {
+        "tests/test_neon_federated_contract.py": [
+          "generation insert must start BUILDING",
+          "projection generation is immutable after READY"
+        ]
+      },
+      "review_state": "DECLARED_WITNESS_MISSING",
+      "title": "READY means immutable searchable content",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "DECLARED_WITNESS_MISSING"
+    },
+    {
+      "changed_evidence_refs": [
+        "functions/router/handler.mjs"
+      ],
+      "changed_test_evidence_refs": [],
+      "declared_evidence_refs": [
+        "functions/router/handler.mjs",
+        "functions/tests/router-pinned-stage2.test.mjs"
+      ],
+      "human_promise": "A router result attributed to generation X must come from a shard query explicitly bound to X, without silently falling back to whichever generation is ACTIVE.",
+      "id": "PIN-01",
+      "matched_paths": [
+        "functions/router/core.mjs",
+        "sql/neon/001_federated_shard_v1.sql",
+        "sql/neon/002_federated_shard_privileges.sql"
+      ],
+      "matched_terms": [
+        "ACTIVE",
+        "STALE_GENERATION",
+        "generation_id"
+      ],
+      "missing_evidence_refs": [
+        "functions/tests/router-pinned-stage2.test.mjs"
+      ],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {},
+      "review_state": "DECLARED_EVIDENCE_MISSING",
+      "title": "Router searches the exact generation it claims",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "NO_DECLARED_MACHINE_WITNESS"
+    },
+    {
+      "changed_evidence_refs": [
+        "functions/router/core.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "changed_test_evidence_refs": [
+        "functions/tests/serving.test.mjs"
+      ],
+      "declared_evidence_refs": [
+        "functions/router/core.mjs",
+        "functions/tests/serving.test.mjs"
+      ],
+      "human_promise": "Search results must preserve provider, shard, generation, session/message occurrence, and relevant provenance even when presentation deduplicates repeated text.",
+      "id": "PROV-01",
+      "matched_paths": [
+        "functions/router/core.mjs",
+        "functions/tests/serving.test.mjs",
+        "session_search/federation.py"
+      ],
+      "matched_terms": [
+        "generation_id",
+        "message_id",
+        "provenance",
+        "provider",
+        "shard_id"
+      ],
+      "missing_evidence_refs": [],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {},
+      "review_state": "SEMANTIC_REVIEW_REQUIRED",
+      "title": "Useful results retain their origin",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "NO_DECLARED_MACHINE_WITNESS"
+    },
+    {
+      "changed_evidence_refs": [
+        "docs/federated-serving-plane.md"
+      ],
+      "changed_test_evidence_refs": [],
+      "declared_evidence_refs": [
+        "PR #141",
+        "docs/federated-serving-plane.md"
+      ],
+      "human_promise": "Router/backend upgrades must preserve the stable TheseusSessionSearch.session_search consumer identity instead of promoting a version-suffixed sibling production tool.",
+      "id": "TOOL-ID-01",
+      "matched_paths": [
+        "docs/federated-serving-plane.md",
+        "functions/router/core.mjs",
+        "functions/router/index.mjs"
+      ],
+      "matched_terms": [
+        "Arcade",
+        "gateway",
+        "remote server",
+        "session_search",
+        "tools/list"
+      ],
+      "missing_evidence_refs": [],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {},
+      "review_state": "SEMANTIC_REVIEW_REQUIRED",
+      "title": "Backend upgrades preserve the consumer tool identity",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "NO_DECLARED_MACHINE_WITNESS"
+    },
+    {
+      "changed_evidence_refs": [
+        "docs/federated-serving-plane.md",
+        "functions/router/handler.mjs",
+        "functions/shard/handler.mjs"
+      ],
+      "changed_test_evidence_refs": [],
+      "declared_evidence_refs": [
+        "docs/federated-serving-plane.md",
+        "functions/router/handler.mjs",
+        "functions/shard/handler.mjs",
+        "functions/tests/auth.test.mjs"
+      ],
+      "human_promise": "Public endpoint reachability must not imply search authority; router and shard use separate authentication boundaries, bounded database roles, and credential-safe error handling.",
+      "id": "SEC-01",
+      "matched_paths": [
+        "docs/federated-serving-plane.md",
+        "sql/neon/001_federated_shard_v1.sql",
+        "sql/neon/002_federated_shard_privileges.sql"
+      ],
+      "matched_terms": [
+        "SECURITY DEFINER",
+        "credential",
+        "session_search_reader"
+      ],
+      "missing_evidence_refs": [
+        "functions/tests/auth.test.mjs"
+      ],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {},
+      "review_state": "DECLARED_EVIDENCE_MISSING",
+      "title": "Search fails closed at trust boundaries",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "NO_DECLARED_MACHINE_WITNESS"
+    },
+    {
+      "changed_evidence_refs": [
+        "functions/tests/handlers.test.mjs"
+      ],
+      "changed_test_evidence_refs": [
+        "functions/tests/handlers.test.mjs"
+      ],
+      "declared_evidence_refs": [
+        "README.md",
+        "functions/tests/handlers.test.mjs"
+      ],
+      "human_promise": "Real conversation text, raw captures, private URLs, provider identifiers, credentials, and account-specific metadata must stay out of the public repository.",
+      "id": "PRIV-01",
+      "matched_paths": [
+        "docs/federated-neon-serving.md",
+        "docs/federated-serving-plane.md",
+        "functions/tests/handlers.test.mjs",
+        "receipts/064-serving-plane.public.json"
+      ],
+      "matched_terms": [
+        "credential",
+        "redact"
+      ],
+      "missing_evidence_refs": [],
+      "missing_witness_refs": [],
+      "missing_witness_terms": {},
+      "review_state": "SEMANTIC_REVIEW_REQUIRED",
+      "title": "Public research artifacts exclude private session material and secrets",
+      "unchanged_test_evidence_refs": [],
+      "witness_status": "NO_DECLARED_MACHINE_WITNESS"
+    }
+  ],
+  "repository": "TeaShaman-cyber/theseus-session-search-lab",
+  "schema_version": "theseus.reverse-trace-receipt.v1",
+  "summary": {
+    "affected_invariant_count": 8,
+    "review_states": {
+      "DECLARED_EVIDENCE_MISSING": 2,
+      "DECLARED_WITNESS_MISSING": 3,
+      "SEMANTIC_REVIEW_REQUIRED": 3
+    }
+  }
+}
