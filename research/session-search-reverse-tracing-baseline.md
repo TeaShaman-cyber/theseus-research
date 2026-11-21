@@ -528,6 +528,40 @@ the human promise to remain semantically aligned with those checks.
 
 ---
 
+## Proof matrix: impact is not proof
+
+The deterministic layer can now join three previously separate questions:
+
+1. which human promise is plausibly touched by the patch;
+2. which code/test/document evidence is declared for that promise;
+3. whether declared static witness anchors are present in the target snapshot.
+
+The resulting proof matrix deliberately reports different uncertainty states:
+
+- DECLARED_WITNESS_MISSING — a promise has a known machine witness and that
+  witness is absent or weakened;
+- DECLARED_EVIDENCE_MISSING — the contract points to local evidence that does
+  not exist in the supplied snapshot;
+- IMPLEMENTATION_CHANGED_TEST_EVIDENCE_UNCHANGED — declared implementation
+  evidence changed while declared test evidence did not;
+- EVIDENCE_CHANGED_RECHECK_SEMANTICS — implementation/test evidence changed
+  together, so the new evidence still needs execution and semantic comparison;
+- SEMANTIC_REVIEW_REQUIRED — the promise has no declared machine witness;
+- IMPACT_WITHOUT_DECLARED_EVIDENCE_CHANGE — the patch matched the promise but
+  did not directly modify one of its declared evidence refs.
+
+These are routing states, not correctness verdicts.
+
+A useful self-test occurred while building the matrix. The first implementation
+called a current test reference “unchanged” when that test did not exist in the
+historical snapshot at all. That confused absence with no change. The matrix
+now fails closed and reports the missing evidence explicitly.
+
+This matters because reverse tracing is itself vulnerable to the same epistemic
+drift it is meant to detect.
+
+---
+
 # Historical drift corpus for the reverse-tracer
 
 These are **not automatically benchmark-ready** merely because we remember the

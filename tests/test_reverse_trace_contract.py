@@ -6,6 +6,7 @@ from pathlib import Path
 from tools.reverse_trace_contract import (
     affected_invariants,
     affected_invariants_from_patches,
+    build_proof_matrix,
     evaluate_proof_witnesses,
     load_contract,
     validate_contract,
@@ -214,6 +215,137 @@ class ReverseTraceContractTests(unittest.TestCase):
             "FAIL-01 proof_checks[0] contains_all must be non-empty list",
             validate_contract(document),
         )
+
+
+
+    def test_proof_matrix_connects_impact_evidence_and_witness_status(self):
+        document = load_contract(CONTRACT)
+        patches = {
+            "functions/router/handler.mjs": (
+                "+const outcomes = await Promise.all(selected.map(fetchShard));\n"
+                "+return mergeShardOutcomes(outcomes, 'PARTIAL');\n"
+            ),
+            "functions/tests/handlers.test.mjs": (
+                "+test('router times out a stalled shard', async () => {\n"
+                "+  await new Promise(() => {});\n"
+                "+  assert.equal(reason, 'TIMEOUT');\n"
+                "+});\n"
+            ),
+        }
+        snapshot = {
+            "functions/router/handler.mjs": (
+                "shardTimeoutMs Promise.race TIMEOUT"
+            ),
+            "functions/tests/handlers.test.mjs": (
+                "router times out a stalled shard new Promise(() => {}) TIMEOUT"
+            ),
+        }
+
+        matrix = build_proof_matrix(document, patches, snapshot)
+        fail = next(item for item in matrix if item["id"] == "FAIL-01")
+
+        self.assertEqual(
+            ["functions/router/handler.mjs", "functions/tests/handlers.test.mjs"],
+            fail["matched_paths"],
+        )
+        self.assertEqual(
+            ["functions/router/handler.mjs", "functions/tests/handlers.test.mjs"],
+            fail["changed_evidence_refs"],
+        )
+        self.assertEqual("DECLARED_WITNESSES_PRESENT", fail["witness_status"])
+        self.assertEqual(
+            "EVIDENCE_CHANGED_RECHECK_SEMANTICS",
+            fail["review_state"],
+        )
+
+    def test_proof_matrix_flags_changed_implementation_with_unchanged_evidence(self):
+        document = load_contract(CONTRACT)
+        patches = {
+            "functions/router/handler.mjs": (
+                "+return mergeShardOutcomes(outcomes, 'PARTIAL');\n"
+                "+Promise.all\n"
+            ),
+        }
+        snapshot = {
+            "functions/router/handler.mjs": "shardTimeoutMs Promise.race TIMEOUT",
+            "functions/tests/handlers.test.mjs": (
+                "router times out a stalled shard new Promise(() => {}) TIMEOUT"
+            ),
+        }
+
+        matrix = build_proof_matrix(document, patches, snapshot)
+        fail = next(item for item in matrix if item["id"] == "FAIL-01")
+        self.assertEqual(
+            ["functions/router/handler.mjs"],
+            fail["changed_evidence_refs"],
+        )
+        self.assertEqual(
+            ["functions/tests/handlers.test.mjs"],
+            fail["unchanged_test_evidence_refs"],
+        )
+        self.assertEqual(
+            "IMPLEMENTATION_CHANGED_TEST_EVIDENCE_UNCHANGED",
+            fail["review_state"],
+        )
+
+    def test_proof_matrix_prioritizes_missing_witness_over_change_shape(self):
+        document = load_contract(CONTRACT)
+        patches = {
+            "functions/router/core.mjs": "+session_id\n+from_time\n+to_time\n",
+        }
+        snapshot = {
+            "functions/router/core.mjs": "session_id from_time to_time",
+        }
+
+        matrix = build_proof_matrix(document, patches, snapshot)
+        route = next(item for item in matrix if item["id"] == "ROUTE-01")
+        self.assertEqual("DECLARED_WITNESS_MISSING", route["witness_status"])
+        self.assertEqual("DECLARED_WITNESS_MISSING", route["review_state"])
+
+    def test_proof_matrix_keeps_semantic_review_for_rules_without_machine_witness(self):
+        document = load_contract(CONTRACT)
+        patches = {
+            "functions/router/core.mjs": "+NON_AUTHORITATIVE_RETRIEVAL authority\n",
+        }
+        snapshot = {}
+
+        snapshot = {
+            "README.md": "history is evidence, not current authority",
+            "docs/architecture.md": "historical evidence is not current operational authority",
+        }
+        matrix = build_proof_matrix(document, patches, snapshot)
+        evidence = next(item for item in matrix if item["id"] == "EVIDENCE-01")
+        self.assertEqual(
+            "NO_DECLARED_MACHINE_WITNESS",
+            evidence["witness_status"],
+        )
+        self.assertEqual(
+            "SEMANTIC_REVIEW_REQUIRED",
+            evidence["review_state"],
+        )
+
+
+
+    def test_proof_matrix_does_not_call_absent_test_evidence_unchanged(self):
+        document = load_contract(CONTRACT)
+        patches = {
+            "functions/router/core.mjs": "+generation_id\n+STALE_GENERATION\n",
+        }
+        snapshot = {
+            "functions/router/handler.mjs": "generation_binding router_pinned_v1",
+        }
+
+        matrix = build_proof_matrix(document, patches, snapshot)
+        pin = next(item for item in matrix if item["id"] == "PIN-01")
+        self.assertIn(
+            "functions/tests/router-pinned-stage2.test.mjs",
+            pin["missing_evidence_refs"],
+        )
+        self.assertNotIn(
+            "functions/tests/router-pinned-stage2.test.mjs",
+            pin["unchanged_test_evidence_refs"],
+        )
+        self.assertEqual("DECLARED_EVIDENCE_MISSING", pin["review_state"])
 
 
 

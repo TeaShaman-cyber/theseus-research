@@ -377,3 +377,101 @@ def evaluate_proof_witnesses(
         )
 
     return results
+
+def build_proof_matrix(
+    document: Mapping[str, object],
+    patches: Mapping[str, str],
+    files: Mapping[str, str],
+) -> list[dict[str, object]]:
+    """Join impact, declared evidence, and static witness presence.
+
+    This remains an advisory matrix. It does not claim that unchanged tests
+    still prove changed behavior, nor that present static witnesses are correct.
+    """
+
+    impacted = affected_invariants_from_patches(document, patches)
+    witnesses = {
+        item["id"]: item
+        for item in evaluate_proof_witnesses(document, files)
+    }
+    invariants = document["invariants"]
+    assert isinstance(invariants, list)
+    by_id = {
+        raw["id"]: raw
+        for raw in invariants
+        if isinstance(raw, Mapping)
+    }
+    changed_paths = set(patches)
+
+    matrix: list[dict[str, object]] = []
+    for impact in impacted:
+        invariant_id = impact["id"]
+        raw = by_id[invariant_id]
+        evidence = raw["evidence"]
+        assert isinstance(evidence, list)
+
+        evidence_refs: list[str] = []
+        changed_evidence_refs: list[str] = []
+        missing_evidence_refs: list[str] = []
+        changed_test_refs: list[str] = []
+        unchanged_test_refs: list[str] = []
+        changed_implementation_refs: list[str] = []
+
+        for item in evidence:
+            assert isinstance(item, Mapping)
+            ref = item.get("ref")
+            kind = item.get("kind")
+            if not isinstance(ref, str):
+                continue
+            evidence_refs.append(ref)
+
+            is_local_file_evidence = kind in {"code", "test", "doc", "workflow"}
+            if is_local_file_evidence and ref not in files:
+                missing_evidence_refs.append(ref)
+                continue
+
+            if ref in changed_paths:
+                changed_evidence_refs.append(ref)
+                if kind == "test":
+                    changed_test_refs.append(ref)
+                elif kind in {"code", "workflow"}:
+                    changed_implementation_refs.append(ref)
+            elif kind == "test":
+                unchanged_test_refs.append(ref)
+
+        witness = witnesses[invariant_id]
+        witness_status = witness["witness_status"]
+
+        if witness_status == "DECLARED_WITNESS_MISSING":
+            review_state = "DECLARED_WITNESS_MISSING"
+        elif missing_evidence_refs:
+            review_state = "DECLARED_EVIDENCE_MISSING"
+        elif witness_status == "NO_DECLARED_MACHINE_WITNESS":
+            review_state = "SEMANTIC_REVIEW_REQUIRED"
+        elif changed_implementation_refs and unchanged_test_refs and not changed_test_refs:
+            review_state = "IMPLEMENTATION_CHANGED_TEST_EVIDENCE_UNCHANGED"
+        elif changed_evidence_refs:
+            review_state = "EVIDENCE_CHANGED_RECHECK_SEMANTICS"
+        else:
+            review_state = "IMPACT_WITHOUT_DECLARED_EVIDENCE_CHANGE"
+
+        matrix.append(
+            {
+                "id": invariant_id,
+                "title": impact["title"],
+                "human_promise": impact["human_promise"],
+                "matched_paths": impact["matched_paths"],
+                "matched_terms": impact["matched_terms"],
+                "declared_evidence_refs": sorted(evidence_refs),
+                "changed_evidence_refs": sorted(changed_evidence_refs),
+                "missing_evidence_refs": sorted(missing_evidence_refs),
+                "changed_test_evidence_refs": sorted(changed_test_refs),
+                "unchanged_test_evidence_refs": sorted(unchanged_test_refs),
+                "witness_status": witness_status,
+                "missing_witness_refs": witness["missing_refs"],
+                "missing_witness_terms": witness["missing_terms"],
+                "review_state": review_state,
+            }
+        )
+
+    return matrix
