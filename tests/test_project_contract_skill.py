@@ -31,6 +31,17 @@ class ProjectContractSkillTests(unittest.TestCase):
             self.assertIn(b'PROJECT_CONTRACT_SKILL_PROBE', content)
             self.assertIn(b'PC_OK_V12', content)
 
+    def test_execution_guidance_is_additive_and_not_a_turn_cap(self):
+        source = pc.SOURCE.read_bytes()
+        with zipfile.ZipFile(io.BytesIO(skill.build_package(pc.SOURCE, '0.1.1'))) as package:
+            content = package.read('skills/theseus-project-contract/SKILL.md')
+        self.assertEqual(content.split(b'```yaml\n', 1)[1].rsplit(b'```\n', 1)[0], source)
+        guidance = content.split(b'## Operational interpretation', 1)[1].split(b'## Canonical policy', 1)[0]
+        for phrase in (b'one policy, not cumulative restrictions', b'not a tool-call budget',
+                       b'meaningful checkpoint', b'explicit user boundary',
+                       b'necessary verification', b'No new authority', b'Example:'):
+            self.assertIn(phrase, guidance)
+
     def test_invalid_contract_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             bad = Path(tmp) / 'contract.yaml'
