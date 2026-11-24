@@ -29,5 +29,5 @@ that the ChatGPT Project Settings projection is installed or active.
 - `tools/project_contract_formal.py` performs deterministic graph/invariant checks in ordinary repo QA.
 - `formal/verify.wl` independently evaluates the same invariant family in Wolfram Language.
 - Wolfram proves properties of the formal model, not semantic completeness or runtime behavior.
-- Adversarial LLM/Codex review remains a separate required gate.
+- Adversarial review by the GitHub Codex review bot remains a separate required gate. Check the bot’s completed PR review for the exact current HEAD before requesting another review. This means the GitHub PR integration, not a locally invoked Codex CLI on exe.dev or another runtime.
 - Git merge does not install Project Settings; v12 runtime acceptance requires `PC_OK_V12`.
