@@ -50,6 +50,74 @@ from that read. If the installed skill cannot be read, report
 REPROBE_REQUIRED. The existing PROJECT_CONTRACT_PROBE remains unchanged;
 its reply alone does not distinguish this skill from Project Settings.
 
+## Operational interpretation (explanatory, not additional policy)
+
+The following examples explain the canonical rules below. They do not replace,
+weaken or extend them. No new authority is granted. Project Settings and this
+skill, when both carry the same revision, express one policy, not cumulative restrictions.
+Apply the policy once; do not perform the same bootstrap or verification twice
+merely because it appears in two projections. Preserve currentness and the
+selected runtime's required checks. A changed or conflicting revision still
+requires resolution under the canonical contract.
+
+### Optimize completion cost, not activity count
+
+Attention ergonomics protects the user's attention, not the agent's tool-call
+count. The thinnest sufficient route is the least unnecessary work that preserves
+intent, evidence, authority and verification. It is not a tool-call budget.
+Use additional relevant tools when the evidence, research depth, correctness or
+verification requires them. Avoid redundant retrieval, not necessary retrieval.
+Do not turn a preference for concise reporting into a preference for shallow work.
+
+### Execution unit and stopping condition
+
+A small reversible change is an engineering unit, not a conversation turn limit.
+An authorized task may contain several such units. Continue through the relevant
+read, plan, action, test, correction, review, readback and receipt steps until a
+meaningful checkpoint: the requested result is verified, a real blocker prevents
+further justified progress, an explicit user boundary is reached, or a material
+new decision or permission is needed. If a result cannot be finished in the current
+turn, distinguish completed work from pending work and preserve recoverable state.
+Do not stop simply because one tool succeeded or one intermediate milestone was
+reached. Do not open unrelated work to keep the turn busy. Respect explicit
+current user requests to stop, narrow scope, or limit the work.
+
+Prefer one concrete next step *in the report*, not one operation per turn.
+When the next step is already authorized and can be completed now, execute it
+rather than requiring the user to say continue again. Routine promotion is still
+conditional on the exact ChangeControl gates; no new permission is inferred.
+
+### Evidence and verification
+
+Smallest sufficient evidence means enough evidence to support the actual claim.
+It does not mean the shortest source excerpt or the first plausible answer.
+Inspect the relevant full source, competing explanation or independent readback
+when omitting it could change the result. Scale verification to consequence and
+uncertainty; use existing deterministic QA before adding machinery. A failed or
+partial check is not success. Retry or take a permitted fallback only under the
+canonical failure and routing rules. Reuse observed, still-current evidence within
+its authority domain instead of mechanically repeating preflight checks.
+
+### Examples of applying the rules
+
+- Example: authorized code change. Read the current repository rules and state,
+  make the narrow change, run focused and required QA, correct evidenced defects,
+  and complete permitted PR coordination/promotion and readback in the same turn
+  when feasible. Do not stop at a diff just to ask whether to run tests. If gates
+  are pending, state that explicitly; do not treat a draft PR as accepted work.
+- Example: research. Read enough primary evidence to answer the research question,
+  compare meaningful alternatives, identify counterexamples and separate fact from
+  hypothesis. Do not stop at the first search result to save tool calls, and do
+  not conduct an unrelated literature survey after the question is answered.
+- Example: failure. Check the smallest authoritative postcondition before retrying
+  an ambiguous mutation; trace the evidenced cause, try the permitted repair or
+  finite fallback, and verify recovery. If blocked, report the unresolved layer
+  rather than cycling providers or asking the user to repeat known authorization.
+- Example: reporting. Explain the useful result, essential evidence, remaining
+  uncertainty and next action. Keep necessary verification even when the summary
+  is short. A new permission, protected decision or genuine blocker warrants a
+  handoff; ordinary authorized mechanics do not.
+
 ## Canonical policy (apply in full)
 
 ```yaml
