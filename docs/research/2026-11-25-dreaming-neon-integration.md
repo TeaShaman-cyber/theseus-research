@@ -7,6 +7,15 @@ Goal: internal module consumes changed conversations with the fewest new
 components, without reproducing Session Search routing or exposing corpus
 credentials. Retain Cloudflare execution and existing Hyperdrive ledger.
 
+Maintainer constraint: preserve modularity and avoid Neon/Cloudflare lock-in.
+Dreaming Core must not import Neon, Cloudflare, Mastra, HTTP or PostgreSQL
+runtime clients. Reuse its existing typed evidence packet and work-store
+boundaries rather than inventing another framework. Only composition/adapters
+know the hosting provider. The same core behavioral tests must pass with local
+and cloud-backed adapters without changing core logic. Mastra is our dev/test
+surface, not an additional production runtime dependency. Option D is deferred,
+not a migration plan; changing providers must not require changing analysis.
+
 ## Observed facts (2026-11-25)
 - Neon Functions are Node.js HTTP handlers, branch-scoped, with public
   invocation URLs. Inbound authentication is application responsibility;
@@ -48,7 +57,7 @@ Function or gateway. Dedicated service credential restricted to that route;
 existing broad router/Arcade token must not be copied. Router owns blue/green
 selection, generation/cursor semantics and coverage. One small source-side
 handler change and consumer adapter; no source DB creds in worker.
-Preferred hypothesis for first experiment, subject to review.
+Preferred candidate for the narrow contract prototype below, not an accepted production route.
 
 B. Worker -> existing shard Function /session-read directly. No new router
 handler but must supply trusted current exact shard/generation/host binding,
@@ -96,8 +105,10 @@ internal dependency.
    validation and response format; distinguish incomplete pagination, partial
    source coverage, unavailable shard, and generation mismatch. No ACTIVE
    fallback, redirects to untrusted hosts, implicit full history or lexical
-   miss as no work. Total byte/page/time budget across a work item. Re-read
-   only with exact retained generation or replan explicit fresh receipt.
+   miss as no work. Total byte/page/time budget across a work item. For the current-catalog policy, an old retained generation is not admitted
+   merely because it can be read directly: on mismatch replan against a fresh
+   verified receipt, without silently advancing the checkpoint. Any future
+   historical-replay policy must be explicit and separately tested.
 3. Authentication: separate worker-specific secret/token, only read capability
    on selected routes, stored in existing secret mechanisms. Do not reuse
    management API keys, browser OAuth, operator bearer or ledger write role.
@@ -140,6 +151,64 @@ source dependency identity and exact provenance before autonomous execution.
 E4. End-to-end synthetic fixture on existing dev runtime with ledger readback.
 Keep existing local/server reader. Only then consider live source and provider
 permission as distinct decisions.
+
+## E1 / E2 findings and narrowed next experiment (2026-11-25)
+
+- SS #344 merged at 34c5abf93771ece4355a68f15de6965ca863f9d0; DW skill
+  overlay #71 merged at 31af0d827d6ce0011f2d558507df6947f8d76f83.
+- SS #304/#332 terminal receipts establish split serving hosts and data
+  projects, retained old serving branches, and same-URI router reload.
+  Independently queried Neon list_functions for that exact router branch:
+  ssrouter2 active deployment observed. Direct /health 200, five READY
+  entries. Fresh protected operator session_coverage via existing App at
+  18:32:09 UTC returned the five exact catalog generations from the last
+  accepted receipts, no truncation, complete catalog bounds. This is
+  catalog observation, NOT five live data queries or source completeness.
+  Full current per-shard Function host/DB credential binding remains unknown.
+- Existing refresh_plan.py already validates serving_url, target project,
+  branch, exact manifest/generation and previous generation. Its actions
+  are a plan, not execution proof. serving_promotion_readiness.py already
+  validates source/bundle/READY receipts, but stops at READY_FOR_RUNTIME_GATES.
+  Reuse these; no new catalog or replacement promotion pipeline.
+- Existing materializer freezes accepted membership and assigned rows under
+  one lock. Its accepted_set_sha256 is corpus-wide, not a per-session
+  dependency. shard_allocation already returns private session_ids for
+  each shard; actual source-to-bundle-to-current-catalog binding must use
+  exact verified bundle rows or equivalent captured inventory, not rerun
+  allocation later on an unrelated current corpus.
+- Executed actual makeSessionBrowser and makeShardHandler with synthetic
+  SQL results, two catalog entries and replacement of one generation.
+  ROUTING_COUNTEREXAMPLE_PASS: old retained host directly reads old exact
+  generation, current router rejects it before dispatch with
+  STALE_GENERATION, fresh generation succeeds, HTTP 503 yields BLOCKED,
+  existing shard bearer also authorizes /search. These are handler-level
+  observations, not a real cloud auth test or latency benchmark. Initial
+  run failed because isolated worktree lacked dependencies and default
+  Node was 18; using pinned Node22 and matching installed lockfile fixed it.
+
+Decision for experiment: prototype A on the existing router handler, not a
+new service. Add a disabled-by-default, separate-token HTTP read route
+reusing makeSessionBrowser; do not enable or provision credentials. Test
+same result as existing MCP wrapper, missing/wrong/colliding token,
+rejection of worker token on search/coverage/MCP, no dispatch on stale
+generation, and partial failures. A read token is route-scoped, not a
+per-session capability; source scope must be checked before any real
+history access is authorized. B remains possible if future explicit
+historical replay, trustworthy placement and narrower shard auth eliminate
+the duplicated policy. No new private data permission or runtime migration.
+
+Durable handoff design still required: retain consumer's last completed
+membership + per-provider generation vector and analysis contract. At refresh,
+bind a new immutable candidate to the actual verified accepted set, exact
+bundle manifests and selected rows, then require live router readback of the
+same generation vector. If a crash occurs before/after readback, reconcile
+from the retained completed checkpoint and current verified promotion rather
+than assume an empty replay report is no pending work. A pending consumer
+batch is not acknowledged until each scoped work completion (or explicit
+non-work disposition) is verified. If generation changes mid-batch, keep
+completed work receipts, replan unresolved work, never substitute another
+generation silently. Persistence location and atomic publication/recovery
+mechanics remain acceptance questions; no automatic cursor advance yet.
 
 ## External sources (reviewed 2026-11-25)
 - https://neon.com/docs/compute/functions/overview
