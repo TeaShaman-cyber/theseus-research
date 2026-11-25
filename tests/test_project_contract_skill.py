@@ -42,6 +42,16 @@ class ProjectContractSkillTests(unittest.TestCase):
                        b'necessary verification', b'No new authority', b'Example:'):
             self.assertIn(phrase, guidance)
 
+    def test_completion_note_preserves_policy(self):
+        with zipfile.ZipFile(io.BytesIO(skill.build_package(pc.SOURCE, '0.1.2'))) as package:
+            content = package.read('skills/theseus-project-contract/SKILL.md')
+        self.assertEqual(content.split(b'```yaml\n', 1)[1].rsplit(b'```\n', 1)[0], pc.SOURCE.read_bytes())
+        guidance = content.split(b'## Operational interpretation', 1)[1].split(b'## Canonical policy', 1)[0]
+        for phrase in (b'launching CI is not completing the task', b'bounded status checks',
+                       b'provisional resource budget', b'already authorized next step',
+                       b'goal-level result', b'actual runtime or turn limit'):
+            self.assertIn(phrase, guidance)
+
     def test_invalid_contract_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             bad = Path(tmp) / 'contract.yaml'

@@ -87,6 +87,25 @@ When the next step is already authorized and can be completed now, execute it
 rather than requiring the user to say continue again. Routine promotion is still
 conditional on the exact ChangeControl gates; no new permission is inferred.
 
+### Completion rather than checkpoint handoffs
+
+A successful tool call, opened PR or launching CI is not completing the task
+unless that was the user's actual goal. For an already authorized next step,
+continue through bounded status checks, result inspection, necessary repair,
+review, permitted merge and readback while the current turn can still make
+useful progress. CI running is an intermediate state, not by itself a blocker.
+Use progress messages without turning them into requests for another user turn.
+If a real wait prevents further useful work, or an actual runtime or turn limit
+is reached, preserve the exact pending state and explain the remaining blocker;
+do not invent background execution or promise later delivery.
+
+A provisional resource budget or pilot size is an engineering choice, not a
+user-imposed limit. Justify it with measured risk/cost, revise it when evidence
+supports expansion, and continue toward the goal-level result rather than
+requiring approval for every small experiment. Respect actual permission,
+resource and scope boundaries. Small reversible changes can be successive
+steps in one substantial iteration. This note adds no authority or policy.
+
 ### Evidence and verification
 
 Smallest sufficient evidence means enough evidence to support the actual claim.
