@@ -1,4 +1,4 @@
-1b8a7e44bc63f77dd7de64c8a59f69dd59d02f42c0c855f21aeb4874d8aed2a6  ./README.md
+bb9a94719ae1ac5c9e9440643ad509107fa20c01e02e1862546796616631d980  ./README.md
 5f0ce36e6078e9f7b77a8614f8c3b467fbbf4287ad9e19b8d93b180b65f02575  ./data/accepted-corpora.json
 9b178491c903e006caccc7fd2c12bc636085b6f9d56af24a1c937bbe63d263ca  ./data/context-cdc-quotient.json
 44af49e353e1bd87101f1e83fa7025548241d6e5ee47626cb8fa6a549d854e00  ./data/context-cdc-swap.json
@@ -22,8 +22,8 @@ f3f2d82f501fdd73f2a8d2506955a37c79ecb46f60f9e2ca6588232ca094d149  ./experiments/
 08281a2d8fb058606147aa62b56844ac36316a559ec99db1d671273e16f832b6  ./experiments/initial-benchmark.mjs
 f4a8bb473c3c96117cbe362af516437ff7a2f562e82df8dee82109d5936b2ddd  ./experiments/postgres-benchmark.mjs
 d5f7514818ebac917866ede188e974f6566a761ec3a6f37be68c6ecb42ef1beb  ./experiments/repeated-benchmark.mjs
-c8c8edc408b95afa6d4147d8fd8559d025fb3e321ad83d0b93be91b7fd0bbf25  ./manuscript.md
+20825f090e3e3423f14e2217ea7fe390dcf5de48fa8d5bd3f4c6cb7929cca986  ./manuscript.md
 e8f62ef0d161ebc8f6d22da47bc65227123cff2d9ae08e7901c5ea128347c9dc  ./proofs/dw108-GraphFilters.lean
 a03d105d7dd81799883d889aff82d55448dcff1e62469a39ea5d6b40990288a5  ./proofs/dw108-LedgerDelta.lean
 581298c8c13749d94a8fc4dfb48c3c6785fd0dcb16b1b0f2d7a1d3b000acea91  ./proofs/dw108-PrefixDAG.lean
-0dfa893ae73a6c26c5338ec10fe329b498ae57b7f8d3ce77a940976859003423  ./zenodo-draft.json
+b59901ad7c222803d753ea42f2e01703f23cadfb195c09529e0eebc25ae7e983  ./zenodo-draft.json

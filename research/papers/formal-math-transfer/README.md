@@ -14,10 +14,12 @@ This is an unpublished, AI-assisted manuscript candidate. The public development
 - [ ] Finalize exact accepted candidate, CI and review receipt; rerun final comparison if source changes.
 - [x] Execute PostgreSQL reproduction through a new disposable database; exact output retained.
 - [ ] Audit archive contents and independent replication or explicitly describe limitation.
-- [ ] Decide manuscript-specific human creator, rights, acknowledgments and funding/conflict declarations.
+- [x] Confirm manuscript-specific creator TeaShaman-cyber, no institutional affiliation, and text license CC BY-SA 4.0.
+- [ ] Audit supplementary rights and confirm acknowledgments and funding/conflict declarations.
 - [ ] Author critically reviews claims and takes responsibility for final text; check submission-venue AI policy.
 - [ ] Render and visually review final PDF; package source, machine-readable results, proofs and reproduction scripts with checksums.
-- [ ] Create/edit a new unpublished Zenodo draft through authorized write route; reserve DOI if desired; read back metadata and files. Publish only after explicit separate approval.
+- [x] Create unpublished Zenodo draft 24602877 and verify initial manuscript attachment.
+- [ ] Verify final archive projection and reserve DOI if desired; publish only after explicit separate approval.
 - [ ] Select a plausible peer-review venue and assess readiness; a preprint is not peer review. No application to Langfuse without separate decision.
 
-Official guidance: https://help.zenodo.org/docs/deposit/create-new-upload/ ; https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/ ; https://help.zenodo.org/docs/deposit/manage-versions/ ; https://help.zenodo.org/docs/deposit/describe-records/licenses/ ; https://support.zenodo.org/help/en-gb/13-policies/227 (AI policy search index consulted; full page fetch failed). Metadata below is a proposal, not provider-validated metadata.
+Official guidance: https://help.zenodo.org/docs/deposit/create-new-upload/ ; https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/ ; https://help.zenodo.org/docs/deposit/manage-versions/ ; https://help.zenodo.org/docs/deposit/describe-records/licenses/ ; https://support.zenodo.org/help/en-gb/13-policies/227 (AI policy search index consulted; full page fetch failed). The metadata file records author-approved manuscript metadata and the existing unpublished draft identity. Final publication remains unapproved.

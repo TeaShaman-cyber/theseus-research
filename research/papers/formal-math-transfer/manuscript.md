@@ -1,8 +1,9 @@
 # From frontier formal mathematics to software engineering: an open, agent-assisted knowledge-transfer case study
 
-**Working manuscript v0.1 — 27 November 2026. Unpublished; not peer reviewed.**
+**Working manuscript v0.2 — 27 November 2026. Unpublished; not peer reviewed.**
 **Research program:** Theseus, independent public-interest research.
-**Proposed creator:** TeaShaman-cyber (manuscript-specific confirmation pending; no institutional affiliation claimed).
+**Author:** TeaShaman-cyber (independent researcher; no institutional affiliation claimed).
+**Manuscript text license:** Creative Commons Attribution-ShareAlike 4.0 International ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)). Code, third-party sources and supplementary artifacts retain their own applicable rights.
 **Study registration:** [Theseus Research #141](https://github.com/TeaShaman-cyber/theseus-research/issues/141).
 **Status:** author review, rights audit, related-work expansion and final candidate acceptance pending.
 
@@ -85,7 +86,7 @@ The adverse-order chain and diamond cases exhibit the predicted large decrease i
 
 An independent comparison of actual implementations over every directed four-vertex edge set in both insertion orders matched 8,192 materialization outcomes (including failure messages) and 13,032 candidate appends to valid histories. An additional abstract experiment checked 6,516 reachability queries across 543 labeled DAGs, 3,588 resolved without visiting vertices by rank/component filters; all 468 redundant-edge insertion witnesses preserved reachability. These are exhaustive finite-domain checks, not a proof for arbitrary implementation sizes.
 
-Candidate #110 passed local canonical QA (448 JavaScript tests, 51 Python tests, native specification coverage and reverse trace), 73 targeted tests and isolated PostgreSQL 17 canonical integration. Final hosted mutation/review status must be refreshed before publication; local passes do not establish acceptance. Exact evidence and current disposition are recorded in #108.
+Candidate #110 passed local canonical QA (448 JavaScript tests, 51 Python tests, native specification coverage and reverse trace), 73 targeted tests and isolated PostgreSQL 17 canonical integration. At the 2026-11-27 follow-up, the exact candidate passed hosted verification, PostgreSQL integration, review gate and nine mutation shards; the ledger mutation shard failed. The candidate remains unaccepted. The observed performance and parity results refer to the pinned candidate, not a released implementation. Local passes do not establish acceptance. Exact evidence and current disposition are recorded in #108.
 
 ## 7. Threats to validity
 
