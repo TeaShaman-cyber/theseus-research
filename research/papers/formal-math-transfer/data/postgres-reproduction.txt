@@ -1,0 +1,7 @@
+{"n":100,"version":"old","elapsedMs":177,"lockMs":162,"historyRows":100}
+{"n":100,"version":"new","elapsedMs":99,"lockMs":77,"historyRows":100}
+{"n":500,"version":"old","elapsedMs":2302,"lockMs":2291,"historyRows":500}
+{"n":500,"version":"new","elapsedMs":70,"lockMs":44,"historyRows":500}
+{"n":1000,"version":"old","elapsedMs":10001,"lockMs":9990,"historyRows":1000}
+{"n":1000,"version":"new","elapsedMs":76,"lockMs":58,"historyRows":1000}
+INDEX_ONLY_INSUFFICIENT unrelated_corruption=true candidate_id_absent=true full_replay_rejected=true no_insert=true

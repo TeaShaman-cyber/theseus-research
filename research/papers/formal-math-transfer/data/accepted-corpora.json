@@ -1,0 +1,252 @@
+{
+  "schema": "theseus.repo-search.accepted-catalog.v1",
+  "release_repository": "TeaShaman-cyber/theseus-repo-search-lab",
+  "corpora": [
+    {
+      "source_id": "annals-challenge-full",
+      "release_tag": "accepted-artifact/annals-challenge-full/8caba38c6657f683",
+      "package_asset": "annals-challenge-full-accepted.tar.gz",
+      "receipt_asset": "annals-challenge-full-release-receipt.json",
+      "source_descriptor": "producer/sources/annals-challenge-full.json",
+      "artifact_identity": "8caba38c6657f6834a0a67741cc6c16194611e65be0e6222846c003408cac0f9",
+      "fingerprint_sha256": "9463fdccba664131d297fb92452b052644083381e41d4516938319feb8cddcfc"
+    },
+    {
+      "source_id": "annals-challenge-marton",
+      "release_tag": "accepted-artifact/annals-challenge-marton/1d0d8ce2fbeb279f",
+      "package_asset": "annals-challenge-marton-accepted.tar.gz",
+      "receipt_asset": "annals-challenge-marton-release-receipt.json",
+      "source_descriptor": "producer/sources/annals-challenge-marton.json",
+      "artifact_identity": "1d0d8ce2fbeb279fc9024856a94f788a2ed015dca5aeaee94786040b89d8f17c",
+      "fingerprint_sha256": "034c0ab9a11e5e03145372158a78fd388494a84da46df4d18b3a7dd8bacfc03b"
+    },
+    {
+      "source_id": "anthropic-fermats-last-theorem",
+      "release_tag": "accepted-artifact/anthropic-fermats-last-theorem/21b6b292cb3160fa",
+      "package_asset": "anthropic-fermats-last-theorem-accepted.tar.gz",
+      "receipt_asset": "anthropic-fermats-last-theorem-release-receipt.json",
+      "source_descriptor": "producer/sources/anthropic-fermats-last-theorem.json",
+      "artifact_identity": "21b6b292cb3160fa33a962ad72e1890691250279e016c251150cdb2f84ce62c3",
+      "fingerprint_sha256": "174f3a74e8176256ca3b7e997f53db2dd1def67d77aaf53cfea66e3e605b9c73"
+    },
+    {
+      "source_id": "decreasing-diagrams-complete",
+      "release_tag": "accepted-artifact/decreasing-diagrams-complete/abd7c1b4e2586c8c",
+      "package_asset": "decreasing-diagrams-complete-accepted.tar.gz",
+      "receipt_asset": "decreasing-diagrams-complete-release-receipt.json",
+      "source_descriptor": "producer/sources/decreasing-diagrams-complete.json",
+      "artifact_identity": "abd7c1b4e2586c8c7641a459f07a6c0026682796a6e4222fe7bc0a0307d5a0bb",
+      "fingerprint_sha256": "c3a52418f50906ebd70c5c84a1d8086ecde0ddb3af665c946d709e9944c58d0e"
+    },
+    {
+      "source_id": "formal-conjectures-riemann",
+      "release_tag": "accepted-artifact/formal-conjectures-riemann/d56ca7204a9a991c",
+      "package_asset": "formal-conjectures-riemann-accepted.tar.gz",
+      "receipt_asset": "formal-conjectures-riemann-release-receipt.json",
+      "source_descriptor": "producer/sources/formal-conjectures-riemann.json",
+      "artifact_identity": "d56ca7204a9a991c1e046b2760c1a84a99eb8e38597cd33cc6cab5bb26930eec",
+      "fingerprint_sha256": "7af3e1efe51626f2ced7e5d64e7ff67416b6508285347d679e576cbd3e680c53"
+    },
+    {
+      "source_id": "imperial-flt-partial",
+      "release_tag": "accepted-artifact/imperial-flt-partial/d218f9a11ea084b4",
+      "package_asset": "imperial-flt-partial-accepted.tar.gz",
+      "receipt_asset": "imperial-flt-partial-release-receipt.json",
+      "source_descriptor": "producer/sources/imperial-flt-partial.json",
+      "artifact_identity": "d218f9a11ea084b44ade06dd3fcb22ee006fd0db196f6c51497706f718c5657a",
+      "fingerprint_sha256": "94992da7aceb954c523fc2161454496918733fef46002edb00850feccbc85d88",
+      "runner_config": "producer/runners/leandepviz-lean436-adapted.json"
+    },
+    {
+      "source_id": "leanprover-community-con-nf",
+      "release_tag": "accepted-artifact/leanprover-community-con-nf/e6bf117b57945fd4",
+      "package_asset": "leanprover-community-con-nf-accepted.tar.gz",
+      "receipt_asset": "leanprover-community-con-nf-release-receipt.json",
+      "source_descriptor": "producer/sources/leanprover-community-con-nf.json",
+      "artifact_identity": "e6bf117b57945fd451c432e0ddb6d569356e6c9c8e7b8dcb598607a9c3e639a6",
+      "fingerprint_sha256": "ab9a5553d1239ec304cd7c1de3caf972ca3ac41644045fc59f5b8afbb3480cd1"
+    },
+    {
+      "source_id": "leanprover-community-flt-regular",
+      "release_tag": "accepted-artifact/flt-regular/41bfa1d236ee59a8",
+      "package_asset": "leanprover-community-flt-regular-accepted.tar.gz",
+      "receipt_asset": "leanprover-community-flt-regular-release-receipt.json",
+      "source_descriptor": "producer/sources/leanprover-community-flt-regular.json",
+      "artifact_identity": "41bfa1d236ee59a856a93288d997b6cf19b7f42f2c7dd630fb2ce2482f9b3844",
+      "fingerprint_sha256": "07a937f3c7f05444ed3390c85476ca696f14c111e9e41386aa7243d3e7f70a7b"
+    },
+    {
+      "source_id": "leanprover-community-riemann-readable",
+      "release_tag": "accepted-artifact/leanprover-community-riemann-readable/6ee2f773cf70114e",
+      "package_asset": "leanprover-community-riemann-readable-accepted.tar.gz",
+      "receipt_asset": "leanprover-community-riemann-readable-release-receipt.json",
+      "source_descriptor": "producer/sources/leanprover-community-riemann-readable.json",
+      "artifact_identity": "6ee2f773cf70114e9ae09b67b56bca07143f2d36b7a137705eb60d96e1e9b5c2",
+      "fingerprint_sha256": "77258a125b585577fdf152d8c8008af8dd5857a58f36724e192a74e7e35e68b9",
+      "runner_config": "producer/runners/leandepviz-lean436-adapted.json"
+    },
+    {
+      "source_id": "openai-cdc-lean",
+      "release_tag": "accepted-artifact/openai-cdc-lean/154e254c84a94b26",
+      "package_asset": "openai-cdc-lean-accepted.tar.gz",
+      "receipt_asset": "openai-cdc-lean-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-cdc-lean.json",
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "fingerprint_sha256": "3471bd170728e2d5c72505f4eb8a1dbafd16a3c953a70f71f7664d55c94f42ee"
+    },
+    {
+      "source_id": "openai-euler",
+      "release_tag": "accepted-artifact/openai-euler/d96ee5ae8f32131d",
+      "package_asset": "openai-euler-accepted.tar.gz",
+      "receipt_asset": "openai-euler-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-euler.json",
+      "artifact_identity": "d96ee5ae8f32131dc18193cd86a695fe63b9e641de1fe37ac7f16defc41c6a09",
+      "fingerprint_sha256": "877b9715cf40d2ed3b569dc1ea154874d1e3e6c2bf0524670d38e6df901da416"
+    },
+    {
+      "source_id": "openai-long-gaps",
+      "release_tag": "accepted-artifact/openai-long-gaps/9c062327474441f8",
+      "package_asset": "openai-long-gaps-accepted.tar.gz",
+      "receipt_asset": "openai-long-gaps-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-long-gaps.json",
+      "artifact_identity": "9c062327474441f85bbb3cbbf6a7b9cc5ec4d79af45af9ac524ce27c93272b5d",
+      "fingerprint_sha256": "045ff1531967daadf3c3eed435e917db0e7b1eb579227be812e959d6786b7604"
+    },
+    {
+      "source_id": "openai-matrix-exponent",
+      "release_tag": "accepted-artifact/openai-matrix-exponent/69a978eec3b557ff",
+      "package_asset": "openai-matrix-exponent-accepted.tar.gz",
+      "receipt_asset": "openai-matrix-exponent-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-matrix-exponent.json",
+      "artifact_identity": "69a978eec3b557ffc9f3073e86f5c41b2b325edc28f706849119bf9df6d23cd1",
+      "fingerprint_sha256": "ec7a66bf941ff6b3ec83da7caed6044c4caf5a69a060b671659fd025be706bb4"
+    },
+    {
+      "source_id": "openai-navier-stokes",
+      "release_tag": "accepted-artifact/openai-navier-stokes/83408cf0626503c2",
+      "package_asset": "openai-navier-stokes-accepted.tar.gz",
+      "receipt_asset": "openai-navier-stokes-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-navier-stokes.json",
+      "artifact_identity": "83408cf0626503c2a6f04e2bcb068d70103dc0af18c563f93e459123f90d0fc8",
+      "fingerprint_sha256": "9d8564138fd2574a67cb978fef3ad0fcdc8db3c725f4184726929363e2a59ca1"
+    },
+    {
+      "source_id": "openai-prime-gaps-186",
+      "release_tag": "accepted-artifact/openai-prime-gaps-186/c2179956c151e840",
+      "package_asset": "openai-prime-gaps-186-accepted.tar.gz",
+      "receipt_asset": "openai-prime-gaps-186-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-prime-gaps-186.json",
+      "artifact_identity": "c2179956c151e840f0804eccc67c987d02a82d30c845f621e64734f32567ddce",
+      "fingerprint_sha256": "724042c62dee2f58b8e405182b7986bd3dc8a0bdae16d6de25169d94179b5d70"
+    },
+    {
+      "source_id": "openai-ten-proofs-compactness-degeneracy",
+      "release_tag": "accepted-artifact/openai-ten-proofs-compactness-degeneracy/56fd3aaaa913054f",
+      "package_asset": "openai-ten-proofs-compactness-degeneracy-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-compactness-degeneracy-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-compactness-degeneracy.json",
+      "artifact_identity": "56fd3aaaa913054f2ec9f129b3d61ad0c22223d52d2c454a1c0a4ef989e4aba5",
+      "fingerprint_sha256": "11d07c3c06204e008c4d9bbe35cbaec3dedc24434f2662df58c22224809d0545"
+    },
+    {
+      "source_id": "openai-ten-proofs-connes-rigidity",
+      "release_tag": "accepted-artifact/openai-ten-proofs-connes-rigidity/ab6b61dd51b05980",
+      "package_asset": "openai-ten-proofs-connes-rigidity-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-connes-rigidity-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-connes-rigidity.json",
+      "artifact_identity": "ab6b61dd51b0598081d317423ac52965fe2011f53e413f173666ea878f06d8ef",
+      "fingerprint_sha256": "38e8eafd362b9237779903a60ad78275b0052616ad4ac326932abf32567593b4"
+    },
+    {
+      "source_id": "openai-ten-proofs-ehrhart",
+      "release_tag": "accepted-artifact/openai-ten-proofs-ehrhart/58dd32b798fbac04",
+      "package_asset": "openai-ten-proofs-ehrhart-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-ehrhart-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-ehrhart.json",
+      "artifact_identity": "58dd32b798fbac0431f8266a542484ecfad1a80fe3d03bee5f7aadc86ea5c4a8",
+      "fingerprint_sha256": "dfa7ca99797b28662ef00f4e0bdee91fdf46b6802128c59c1f06c3133153d199"
+    },
+    {
+      "source_id": "openai-ten-proofs-gap-cvp",
+      "release_tag": "accepted-artifact/openai-ten-proofs-gap-cvp/5ef64520d8fa1150",
+      "package_asset": "openai-ten-proofs-gap-cvp-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-gap-cvp-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-gap-cvp.json",
+      "artifact_identity": "5ef64520d8fa115028c5bd04e832d501305dd832d12711be31168d5dabb2ba4d",
+      "fingerprint_sha256": "e1b49405a6ee24b497bce70f552e4e83c67ce398404dd398abb7617301c5f4a6"
+    },
+    {
+      "source_id": "openai-ten-proofs-metric-codes",
+      "release_tag": "accepted-artifact/openai-ten-proofs-metric-codes/4185b2baa6fc54bf",
+      "package_asset": "openai-ten-proofs-metric-codes-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-metric-codes-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-metric-codes.json",
+      "artifact_identity": "4185b2baa6fc54bfdf369f74cf00781f20bf04d2fc83f216b995bbd0cb0a5684",
+      "fingerprint_sha256": "70b9f4109d4afdc7f88d12ed26f16e34f7b4fdd34376b05c02be32c7ca484b2c"
+    },
+    {
+      "source_id": "openai-ten-proofs-multicolor",
+      "release_tag": "accepted-artifact/openai-ten-proofs-multicolor/3f2d8edd1077cc4d",
+      "package_asset": "openai-ten-proofs-multicolor-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-multicolor-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-multicolor.json",
+      "artifact_identity": "3f2d8edd1077cc4db1d2f991c6d51b0b1259840a83542bf2eb49612335cc9690",
+      "fingerprint_sha256": "c5bf25665d4d22b943e30df80f83773bbb0dc7135ff241ba1056618663ff7d51"
+    },
+    {
+      "source_id": "openai-ten-proofs-non-sofic",
+      "release_tag": "accepted-artifact/openai-ten-proofs-non-sofic/1aebfced96d3d61c",
+      "package_asset": "openai-ten-proofs-non-sofic-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-non-sofic-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-non-sofic.json",
+      "artifact_identity": "1aebfced96d3d61c6190fdd5828fb4dd14b166f804842b5ab39b06e9c05b8dca",
+      "fingerprint_sha256": "04c4fb190a1e7d8b149976c5ed73e029e7e23652dbe3aa69c013550b1b518097"
+    },
+    {
+      "source_id": "openai-ten-proofs-permanent",
+      "release_tag": "accepted-artifact/openai-ten-proofs-permanent/b097ff91a1413a83",
+      "package_asset": "openai-ten-proofs-permanent-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-permanent-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-permanent.json",
+      "artifact_identity": "b097ff91a1413a83bd9aaf2edc88bf16fa1ba339f1976f2e62f20b8ca0b8232c",
+      "fingerprint_sha256": "b609443a04a2f21d7a23c59a624c6a4bf1512bcec2aeb513147dd64b545c4a70"
+    },
+    {
+      "source_id": "openai-ten-proofs-quantum-repetition",
+      "release_tag": "accepted-artifact/openai-ten-proofs-quantum-repetition/48895ebe70405d1d",
+      "package_asset": "openai-ten-proofs-quantum-repetition-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-quantum-repetition-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-quantum-repetition.json",
+      "artifact_identity": "48895ebe70405d1d4c6b44c4e37f59b8310bbe832bd9aa2d26f9cb25696cc6d5",
+      "fingerprint_sha256": "2c92fb87860a38234b01430ba0361c5ee676aab73b96b71502382db711272afe"
+    },
+    {
+      "source_id": "openai-ten-proofs-sphere-packing",
+      "release_tag": "accepted-artifact/openai-ten-proofs-sphere-packing/5350eca08be34180",
+      "package_asset": "openai-ten-proofs-sphere-packing-accepted.tar.gz",
+      "receipt_asset": "openai-ten-proofs-sphere-packing-release-receipt.json",
+      "source_descriptor": "producer/sources/openai-ten-proofs-sphere-packing.json",
+      "artifact_identity": "5350eca08be34180e7cb562b569bf5837873548dc6eb5e0ee62a42fce62e1cc9",
+      "fingerprint_sha256": "a4ecbd30db23a4b379500eb594c445ab52b258b0dc51064bf4280b2ada65b19a"
+    },
+    {
+      "source_id": "sphere-eversion-main",
+      "release_tag": "accepted-artifact/sphere-eversion-main/c239fe589a525d9a",
+      "package_asset": "sphere-eversion-main-accepted.tar.gz",
+      "receipt_asset": "sphere-eversion-main-release-receipt.json",
+      "source_descriptor": "producer/sources/sphere-eversion-main.json",
+      "artifact_identity": "c239fe589a525d9aa21a5f5db0e40b963448bcd4b0086983db464c241fdc6bc7",
+      "fingerprint_sha256": "b766735d66ffba2855e0f95806c028c807cdeff6a2ac78f50fbef1ada04e9f45",
+      "runner_config": "producer/runners/leandepviz-lean436-adapted.json"
+    },
+    {
+      "source_id": "zeta23",
+      "release_tag": "accepted-artifact/zeta23/786b5ab339dd85b7",
+      "package_asset": "zeta23-accepted.tar.gz",
+      "receipt_asset": "zeta23-release-receipt.json",
+      "source_descriptor": "producer/sources/zeta23.json",
+      "artifact_identity": "786b5ab339dd85b7817642d6f4921747e5e0cdcdd3ffed2dd9d02bd79277ae2c",
+      "fingerprint_sha256": "dbd76221cda67976adca51a61aefe7f888225bba606b9298ab5984319436bcc0"
+    }
+  ]
+}

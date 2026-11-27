@@ -1,0 +1,319 @@
+{
+  "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+  "catalog_sha256": "80290ac5b04b39ed1fb0c81f2dcdeb0a869a20a0f9f928b6f71d274fae8f2dca",
+  "chunks": [
+    {
+      "declaration_hint": "connects_of_internal_of_quotient_connects",
+      "declaration_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "distance": 0,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 957,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 882
+    },
+    {
+      "declaration_hint": "FiniteGraph",
+      "declaration_id": "lean:CDCLean.FiniteGraph",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 24,
+      "source_path": "CDCLean/GeneralGraph.lean",
+      "source_start_line": 15
+    },
+    {
+      "declaration_hint": "supportGraph",
+      "declaration_id": "lean:CDCLean.FiniteGraph.supportGraph",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 27,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 22
+    },
+    {
+      "declaration_hint": "ReachableIn",
+      "declaration_id": "lean:CDCLean.FiniteGraph.ReachableIn",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 31,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 28
+    },
+    {
+      "declaration_hint": "Connects",
+      "declaration_id": "lean:CDCLean.FiniteGraph.Connects",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 35,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 32
+    },
+    {
+      "declaration_hint": "crossingClass",
+      "declaration_id": "lean:CDCLean.FiniteGraph.crossingClass",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 60,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 53
+    },
+    {
+      "declaration_hint": "mem_crossingClass",
+      "declaration_id": "lean:CDCLean.FiniteGraph.mem_crossingClass",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 67,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 61
+    },
+    {
+      "declaration_hint": "quotientFintype",
+      "declaration_id": "lean:CDCLean.FiniteGraph.quotientFintype",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 76,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 74
+    },
+    {
+      "declaration_hint": "quotientGraph",
+      "declaration_id": "lean:CDCLean.FiniteGraph.quotientGraph",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 86,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 77
+    },
+    {
+      "declaration_hint": "insideEdges",
+      "declaration_id": "lean:CDCLean.FiniteGraph.insideEdges",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 103,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 96
+    },
+    {
+      "declaration_hint": "insideEdges_subset",
+      "declaration_id": "lean:CDCLean.FiniteGraph.insideEdges_subset",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 128,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 123
+    },
+    {
+      "declaration_hint": "InternallyConnected",
+      "declaration_id": "lean:CDCLean.FiniteGraph.InternallyConnected",
+      "distance": 1,
+      "evidence_grade": "LEXICAL_HIT",
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 229,
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_start_line": 225
+    }
+  ],
+  "complete_within_scope": true,
+  "created_from_authoritative_commit": true,
+  "dependency_boundary": "internal_only",
+  "estimated_tokens": 1686,
+  "evidence_boundary": "ELABORATED_DEPENDENCY",
+  "graph_edges": [
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.Connects"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.InternallyConnected"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.crossingClass"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.quotientFintype"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_TYPE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "type_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.quotientGraph"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.Connects"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.InternallyConnected"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.ReachableIn"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.crossingClass"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.endAt"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.insideEdges"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.insideEdges_subset"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.loopless"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.mem_crossingClass"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.quotientFintype"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.quotientGraph"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.reachableIn_mono"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.reachable_map_of_adj_reachable"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.supportGraph"
+    },
+    {
+      "depth": 1,
+      "evidence_grade": "ELABORATED_VALUE_DEPENDENCY",
+      "producer": "cameronfreer/LeanDepViz@7859d91f89b37c9193d9a09709a58be6d98f94d6",
+      "relation": "value_dependency",
+      "source_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+      "target_id": "lean:CDCLean.FiniteGraph.supportGraph_adj_iff"
+    }
+  ],
+  "query": "CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+  "scope_root_modules": [
+    "CDCLean"
+  ],
+  "source_id": "openai-cdc-lean",
+  "source_kind": "git",
+  "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+  "status": "FOUND",
+  "target_id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects",
+  "token_estimate_method": "ceil(chars/4)"
+}

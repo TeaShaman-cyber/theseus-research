@@ -1,0 +1,22 @@
+{
+  "status": "LOCAL_METADATA_PROPOSAL_NOT_PROVIDER_DRAFT",
+  "title": "From frontier formal mathematics to software engineering: an open, agent-assisted knowledge-transfer case study",
+  "resource_type_label": "Publication / Preprint",
+  "version": "0.1-draft",
+  "language": "eng",
+  "description": "An open, agent-assisted case study of transferring mathematical structures from research-level Lean corpora to an append-only proposal ledger. The manuscript separates literature, lexical retrieval, dependency graph expansion, abstract Lean proofs, differential implementation tests, repeatable performance measurements and negative results. Prospective observability research is distinct from measured software results.",
+  "proposed_creator": "TeaShaman-cyber",
+  "affiliation": null,
+  "creator_status": "pending manuscript-specific author confirmation",
+  "proposed_text_license": "CC BY-SA 4.0 (precedent in Theseus #96, not granted for this work)",
+  "code_rights": "Preserve original per-file rights; no third-party relicensing.",
+  "publication_date": null,
+  "doi": null,
+  "keywords": ["formal mathematics", "Lean", "knowledge transfer", "dependency graphs", "agent-assisted research", "software engineering", "observability", "reproducibility"],
+  "related_identifiers": [
+    "https://github.com/TeaShaman-cyber/theseus-research/issues/141",
+    "https://github.com/TeaShaman-cyber/theseus-repo-search-lab/tree/059cde32e3e63e17d4ad3917d9fe85c6490d62df",
+    "https://github.com/TeaShaman-cyber/theseus-dreaming-worker/issues/108"
+  ],
+  "publish_authorization": false
+}

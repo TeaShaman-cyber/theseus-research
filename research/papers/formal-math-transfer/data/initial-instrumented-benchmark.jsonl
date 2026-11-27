@@ -1,0 +1,6 @@
+{"n":160,"events":319,"version":"old","ms":29,"reads":13198}
+{"n":160,"events":319,"version":"new","ms":16,"reads":1116}
+{"n":1000,"events":1999,"version":"old","ms":305,"reads":502498}
+{"n":1000,"events":1999,"version":"new","ms":90,"reads":6996}
+{"n":5000,"events":9999,"version":"old","ms":4404,"reads":12512498}
+{"n":5000,"events":9999,"version":"new","ms":311,"reads":34996}
