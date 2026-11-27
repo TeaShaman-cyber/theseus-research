@@ -1,0 +1,14 @@
+Lean (version 4.28.0, x86_64-unknown-linux-gnu, commit 7e01a1bf5c70fc6167d49c345d3bf80596e9a79b, Release)
+'GraphFilters.redundant_edge' does not depend on any axioms
+'GraphFilters.component_path' does not depend on any axioms
+'GraphFilters.rank_path' does not depend on any axioms
+'GraphFilters.rank_restrict_iff' does not depend on any axioms
+'LedgerDelta.extend_refl' does not depend on any axioms
+'LedgerDelta.extend_trans' does not depend on any axioms
+'LedgerDelta.extend_least' does not depend on any axioms
+'LedgerDelta.extend_edge' does not depend on any axioms
+'LedgerDelta.extend_antisymm_iff' does not depend on any axioms
+'LedgerDelta.no_exact_subset_check' depends on axioms: [propext, Quot.sound]
+'PrefixDAG.path_mono' does not depend on any axioms
+'PrefixDAG.all_prefixes_iff_final' does not depend on any axioms
+'PrefixDAG.rank_certificate' does not depend on any axioms

@@ -1,0 +1,89 @@
+{
+  "backend": "turso+kusto",
+  "catalog_sha256": "80290ac5b04b39ed1fb0c81f2dcdeb0a869a20a0f9f928b6f71d274fae8f2dca",
+  "graph_coverage": "selected_lexical_declaration_seeds",
+  "graph_limit_per_seed": 30,
+  "graph_seeds": 1,
+  "graph_status": "FOUND",
+  "graph_unavailable": [],
+  "graphs": [
+    {
+      "artifact_identity": "abd7c1b4e2586c8c7641a459f07a6c0026682796a6e4222fe7bc0a0307d5a0bb",
+      "backend": "kusto",
+      "candidate_id": "decreasing-diagrams-complete::lean:DCR.Escape",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "forward",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:DCR.Star"
+        },
+        {
+          "depth": 1,
+          "id": "lean:DCR.stepOff"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 2116,
+      "projection_nodes": 245,
+      "root": "lean:DCR.Escape",
+      "scope_root_modules": [
+        "Regular",
+        "Singular",
+        "Audit"
+      ],
+      "source_authority": {
+        "format": "zip",
+        "kind": "archive",
+        "sha256": "4601cfef943144d27e4cd0daef5a2b8308f23dddec8cc6f997274585211e7c0f",
+        "subdir": "decreasing-diagrams-lean",
+        "url": "https://zenodo.org/records/23160921/files/decreasing-diagrams-lean.zip?download=1"
+      },
+      "source_id": "decreasing-diagrams-complete",
+      "source_kind": "archive",
+      "source_revision": "4601cfef943144d27e4cd0daef5a2b8308f23dddec8cc6f997274585211e7c0f",
+      "status": "FOUND"
+    }
+  ],
+  "hits": [
+    {
+      "artifact_identity": "abd7c1b4e2586c8c7641a459f07a6c0026682796a6e4222fe7bc0a0307d5a0bb",
+      "candidate_id": "decreasing-diagrams-complete::lean:DCR.Escape",
+      "created_from_authoritative_source": true,
+      "declaration_hint": "Escape",
+      "declaration_id": "lean:DCR.Escape",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 1,
+      "match_mode": "exact",
+      "query_mode": "discovery",
+      "score": 0.0,
+      "source_authority": {
+        "format": "zip",
+        "kind": "archive",
+        "sha256": "4601cfef943144d27e4cd0daef5a2b8308f23dddec8cc6f997274585211e7c0f",
+        "subdir": "decreasing-diagrams-lean",
+        "url": "https://zenodo.org/records/23160921/files/decreasing-diagrams-lean.zip?download=1"
+      },
+      "source_end_line": 160,
+      "source_id": "decreasing-diagrams-complete",
+      "source_kind": "archive",
+      "source_path": "Regular.lean",
+      "source_revision": "4601cfef943144d27e4cd0daef5a2b8308f23dddec8cc6f997274585211e7c0f",
+      "source_row_id": "src:Regular.lean:155:160",
+      "source_start_line": 155
+    }
+  ],
+  "lexical_status": "FOUND",
+  "query": "escape",
+  "query_mode": "discovery",
+  "searched_corpora": 1,
+  "source_filter": "decreasing-diagrams-complete",
+  "status": "FOUND",
+  "unavailable": [],
+  "unavailable_corpora": 0
+}

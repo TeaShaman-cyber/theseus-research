@@ -1,0 +1,429 @@
+{
+  "backend": "turso+kusto",
+  "catalog_sha256": "80290ac5b04b39ed1fb0c81f2dcdeb0a869a20a0f9f928b6f71d274fae8f2dca",
+  "graph_coverage": "selected_lexical_declaration_seeds",
+  "graph_limit_per_seed": 30,
+  "graph_seeds": 6,
+  "graph_status": "FOUND",
+  "graph_unavailable": [],
+  "graphs": [
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachable_of_adj_reachable",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.exists_three_spanningTrees_omitting_each_edge"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.reachableIn_erase_of_cyclic"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.componentSetoid_erase_eq_of_cyclic"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.connects_erase_of_cyclic"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.cyclicEdge_swap_of_cyclic_of_reachable"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasKaiserImprovementStep_of_condition"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.nowhereZeroGammaFlow_of_threeEdgeConnected"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.reachableIn_erase_union_singleton_iff_of_cyclic_of_reachable"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.reachableIn_inside_erase_of_min_superfluous"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_lt_of_cyclic_of_not_reachable"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.reachable_of_adj_reachable",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachable_map_of_adj_reachable",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.connects_of_internal_of_quotient_connects"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.contractEdge_connects_univ"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.cyclicEdge_of_quotient_cyclic_of_internal"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.quotientGraph_connected_of_connects"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.crossingClass_card_eq_of_spanningTree_of_internal"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasSuperfluousEdge_of_condition_of_disconnected"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.quotient_card_sub_one_le_crossingClass_card"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.reachable_map_of_adj_reachable",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachableIn_erase_of_cyclic",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.componentSetoid_erase_eq_of_cyclic"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.connects_erase_of_cyclic"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.cyclicEdge_swap_of_cyclic_of_reachable"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.hasKaiserImprovementStep_of_condition"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.reachableIn_erase_union_singleton_iff_of_cyclic_of_reachable"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.reachableIn_inside_erase_of_min_superfluous"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_lt_of_cyclic_of_not_reachable"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasTreePacking_of_condition"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.kaiserPartition_eq_upto_of_min_exchange"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.refineSetoid_residual_erase_eq_of_min_superfluous"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.reachableIn_erase_of_cyclic",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.connectedComponent_card_eq_of_reachable_iff",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_eq_of_reachable_iff"
+        },
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_lt_of_cyclic_of_not_reachable"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasKaiserImprovementStep_of_condition"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.connectedComponent_card_eq_of_reachable_iff",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.hasKaiserImprovementStep_of_condition"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasTreePacking_of_condition"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "backend": "kusto",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.residualComponents_eq_of_reachable_iff",
+      "complete_within_scope": true,
+      "created_from_authoritative_source": true,
+      "dependency_boundary": "internal_only",
+      "depth": 2,
+      "direction": "reverse",
+      "evidence": "reachability_over_indexed_typed_edges",
+      "found": true,
+      "nodes": [
+        {
+          "depth": 1,
+          "id": "lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable"
+        },
+        {
+          "depth": 2,
+          "id": "lean:CDCLean.FiniteGraph.hasKaiserImprovementStep_of_condition"
+        }
+      ],
+      "producer_kind": "lean-dep-viz",
+      "projection_edges": 4562,
+      "projection_nodes": 552,
+      "root": "lean:CDCLean.FiniteGraph.residualComponents_eq_of_reachable_iff",
+      "scope_root_modules": [
+        "CDCLean"
+      ],
+      "source_authority": null,
+      "source_id": "openai-cdc-lean",
+      "source_kind": "git",
+      "source_revision": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "status": "FOUND"
+    }
+  ],
+  "hits": [
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachable_of_adj_reachable",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "reachable_of_adj_reachable",
+      "declaration_id": "lean:CDCLean.FiniteGraph.reachable_of_adj_reachable",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 1,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -4.258080746946985,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 765,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:757:765",
+      "source_start_line": 757
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachable_map_of_adj_reachable",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "reachable_map_of_adj_reachable",
+      "declaration_id": "lean:CDCLean.FiniteGraph.reachable_map_of_adj_reachable",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 2,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -4.060305909432178,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 778,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:766:778",
+      "source_start_line": 766
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.reachableIn_erase_of_cyclic",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "reachableIn_erase_of_cyclic",
+      "declaration_id": "lean:CDCLean.FiniteGraph.reachableIn_erase_of_cyclic",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 3,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -3.707310917627914,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 1096,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:1069:1096",
+      "source_start_line": 1069
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.connectedComponent_card_eq_of_reachable_iff",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "connectedComponent_card_eq_of_reachable_iff",
+      "declaration_id": "lean:CDCLean.FiniteGraph.connectedComponent_card_eq_of_reachable_iff",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 4,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -3.666129716112149,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 2267,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:2250:2267",
+      "source_start_line": 2250
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "residualComponents_swap_eq_of_cyclic_of_reachable",
+      "declaration_id": "lean:CDCLean.FiniteGraph.residualComponents_swap_eq_of_cyclic_of_reachable",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 5,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -3.6553719295438807,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 2360,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:2345:2360",
+      "source_start_line": 2345
+    },
+    {
+      "artifact_identity": "154e254c84a94b262f8df022e5e81bea4ee544677830a7de6e1d44b2ea15d978",
+      "candidate_id": "openai-cdc-lean::lean:CDCLean.FiniteGraph.residualComponents_eq_of_reachable_iff",
+      "created_from_authoritative_commit": true,
+      "declaration_hint": "residualComponents_eq_of_reachable_iff",
+      "declaration_id": "lean:CDCLean.FiniteGraph.residualComponents_eq_of_reachable_iff",
+      "evidence_grade": "LEXICAL_HIT",
+      "local_rank": 6,
+      "match_mode": "single_term",
+      "query_mode": "discovery",
+      "score": -3.583607569801105,
+      "source_commit": "577e9d9ea326d520f80672ee69b830bf1d513df5",
+      "source_end_line": 2280,
+      "source_id": "openai-cdc-lean",
+      "source_path": "CDCLean/NashWilliams.lean",
+      "source_row_id": "src:CDCLean/NashWilliams.lean:2268:2280",
+      "source_start_line": 2268
+    }
+  ],
+  "lexical_status": "CANDIDATE",
+  "query": "reachable",
+  "query_mode": "discovery",
+  "searched_corpora": 1,
+  "source_filter": "openai-cdc-lean",
+  "status": "CANDIDATE",
+  "unavailable": [],
+  "unavailable_corpora": 0
+}
